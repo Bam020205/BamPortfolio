@@ -29,14 +29,19 @@ if ('IntersectionObserver' in window && matchMedia('(prefers-reduced-motion: no-
   });
 }
 
-const presentation = document.querySelector('[data-has-preview]');
-if (presentation) {
-  const preview = presentation.querySelector('[data-preview]');
+const presentation = document.querySelector('[data-local-original]');
+if (presentation && !location.hostname.endsWith('.github.io')) {
+  const original = document.createElement('source');
+  original.type = 'video/mp4';
+  original.src = presentation.dataset.localOriginal;
+  presentation.prepend(original);
+  presentation.load();
   const label = document.querySelector('[data-video-label]');
+  label.textContent = 'Science fair presentation';
   presentation.addEventListener('loadedmetadata', () => {
-    label.textContent = presentation.currentSrc === preview.src
-      ? 'Science fair preview'
-      : 'Full science fair presentation';
+    label.textContent = presentation.currentSrc === original.src
+      ? 'Full science fair presentation'
+      : 'Science fair preview · 14 seconds';
   });
 }
 

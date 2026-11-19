@@ -9,7 +9,7 @@ const encodePath = (path) => path.split('/').map(encodeURIComponent).join('/');
 const pageUrl = (root, route = '') => `${root}${route ? `${route}/` : ''}index.html`;
 const heading = (label, title, intro) => `
   <header class="page-head wrap">
-    <p class="eyebrow">${label}</p>
+    <p class="eyebrow kicker">${label}</p>
     <h1 class="entrance">${title}</h1>
     <p class="lede entrance">${intro}</p>
   </header>`;
@@ -18,7 +18,7 @@ const projects = [
   {
     slug: 'determinator', title: 'DeTerminator', category: 'Robotics research',
     intro: 'An Arduino-based rover that explores carbon dioxide and humidity as possible indicators of termite activity.',
-    cover: 'rover.jpg', alt: 'A close-up of the DeTerminator rover during assembly',
+    cover: 'terry-assembly.webp', alt: 'Hands connecting wiring inside the DeTerminator rover beside its blue display',
     video: 'determinator-original.mp4', videoTitle: 'Science fair presentation',
     preview: 'rover-demo.mp4',
     fullVideoUrl: 'https://drive.google.com/file/d/1tQ78QHXYtkHzy3e_hV68IHwHDJrSgSiy/view?usp=drivesdk',
@@ -32,7 +32,7 @@ const projects = [
   {
     slug: 'inventory', title: 'Shop Inventory Manager', category: 'Desktop application',
     intro: 'A Java Swing inventory system designed around the everyday needs of a sari-sari store.',
-    cover: 'inventory.jpg', alt: 'The Shop Inventory Manager product form and stock table in the original screen recording',
+    cover: 'inventory-window.webp', poster: 'inventory.jpg', alt: 'The Shop Inventory Manager product form and stock table in the original screen recording',
     video: 'inventory.mp4', videoTitle: 'Application walkthrough',
     details: [
       ['The idea', 'Helping my mother at a canteen inspired me to build a simple tool for tracking products, prices, and stock. I left supplier and item code fields out of the product form.'],
@@ -43,14 +43,16 @@ const projects = [
   },
 ];
 
-function projectList(root, titleTag = 'h3') {
+function projectList(root) {
   return `<div class="work-grid">${projects.map((project) => `
-    <article class="work reveal">
+    <article class="work work-${project.slug} reveal">
       <a href="${pageUrl(root, `projects/${project.slug}`)}">
         <div class="work-image"><img src="${root}media/${project.cover}" width="1280" height="720" loading="lazy" alt="${project.alt}"></div>
-        <div class="work-label"><span class="eyebrow">${project.category}</span><span class="link-mark" aria-hidden="true">↗</span></div>
-        <${titleTag}>${project.title}</${titleTag}>
+        <div class="work-label"><span class="eyebrow">${project.category}</span></div>
+        <h2>${project.title}</h2>
         <p>${project.intro}</p>
+        <span class="work-tools">${project.tools}</span>
+        <span class="text-link">View project</span>
       </a>
     </article>`).join('')}</div>`;
 }
@@ -65,11 +67,10 @@ function projectVideo(root, project) {
   const videoLink = project.fullVideoUrl ?? videoPath;
   const linkLabel = project.fullVideoUrl ? 'Watch the full video on Google Drive' : 'Open video';
   return `<figure class="film reveal">
-    <video controls playsinline preload="none" width="1280" height="720" poster="${root}media/${project.cover}" aria-label="${project.videoTitle}"${project.preview ? ' data-has-preview' : ''}>
-      <source src="${videoPath}" type="video/mp4">
-      ${project.preview ? `<source src="${root}media/${project.preview}" type="video/mp4" data-preview>` : ''}
+    <video controls playsinline preload="none" width="1280" height="720" poster="${root}media/${project.poster ?? project.cover}" aria-label="${project.videoTitle}"${project.preview ? ` data-local-original="${videoPath}"` : ''}>
+      <source src="${project.preview ? root + 'media/' + project.preview : videoPath}" type="video/mp4">
     </video>
-    <figcaption><span${project.preview ? ' data-video-label' : ''}>${project.videoTitle}</span> <a class="text-link" href="${videoLink}">${linkLabel}</a></figcaption>
+    <figcaption><span${project.preview ? ' data-video-label' : ''}>${project.preview ? 'Science fair preview · 14 seconds' : project.videoTitle}</span> <a class="text-link" href="${videoLink}">${linkLabel}</a></figcaption>
   </figure>`;
 }
 
@@ -85,33 +86,57 @@ const certs = [
   ['Packet Capture: Beneath the Network CTF', 'CyberPH', 'Oct 26, 2026', 'Participation', 'Packet Capture Beneath the Network CTF - CyberPH.png'],
 ];
 
+function credentials(root) {
+  const issuers = [...new Set(certs.map(([, issuer]) => issuer))];
+  const anchor = (issuer) => issuer.toLowerCase().replaceAll(' ', '-');
+  return `<div class="credential-index">
+    <nav aria-label="Certificate issuers"><p class="eyebrow">Issuers</p>${issuers.map(issuer => `<a href="#${anchor(issuer)}">${issuer}</a>`).join('')}</nav>
+    <div>${issuers.map(issuer => `<section class="issuer" id="${anchor(issuer)}"><h2>${issuer}</h2><ul class="cert-list">${certs.filter(cert => cert[1] === issuer).map(([title, , date, type, image, id]) => {
+      const src = `${root}media/credentials/${encodePath(image)}`;
+      const label = title.replaceAll('&', '&amp;');
+      return `<li class="credential"><a class="cert-image" href="${src}" aria-label="View ${label} certificate"><img src="${src}" alt="" loading="lazy"></a>
+        <div><p class="eyebrow">${date}</p><h3>${label}</h3><p>${type}</p>
+        <a class="text-link" href="${src}">View certificate</a>${id ? ` <a class="text-link" href="https://www.datacamp.com/completed/statement-of-accomplishment/course/${id}">Verify with DataCamp</a>` : ''}</div></li>`;
+    }).join('')}</ul></section>`).join('')}</div></div>`;
+}
+
 const pages = [
   ['', name, 'Computer Science student at Cavite State University. Explore selected robotics and software projects.', (root) => `
     <section class="hero wrap">
-      <div class="hero-copy">
-        <p class="eyebrow entrance">Computer Science student</p>
-        <h1 aria-label="${name}"><span class="entrance">Abram John</span><span class="entrance">R. Seneca</span></h1>
-        <div class="hero-meta entrance">
-          <p>I study Computer Science at Cavite State University and build projects in robotics and software.</p>
-          <a class="text-link" href="#selected">Selected projects</a>
-        </div>
+      <div class="hero-copy entrance">
+        <p class="eyebrow kicker">Robotics &amp; software</p>
+        <h1 aria-label="${name}"><span>Abram John</span><em>R. Seneca</em></h1>
+        <p class="hero-intro">I study Computer Science at Cavite State University. I built and programmed Terry, a rover for investigating termite activity.</p>
       </div>
-      <figure class="hero-portrait entrance"><img src="${root}media/portrait.jpg" alt="Abram John R. Seneca" fetchpriority="high"></figure>
+      <figure class="hero-media entrance">
+        <div class="frame"><img src="${root}media/terry-assembly.webp" width="1400" height="845" alt="${projects[0].alt}" fetchpriority="high"></div>
+        <figcaption><strong>DeTerminator</strong><span>Rover assembly · 2025</span></figcaption>
+      </figure>
+      <div class="hero-actions"><a class="action" href="${pageUrl(root, 'projects/determinator')}">Explore DeTerminator</a><a class="text-link" href="${pageUrl(root, 'projects')}">All projects</a></div>
     </section>
     <section class="section light-section" id="selected" aria-labelledby="selected-title">
-      <div class="wrap">
-        <div class="section-head"><h2 id="selected-title">Selected projects</h2><a class="text-link" href="${pageUrl(root, 'projects')}">All projects</a></div>
-        ${projectList(root)}
+      <div class="wrap feature">
+        <div class="feature-copy reveal"><p class="eyebrow kicker">Desktop application</p><h2 id="selected-title">Shop Inventory <em>Manager</em></h2>
+        <p>Helping my mother at a canteen gave me the idea for a desktop app to track products, prices, and stock in a sari-sari store.</p>
+        <p class="work-tools">${projects[1].tools}</p><a class="text-link" href="${pageUrl(root, 'projects/inventory')}">Explore the application</a></div>
+        <a class="software-plate reveal" href="${pageUrl(root, 'projects/inventory')}" aria-label="View Shop Inventory Manager"><img src="${root}media/${projects[1].cover}" width="742" height="430" alt="${projects[1].alt}" loading="lazy"></a>
       </div>
+    </section>
+    <section class="section wrap feature community" aria-labelledby="home-event">
+      <figure class="reveal"><img src="${root}media/hacktoberfest/workshop.webp" width="1600" height="900" alt="Hacktoberfest participants working together at laptops" loading="lazy"></figure>
+      <div class="feature-copy reveal"><p class="eyebrow kicker">Volunteer photography · 2026</p><h2 id="home-event">At <em>Hacktoberfest</em></h2>
+      <p>I photographed Hacktoberfest with AWS Student Builder Group–Tempest at National University–Las Piñas.</p>
+      <a class="text-link" href="${pageUrl(root, 'experience')}#volunteering">View the photographs</a></div>
     </section>`],
   ['about', 'About', 'Education, interests, and skills.', (root) => `
-    ${heading('About', 'Abram John<br>R. Seneca', 'Computer Science student at Cavite State University.')}
+    <header class="wrap about-head"><div><p class="eyebrow kicker">About</p><h1>Abram John<br><em>R. Seneca</em></h1><p class="lede">Computer Science student at Cavite State University.</p></div>
+      <figure class="bio-photo"><img src="${root}media/portrait.jpg" alt="Portrait of Abram Seneca" fetchpriority="high"></figure></header>
     <section class="light-section section">
       <div class="wrap bio">
-      <figure class="bio-photo reveal"><img src="${root}media/portrait.jpg" alt="Portrait of Abram Seneca"></figure>
       <div>
         <h2>Education</h2>
         ${rows([['2026–2030 expected', 'Cavite State University · Indang (Main)', 'Bachelor of Science in Computer Science'], ['Senior high school', 'Cavite Science Integrated School–RSHS', '']])}
+      </div><div>
         <h2>Interests &amp; skills</h2>
         <p>I’m interested in software development, robotics, databases, and cybersecurity. My goal is to become a software engineer and build a stronger foundation in data and technology.</p>
         <p>I have basic knowledge of Java and Python, and hands-on experience with SQL and database management, Arduino programming, and robotics hardware.</p>
@@ -120,10 +145,13 @@ const pages = [
     </section>`],
   ['projects', 'Projects', 'Robotics research and desktop software projects.', (root) => `
     ${heading('Selected work', 'Projects', 'An individual robotics research project and a desktop inventory application.')}
-    <section class="section light-section" aria-label="Project index"><div class="wrap">${projectList(root, 'h2')}</div></section>`],
+    <section class="section light-section" aria-label="Project index"><div class="wrap">${projectList(root)}</div></section>`],
   ...projects.map((project, index) => [`projects/${project.slug}`, project.title, project.intro, (root) => `
-    ${heading(project.category, project.title, project.intro)}
-    <div class="wrap film-section">${projectVideo(root, project)}</div>
+    <div class="case-opening case-${project.slug}"><div class="wrap">
+      <a class="text-link breadcrumb" href="${pageUrl(root, 'projects')}">All projects</a>
+      <div class="case-heading"><div><p class="eyebrow kicker">${project.category}</p><h1>${project.title}</h1></div><p class="lede">${project.intro}</p></div>
+      <div class="film-section">${projectVideo(root, project)}</div>
+    </div></div>
     <div class="light-section">
       <div class="wrap case-notes">
         <p class="eyebrow">${project.tools}</p>
@@ -133,7 +161,7 @@ const pages = [
         </div>
       </div>
     </div>
-    <nav class="wrap section" aria-label="Project navigation"><p class="next-project"><a href="${pageUrl(root, `projects/${projects[1 - index].slug}`)}"><span class="eyebrow">Next project</span><strong>${projects[1 - index].title} <span aria-hidden="true">↗</span></strong></a></p></nav>`]),
+    <nav class="wrap section" aria-label="Project navigation"><p class="next-project"><a href="${pageUrl(root, `projects/${projects[1 - index].slug}`)}"><span class="eyebrow">Next project</span><strong>${projects[1 - index].title}</strong></a></p></nav>`]),
   ['experience', 'Experience', 'Student organizations, volunteering, training, and academic achievements.', (root) => `
     ${heading('Campus &amp; community', 'Experience', 'Student organizations, volunteering, and learning beyond the classroom.')}
       <section class="wrap section" aria-labelledby="organizations">
@@ -187,19 +215,11 @@ const pages = [
   ['certifications', 'Certifications', 'Course accomplishments and certificates of attendance and participation.', (root) => `
     ${heading('Coursework &amp; participation', 'Certifications', 'Course accomplishments, workshop attendance, and event participation.')}
     <section class="section light-section" aria-label="Credentials"><div class="wrap">
-      <ul class="cert-list">${certs.map(([title, issuer, date, type, image, id]) => {
-        const src = `${root}media/credentials/${encodePath(image)}`;
-        return `<li class="credential reveal">
-          <a class="cert-image" href="${src}" aria-label="View ${title.replace('&', '&amp;')} certificate"><img src="${src}" alt="" loading="lazy"></a>
-          <div><p class="eyebrow">${issuer} · ${date}</p><h2>${title.replace('&', '&amp;')}</h2><p>${type}</p>
-          ${id ? `<a class="text-link" href="https://www.datacamp.com/completed/statement-of-accomplishment/course/${id}">Verify with DataCamp</a>` : ''}
-          </div>
-        </li>`;
-      }).join('')}</ul>
+      ${credentials(root)}
     </div></section>`],
   ['contact', 'Contact', 'Email, phone, and LinkedIn for Abram Seneca.', () => `
     <header class="page-head wrap"><h1 class="entrance">Contact</h1><p class="lede entrance">Tanza, Cavite</p></header>
-    <div class="wrap contact-grid section">
+    <div class="light-section"><div class="wrap contact-grid section">
       <section aria-label="Contact details">
         <div class="contact-line">
           <p class="eyebrow">Email</p>
@@ -220,7 +240,7 @@ const pages = [
           <button class="button" type="submit">Open in email app</button>
         </form>
       </section>
-    </div>`],
+    </div></div>`],
 ];
 
 for (const [route, title, description, render] of pages) {
@@ -238,7 +258,7 @@ for (const [route, title, description, render] of pages) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="${description}">
-  <meta name="theme-color" content="#0B0B0B">
+  <meta name="theme-color" content="#171916">
   <title>${route ? `${title} | ${name}` : name}</title>
   <link rel="stylesheet" href="${root}site.css">
   <script src="${root}site.js" defer></script>
@@ -246,12 +266,12 @@ for (const [route, title, description, render] of pages) {
 <body id="top">
   <a class="skip" href="#main">Skip to content</a>
   <header class="masthead wrap">
-    <a class="brand" href="${pageUrl(root)}" aria-label="${name}, home">Abram Seneca<span>.</span></a>
+    <a class="brand" href="${pageUrl(root)}" aria-label="${name}, home"><i aria-hidden="true">as</i> Abram Seneca</a>
     <nav class="desktop-nav" aria-label="Main navigation">${navLinks}</nav>
     <button class="menu-toggle" type="button" aria-haspopup="dialog" aria-controls="menu" aria-expanded="false" hidden>Menu <span aria-hidden="true">+</span></button>
   </header>
   <dialog id="menu" aria-label="Site menu">
-    <div class="menu-head"><span class="brand">Abram Seneca<span>.</span></span><button type="button" class="menu-close" autofocus>Close <span aria-hidden="true">×</span></button></div>
+    <div class="menu-head"><span class="brand"><i aria-hidden="true">as</i> Abram Seneca</span><button type="button" class="menu-close" autofocus>Close <span aria-hidden="true">×</span></button></div>
     <nav aria-label="Mobile navigation">${navLinks}</nav>
   </dialog>
   <main id="main" tabindex="-1">${render(root)}</main>
