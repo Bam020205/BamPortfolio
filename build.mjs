@@ -19,13 +19,15 @@ const projects = [
     slug: 'determinator', title: 'DeTerminator', category: 'Robotics research',
     intro: 'An Arduino-based rover that explores carbon dioxide and humidity as possible indicators of termite activity.',
     cover: 'rover.jpg', alt: 'A close-up of the DeTerminator rover during assembly',
-    video: 'rover-demo.mp4', videoTitle: 'Excerpt from the science fair presentation',
+    video: 'determinator-original.mp4', videoTitle: 'Science fair presentation',
+    preview: 'rover-demo.mp4',
+    fullVideoUrl: 'https://drive.google.com/file/d/1tQ78QHXYtkHzy3e_hV68IHwHDJrSgSiy/view?usp=drivesdk',
     details: [
       ['The build', 'I programmed, integrated the hardware, and built the rover, named Terry. It collects environmental readings from sites where termite activity is suspected.'],
       ['The science fair', 'DeTerminator earned fourth place in the individual Robotics and Intelligent Machines category at the 2025 Division Science and Technology Fair in Bulihan, Silang, Cavite.'],
     ],
     tools: 'Arduino · C++ · Environmental sensors',
-    transcript: 'The excerpt shows Abram introducing Terry outdoors and explaining that he programmed it in C++ and used an Arduino Uno to control it. The original video includes on-screen captions.',
+    transcript: 'The original presentation introduces Terry, shows the rover and its assembly, and explains the research and results. The recording includes on-screen captions.',
   },
   {
     slug: 'inventory', title: 'Shop Inventory Manager', category: 'Desktop application',
@@ -58,6 +60,19 @@ function rows(items) {
     <div class="entry reveal"><dt><span class="eyebrow">${tag}</span><strong>${title}</strong></dt><dd>${detail}</dd></div>`).join('')}</dl>`;
 }
 
+function projectVideo(root, project) {
+  const videoPath = `${root}media/${project.video}`;
+  const videoLink = project.fullVideoUrl ?? videoPath;
+  const linkLabel = project.fullVideoUrl ? 'Watch the full video on Google Drive' : 'Open video';
+  return `<figure class="film reveal">
+    <video controls playsinline preload="none" width="1280" height="720" poster="${root}media/${project.cover}" aria-label="${project.videoTitle}"${project.preview ? ' data-has-preview' : ''}>
+      <source src="${videoPath}" type="video/mp4">
+      ${project.preview ? `<source src="${root}media/${project.preview}" type="video/mp4" data-preview>` : ''}
+    </video>
+    <figcaption><span${project.preview ? ' data-video-label' : ''}>${project.videoTitle}</span> <a class="text-link" href="${videoLink}">${linkLabel}</a></figcaption>
+  </figure>`;
+}
+
 const certs = [
   ['Introduction to Git', 'DataCamp', 'Oct 27, 2026', 'Statement of Accomplishment', 'Introduction to Git - DataCamp.png', 'a72439ba58bacfe98139735033e3a0d2277f347f'],
   ['Introduction to Java', 'DataCamp', 'Oct 2026', 'Statement of Accomplishment', 'Introduction to Java - DataCamp.png', 'd7539cb2d500b06ca0e4951b307a67c7e36fbc05'],
@@ -83,13 +98,16 @@ const pages = [
       </div>
       <figure class="hero-portrait entrance"><img src="${root}media/portrait.jpg" alt="Abram John R. Seneca" fetchpriority="high"></figure>
     </section>
-    <section class="section wrap" id="selected" aria-labelledby="selected-title">
-      <div class="section-head"><h2 id="selected-title">Selected projects</h2><a class="text-link" href="${pageUrl(root, 'projects')}">All projects</a></div>
-      ${projectList(root)}
+    <section class="section light-section" id="selected" aria-labelledby="selected-title">
+      <div class="wrap">
+        <div class="section-head"><h2 id="selected-title">Selected projects</h2><a class="text-link" href="${pageUrl(root, 'projects')}">All projects</a></div>
+        ${projectList(root)}
+      </div>
     </section>`],
   ['about', 'About', 'Education, interests, and skills.', (root) => `
     ${heading('About', 'Abram John<br>R. Seneca', 'Computer Science student at Cavite State University.')}
-    <section class="wrap bio section">
+    <section class="light-section section">
+      <div class="wrap bio">
       <figure class="bio-photo reveal"><img src="${root}media/portrait.jpg" alt="Portrait of Abram Seneca"></figure>
       <div>
         <h2>Education</h2>
@@ -98,33 +116,27 @@ const pages = [
         <p>I’m interested in software development, robotics, databases, and cybersecurity. My goal is to become a software engineer and build a stronger foundation in data and technology.</p>
         <p>I have basic knowledge of Java and Python, and hands-on experience with SQL and database management, Arduino programming, and robotics hardware.</p>
       </div>
+      </div>
     </section>`],
   ['projects', 'Projects', 'Robotics research and desktop software projects.', (root) => `
     ${heading('Selected work', 'Projects', 'An individual robotics research project and a desktop inventory application.')}
-    <section class="wrap section" aria-label="Project index">${projectList(root, 'h2')}</section>`],
+    <section class="section light-section" aria-label="Project index"><div class="wrap">${projectList(root, 'h2')}</div></section>`],
   ...projects.map((project, index) => [`projects/${project.slug}`, project.title, project.intro, (root) => `
     ${heading(project.category, project.title, project.intro)}
-    <div class="wrap">
-      <figure class="film reveal">
-        <video controls playsinline preload="none" width="1280" height="720" poster="${root}media/${project.cover}" aria-label="${project.videoTitle}">
-          <source src="${root}media/${project.video}" type="video/mp4">
-          <a href="${root}media/${project.video}">Open video</a>
-        </video>
-        <figcaption>${project.videoTitle} <a class="text-link" href="${root}media/${project.video}">Open video</a></figcaption>
-      </figure>
-      <div class="case-notes">
+    <div class="wrap film-section">${projectVideo(root, project)}</div>
+    <div class="light-section">
+      <div class="wrap case-notes">
         <p class="eyebrow">${project.tools}</p>
         <div>${project.details.map(([title, detail]) => `<section class="reveal"><h2>${title}</h2><p>${detail}</p></section>`).join('')}
           <details><summary>Video description</summary><p>${project.transcript}</p></details>
           ${index === 0 ? `<p><a class="text-link" href="${root}media/fair.jpg">View recognition certificate</a></p>` : ''}
         </div>
       </div>
-      <p class="next-project"><a href="${pageUrl(root, `projects/${projects[1 - index].slug}`)}"><span class="eyebrow">Next project</span><strong>${projects[1 - index].title} <span aria-hidden="true">↗</span></strong></a></p>
-    </div>`]),
+    </div>
+    <nav class="wrap section" aria-label="Project navigation"><p class="next-project"><a href="${pageUrl(root, `projects/${projects[1 - index].slug}`)}"><span class="eyebrow">Next project</span><strong>${projects[1 - index].title} <span aria-hidden="true">↗</span></strong></a></p></nav>`]),
   ['experience', 'Experience', 'Student organizations, volunteering, training, and academic achievements.', (root) => `
     ${heading('Campus &amp; community', 'Experience', 'Student organizations, volunteering, and learning beyond the classroom.')}
-    <div class="wrap section">
-      <section aria-labelledby="organizations">
+      <section class="wrap section" aria-labelledby="organizations">
         <h2 id="organizations">Student organizations</h2>
         ${rows([
           ['Since Aug 2026', 'AWS Student Builder Group–Spade', 'Relations &amp; Communications Office · ACE'],
@@ -132,7 +144,8 @@ const pages = [
           ['Since Oct 2026', 'Microsoft Student Community Philippines', 'Member'],
         ])}
       </section>
-      <section class="section" aria-labelledby="volunteering">
+      <section class="section light-section" aria-labelledby="volunteering">
+        <div class="wrap">
         <h2 id="volunteering">Volunteering</h2>
         ${rows([['2026', 'Hacktoberfest', 'Volunteer photographer with AWS Student Builder Group–Tempest at National University–Las Piñas.']])}
         <div class="event-photos reveal">
@@ -152,8 +165,9 @@ const pages = [
             ].map(([file, alt, height]) => `<img src="${root}media/hacktoberfest/${file}.webp" width="1200" height="${height}" alt="${alt}" loading="lazy">`).join('')}
           </div>
         </details>
+        </div>
       </section>
-      <section aria-labelledby="learning">
+      <section class="wrap section" aria-labelledby="learning">
         <h2 id="learning">Training &amp; events</h2>
         ${rows([
           ['Oct 18–25, 2026', 'Packet Capture: Beneath the Network CTF', 'Team participant with SINT-O SINT-O in the CyberPH competition.'],
@@ -161,17 +175,18 @@ const pages = [
           ['2026', 'Project Tuklas Teknolohiya workshops', 'Attended sessions on Java database connectivity, C++ programming, and SQL and database management.'],
         ])}
       </section>
-      <section class="section" aria-labelledby="awards">
+      <section class="section light-section" aria-labelledby="awards">
+        <div class="wrap">
         <h2 id="awards">Academic achievements</h2>
         ${rows([
           ['Nov 16, 2025', 'Silver Award · 2nd National Linguistics Challenge', `Represented Cavite Science Integrated School–RSHS in Grade 12. <a class="text-link" href="${root}media/nlc.png">View award</a>`],
           ['Oct 2025', 'Fourth place · Division Science and Technology Fair', `Robotics and Intelligent Machines, individual category. <a class="text-link" href="${pageUrl(root, 'projects/determinator')}">View DeTerminator</a>`],
         ])}
-      </section>
-    </div>`],
+        </div>
+      </section>`],
   ['certifications', 'Certifications', 'Course accomplishments and certificates of attendance and participation.', (root) => `
     ${heading('Coursework &amp; participation', 'Certifications', 'Course accomplishments, workshop attendance, and event participation.')}
-    <section class="wrap section" aria-label="Credentials">
+    <section class="section light-section" aria-label="Credentials"><div class="wrap">
       <ul class="cert-list">${certs.map(([title, issuer, date, type, image, id]) => {
         const src = `${root}media/credentials/${encodePath(image)}`;
         return `<li class="credential reveal">
@@ -181,7 +196,7 @@ const pages = [
           </div>
         </li>`;
       }).join('')}</ul>
-    </section>`],
+    </div></section>`],
   ['contact', 'Contact', 'Email, phone, and LinkedIn for Abram Seneca.', () => `
     <header class="page-head wrap"><h1 class="entrance">Contact</h1><p class="lede entrance">Tanza, Cavite</p></header>
     <div class="wrap contact-grid section">

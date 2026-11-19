@@ -29,6 +29,17 @@ if ('IntersectionObserver' in window && matchMedia('(prefers-reduced-motion: no-
   });
 }
 
+const presentation = document.querySelector('[data-has-preview]');
+if (presentation) {
+  const preview = presentation.querySelector('[data-preview]');
+  const label = document.querySelector('[data-video-label]');
+  presentation.addEventListener('loadedmetadata', () => {
+    label.textContent = presentation.currentSrc === preview.src
+      ? 'Science fair preview'
+      : 'Full science fair presentation';
+  });
+}
+
 const compose = document.querySelector('.compose');
 if (compose) {
   compose.hidden = false;
