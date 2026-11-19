@@ -6,6 +6,7 @@ const name = 'Abram John R. Seneca';
 const email = 'AbramSeneca2.0@gmail.com';
 const nav = [['', 'Home'], ['about', 'About'], ['projects', 'Projects'], ['experience', 'Experience'], ['certifications', 'Certifications'], ['contact', 'Contact']];
 const encodePath = (path) => path.split('/').map(encodeURIComponent).join('/');
+const pageUrl = (root, route = '') => `${root}${route ? `${route}/` : ''}index.html`;
 const heading = (label, title, intro) => `
   <header class="page-head wrap">
     <p class="eyebrow">${label}</p>
@@ -43,7 +44,7 @@ const projects = [
 function projectList(root, titleTag = 'h3') {
   return `<div class="work-grid">${projects.map((project) => `
     <article class="work reveal">
-      <a href="${root}projects/${project.slug}/">
+      <a href="${pageUrl(root, `projects/${project.slug}`)}">
         <div class="work-image"><img src="${root}media/${project.cover}" width="1280" height="720" loading="lazy" alt="${project.alt}"></div>
         <div class="work-label"><span class="eyebrow">${project.category}</span><span class="link-mark" aria-hidden="true">↗</span></div>
         <${titleTag}>${project.title}</${titleTag}>
@@ -83,7 +84,7 @@ const pages = [
       <figure class="hero-portrait entrance"><img src="${root}media/portrait.jpg" alt="Abram John R. Seneca" fetchpriority="high"></figure>
     </section>
     <section class="section wrap" id="selected" aria-labelledby="selected-title">
-      <div class="section-head"><h2 id="selected-title">Selected projects</h2><a class="text-link" href="${root}projects/">All projects</a></div>
+      <div class="section-head"><h2 id="selected-title">Selected projects</h2><a class="text-link" href="${pageUrl(root, 'projects')}">All projects</a></div>
       ${projectList(root)}
     </section>`],
   ['about', 'About', 'Education, interests, and skills.', (root) => `
@@ -118,7 +119,7 @@ const pages = [
           ${index === 0 ? `<p><a class="text-link" href="${root}media/fair.jpg">View recognition certificate</a></p>` : ''}
         </div>
       </div>
-      <p class="next-project"><a href="${root}projects/${projects[1 - index].slug}/"><span class="eyebrow">Next project</span><strong>${projects[1 - index].title} <span aria-hidden="true">↗</span></strong></a></p>
+      <p class="next-project"><a href="${pageUrl(root, `projects/${projects[1 - index].slug}`)}"><span class="eyebrow">Next project</span><strong>${projects[1 - index].title} <span aria-hidden="true">↗</span></strong></a></p>
     </div>`]),
   ['experience', 'Experience', 'Student organizations, volunteering, training, and academic achievements.', (root) => `
     ${heading('Campus &amp; community', 'Experience', 'Student organizations, volunteering, and learning beyond the classroom.')}
@@ -135,9 +136,22 @@ const pages = [
         <h2 id="volunteering">Volunteering</h2>
         ${rows([['2026', 'Hacktoberfest', 'Volunteer photographer with AWS Student Builder Group–Tempest at National University–Las Piñas.']])}
         <div class="event-photos reveal">
-          <img src="${root}media/1794826153366.jpg" alt="Hacktoberfest participants gathered for a group photo" loading="lazy">
-          <img src="${root}media/1794235554659.jpg" alt="Abram at Hacktoberfest 2026" loading="lazy">
+          <img src="${root}media/hacktoberfest/workshop.webp" width="1600" height="900" alt="Hacktoberfest attendees working at laptops" loading="lazy">
+          <img src="${root}media/hacktoberfest/abram-laptop.webp" width="1800" height="1200" alt="Abram holding a laptop beside the Hacktoberfest 2026 welcome screen" loading="lazy">
         </div>
+        <details class="event-gallery">
+          <summary>More Hacktoberfest photos</summary>
+          <div class="event-gallery-grid">
+            ${[
+              ['speaker', 'A Hacktoberfest speaker holding a microphone', 675],
+              ['audience', 'Attendees watching a speaker at Hacktoberfest', 675],
+              ['lanyards', 'Blue event lanyards laid out on a table', 675],
+              ['session', 'A seated Hacktoberfest audience', 675],
+              ['participants', 'Participants standing together at the event', 675],
+              ['abram-welcome', 'Abram standing beside the Hacktoberfest welcome screen', 800],
+            ].map(([file, alt, height]) => `<img src="${root}media/hacktoberfest/${file}.webp" width="1200" height="${height}" alt="${alt}" loading="lazy">`).join('')}
+          </div>
+        </details>
       </section>
       <section aria-labelledby="learning">
         <h2 id="learning">Training &amp; events</h2>
@@ -151,7 +165,7 @@ const pages = [
         <h2 id="awards">Academic achievements</h2>
         ${rows([
           ['Nov 16, 2025', 'Silver Award · 2nd National Linguistics Challenge', `Represented Cavite Science Integrated School–RSHS in Grade 12. <a class="text-link" href="${root}media/nlc.png">View award</a>`],
-          ['Oct 2025', 'Fourth place · Division Science and Technology Fair', `Robotics and Intelligent Machines, individual category. <a class="text-link" href="${root}projects/determinator/">View DeTerminator</a>`],
+          ['Oct 2025', 'Fourth place · Division Science and Technology Fair', `Robotics and Intelligent Machines, individual category. <a class="text-link" href="${pageUrl(root, 'projects/determinator')}">View DeTerminator</a>`],
         ])}
       </section>
     </div>`],
@@ -199,7 +213,7 @@ for (const [route, title, description, render] of pages) {
   const navLinks = nav.map(([path, label]) => {
     const active = path === route || (path && route.startsWith(`${path}/`));
     const current = active ? ` aria-current="${path === route ? 'page' : 'location'}"` : '';
-    return `<a href="${root}${path ? `${path}/` : ''}"${current}>${label}</a>`;
+    return `<a href="${pageUrl(root, path)}"${current}>${label}</a>`;
   }).join('');
   const output = fileURLToPath(new URL(`./${route ? `${route}/` : ''}index.html`, import.meta.url));
   mkdirSync(dirname(output), { recursive: true });
@@ -217,7 +231,7 @@ for (const [route, title, description, render] of pages) {
 <body id="top">
   <a class="skip" href="#main">Skip to content</a>
   <header class="masthead wrap">
-    <a class="brand" href="${root}" aria-label="${name}, home">Abram Seneca<span>.</span></a>
+    <a class="brand" href="${pageUrl(root)}" aria-label="${name}, home">Abram Seneca<span>.</span></a>
     <nav class="desktop-nav" aria-label="Main navigation">${navLinks}</nav>
     <button class="menu-toggle" type="button" aria-haspopup="dialog" aria-controls="menu" aria-expanded="false" hidden>Menu <span aria-hidden="true">+</span></button>
   </header>
@@ -227,8 +241,8 @@ for (const [route, title, description, render] of pages) {
   </dialog>
   <main id="main" tabindex="-1">${render(root)}</main>
   <footer class="footer">
-    <div class="wrap footer-inner"><div><a class="footer-name" href="${root}">${name}</a><p>Computer Science student · Tanza, Cavite</p></div>
-    <div class="footer-links"><a href="${root}contact/">Contact</a><a href="https://www.linkedin.com/in/abram-seneca-b700a9386/">LinkedIn</a><a href="#top">Back to top</a></div></div>
+    <div class="wrap footer-inner"><div><a class="footer-name" href="${pageUrl(root)}">${name}</a><p>Computer Science student · Tanza, Cavite</p></div>
+    <div class="footer-links"><a href="${pageUrl(root, 'contact')}">Contact</a><a href="https://www.linkedin.com/in/abram-seneca-b700a9386/">LinkedIn</a><a href="#top">Back to top</a></div></div>
   </footer>
 </body>
 </html>

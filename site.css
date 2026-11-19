@@ -81,8 +81,10 @@ h2 { font-size: clamp(2.15rem, 4.45vw, 4.5rem); }
 .entry strong { display: block; font-size: clamp(1.25rem, 2.35vw, 2.3rem); line-height: 1.1; letter-spacing: -.042em; font-weight: 550; margin-top: .25rem; }
 .entry dd { color: var(--muted); }
 .bio .entries { margin-bottom: 3rem; }
-.event-photos { margin-top: 1.5rem; display: grid; grid-template-columns: 1.3fr 1fr; gap: .8rem; }
-.event-photos img { width: 100%; height: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.event-photos { margin-top: 1.5rem; display: grid; grid-template-columns: 1.3fr 1fr; align-items: start; gap: .8rem; }
+.event-photos img, .event-gallery-grid img { width: 100%; height: auto; }
+.event-gallery { margin-top: 1rem; border-top: 1px solid var(--line); padding-top: .8rem; }
+.event-gallery-grid { margin-top: 1rem; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .8rem; }
 .film { margin-top: clamp(1.25rem, 4vw, 3.5rem); }
 .film video { width: 100%; height: auto; aspect-ratio: 16 / 9; background: var(--surface); }
 .film figcaption { display: flex; gap: .4rem 1.5rem; flex-wrap: wrap; justify-content: space-between; padding: .65rem 0; color: var(--muted); }
@@ -132,6 +134,7 @@ h2 { font-size: clamp(2.15rem, 4.45vw, 4.5rem); }
   .work + .work { margin-top: .8rem; }
   .entry { grid-template-columns: 1fr; }
   .entry dd:empty { display: none; }
+  .event-photos, .event-gallery-grid { grid-template-columns: minmax(0, 1fr); }
   .credential { grid-template-columns: minmax(0, 1fr) minmax(0, 1.65fr); }
   .credential h2 { font-size: clamp(1.25rem, 4.5vw, 1.8rem); overflow-wrap: anywhere; }
 }
