@@ -54,6 +54,7 @@ function projectList(root) {
         <span class="work-tools">${project.tools}</span>
         <span class="text-link">View project</span>
       </a>
+      <details class="quick-preview"><summary>Preview demonstration</summary><video controls playsinline preload="none" poster="${root}media/${project.cover}" aria-label="${project.videoTitle}"><source src="${root}media/${project.preview ?? project.video}" type="video/mp4"></video></details>
     </article>`).join('')}</div>`;
 }
 
@@ -100,19 +101,40 @@ function credentials(root) {
     }).join('')}</ul></section>`).join('')}</div></div>`;
 }
 
+function ribbon(label, reverse = false) {
+  const phrase = Array(5).fill(label).join('　 /　 ') + '　 /　 ';
+  return `<div class="ribbon${reverse ? ' reverse' : ''}" aria-hidden="true"><div><span>${phrase}</span><span>${phrase}</span></div></div>`;
+}
+
+const icons = {
+  Home: 'M3 11l9-8 9 8v10h-6v-7H9v7H3z',
+  About: 'M8 8a4 4 0 1 0 8 0 4 4 0 0 0-8 0 M4 21c0-8 16-8 16 0',
+  Projects: 'M2 7h8l2 3h10v10H2z M3 7V4h7l2 3h8v3',
+  Experience: 'M3 8h18v13H3z M8 8V4h8v4 M3 13q9 5 18 0',
+  Certifications: 'M6 3h12v13H6z M8 16v6l4-3 4 3v-6 M9 7h6 M9 10h5',
+  Contact: 'M2 5h20v14H2z M2 6l10 8L22 6',
+};
+
 const pages = [
   ['', name, 'Computer Science student at Cavite State University. Explore selected robotics and software projects.', (root) => `
-    <section class="hero wrap">
-      <div class="hero-copy entrance">
-        <p class="eyebrow kicker">Robotics &amp; software</p>
-        <h1 aria-label="${name}"><span>Abram John</span><em>R. Seneca</em></h1>
-        <p class="hero-intro">I study Computer Science at Cavite State University. I built and programmed Terry, a rover for investigating termite activity.</p>
+    <section class="portrait-stage">
+      <div class="portrait-layout wrap">
+        <p class="stage-meta">Computer Science <span>/</span> Tanza, Cavite</p>
+        <button type="button" class="motion-toggle" hidden>Pause motion</button>
+        <h1 aria-label="${name}">Abram <em>Seneca</em></h1>
+        <div class="portrait-layer"><svg viewBox="0 0 850 842" role="img" aria-label="Abram smiling and lifting his glasses">
+          <defs><clipPath id="silhouette"><path d="M257 842 Q267 820 263 811 L281 681 Q297 548 274 462 Q197 439 179 397 Q151 348 230 289 L253 275 Q297 247 337 207 L346 167 Q348 154 385 151 Q399 152 404 162 L407 159 Q426 108 477 89 Q515 80 539 98 L543 115 Q597 120 594 180 Q601 204 572 231 Q571 266 555 281 L528 305 L520 330 Q529 341 532 361 Q534 374 583 393 L617 416 Q631 447 641 483 L636 536 L719 513 L728 520 L656 608 Q671 644 672 678 Q669 725 637 732 Q601 743 579 694 L561 715 L562 794 Q559 814 580 842 Z M300 337 Q319 306 343 265 L402 222 Q402 244 418 253 L421 305 Q402 299 403 320 L394 323 L392 330 L359 340 Q326 327 300 337 Z" clip-rule="evenodd"/></clipPath></defs>
+          <image href="${root}media/portrait.jpg" width="850" height="842" clip-path="url(#silhouette)"/>
+        </svg></div>
+        <span class="foreground-type" aria-hidden="true">Seneca</span>
+        <div class="stage-copy"><p class="eyebrow">Robotics &amp; software</p><p>I study Computer Science at Cavite State University and build robots and desktop applications.</p><a class="stage-link" href="#fieldwork">Explore my work <span aria-hidden="true">↓</span></a></div>
+        <a class="portrait-credit" href="${pageUrl(root,'about')}">About Abram</a>
       </div>
-      <figure class="hero-media entrance">
-        <div class="frame"><img src="${root}media/terry-assembly.webp" width="1400" height="845" alt="${projects[0].alt}" fetchpriority="high"></div>
-        <figcaption><strong>DeTerminator</strong><span>Rover assembly · 2025</span></figcaption>
-      </figure>
-      <div class="hero-actions"><a class="action" href="${pageUrl(root, 'projects/determinator')}">Explore DeTerminator</a><a class="text-link" href="${pageUrl(root, 'projects')}">All projects</a></div>
+    </section>
+    ${ribbon('Robotics　 /　 Software development')}
+    <section id="fieldwork" class="section wrap feature community">
+      <a class="project-still" href="${pageUrl(root,'projects/determinator')}"><img src="${root}media/terry-assembly.webp" alt="${projects[0].alt}" loading="lazy"></a>
+      <div class="feature-copy reveal"><p class="eyebrow kicker">Robotics research</p><h2><em>DeTerminator</em></h2><p>I built and programmed Terry, an Arduino rover for investigating termite activity.</p><a class="text-link" href="${pageUrl(root,'projects/determinator')}">Explore DeTerminator</a></div>
     </section>
     <section class="section light-section" id="selected" aria-labelledby="selected-title">
       <div class="wrap feature">
@@ -122,6 +144,7 @@ const pages = [
         <a class="software-plate reveal" href="${pageUrl(root, 'projects/inventory')}" aria-label="View Shop Inventory Manager"><img src="${root}media/${projects[1].cover}" width="742" height="430" alt="${projects[1].alt}" loading="lazy"></a>
       </div>
     </section>
+    ${ribbon('Photography　 /　 Campus life', true)}
     <section class="section wrap feature community" aria-labelledby="home-event">
       <figure class="reveal"><img src="${root}media/hacktoberfest/workshop.webp" width="1600" height="900" alt="Hacktoberfest participants working together at laptops" loading="lazy"></figure>
       <div class="feature-copy reveal"><p class="eyebrow kicker">Volunteer photography · 2026</p><h2 id="home-event">At <em>Hacktoberfest</em></h2>
@@ -248,7 +271,7 @@ for (const [route, title, description, render] of pages) {
   const navLinks = nav.map(([path, label]) => {
     const active = path === route || (path && route.startsWith(`${path}/`));
     const current = active ? ` aria-current="${path === route ? 'page' : 'location'}"` : '';
-    return `<a href="${pageUrl(root, path)}"${current}>${label}</a>`;
+    return `<a href="${pageUrl(root, path)}"${current}><span class="app-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="${icons[label]}"/></svg></span>${label}</a>`;
   }).join('');
   const output = fileURLToPath(new URL(`./${route ? `${route}/` : ''}index.html`, import.meta.url));
   mkdirSync(dirname(output), { recursive: true });
@@ -263,17 +286,19 @@ for (const [route, title, description, render] of pages) {
   <link rel="stylesheet" href="${root}site.css">
   <script src="${root}site.js" defer></script>
 </head>
-<body id="top">
+<body id="top" class="${route ? 'interior' : 'front-page'}">
   <a class="skip" href="#main">Skip to content</a>
   <header class="masthead wrap">
     <a class="brand" href="${pageUrl(root)}" aria-label="${name}, home"><i aria-hidden="true">as</i> Abram Seneca</a>
     <nav class="desktop-nav" aria-label="Main navigation">${navLinks}</nav>
-    <button class="menu-toggle" type="button" aria-haspopup="dialog" aria-controls="menu" aria-expanded="false" hidden>Menu <span aria-hidden="true">+</span></button>
+    <button class="menu-toggle" type="button" aria-haspopup="dialog" aria-controls="menu" aria-expanded="false" hidden><i class="device-mini" aria-hidden="true"></i> Menu</button>
   </header>
   <dialog id="menu" aria-label="Site menu">
     <div class="menu-head"><span class="brand"><i aria-hidden="true">as</i> Abram Seneca</span><button type="button" class="menu-close" autofocus>Close <span aria-hidden="true">×</span></button></div>
-    <nav aria-label="Mobile navigation">${navLinks}</nav>
+    <nav aria-label="Portfolio apps">${navLinks}</nav>
+    <button type="button" class="home-bar" aria-label="Close menu"></button>
   </dialog>
+  <div class="cursor-ring" aria-hidden="true"></div>
   <main id="main" tabindex="-1">${render(root)}</main>
   <footer class="footer">
     <div class="wrap footer-inner"><div><a class="footer-name" href="${pageUrl(root)}">${name}</a><p>Computer Science student · Tanza, Cavite</p></div>
