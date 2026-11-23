@@ -116,7 +116,24 @@ const icons = {
 };
 
 const pages = [
-  ['', name, 'Computer Science student at Cavite State University. Explore selected robotics and software projects.', (root) => `
+  ['', name, 'Open a portfolio card to explore Abram Seneca’s work, experience, and credentials.', (root) => {
+    const sections = nav.filter(([path]) => path);
+    return `<section class="wallet-landing" aria-labelledby="wallet-title">
+      <header class="wallet-heading">
+        <p>Portfolio directory</p>
+        <h1 id="wallet-title">Choose a <em>section.</em></h1>
+      </header>
+      <nav class="wallet" aria-label="Portfolio sections" style="--cards:${sections.length}">
+        ${sections.map(([path, label], index) => `<a class="wallet-card metal-${path}" href="${pageUrl(root, path)}" style="--i:${index}">
+          <span class="wallet-tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${icons[label]}"/></svg><span>${label}</span><span class="card-arrow" aria-hidden="true">↗</span></span>
+          <span class="card-engraving" aria-hidden="true">Abram Seneca</span>
+        </a>`).join('')}
+        <div class="wallet-pocket" aria-hidden="true"><i>as</i><div><strong>Abram Seneca</strong><span>Computer Science · CvSU</span></div></div>
+      </nav>
+      <a class="overview-link" href="${pageUrl(root,'overview')}">View portfolio overview <span aria-hidden="true">↗</span></a>
+    </section>`;
+  }],
+  ['overview', 'Portfolio overview', 'Computer Science student at Cavite State University. Explore selected robotics and software projects.', (root) => `
     <section class="portrait-stage">
       <div class="portrait-layout wrap">
         <p class="stage-meta">Computer Science <span>/</span> Tanza, Cavite</p>
@@ -281,12 +298,14 @@ for (const [route, title, description, render] of pages) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="${description}">
-  <meta name="theme-color" content="#171916">
+  <meta name="theme-color" content="${route ? '#171916' : '#09281f'}">
   <title>${route ? `${title} | ${name}` : name}</title>
-  <link rel="stylesheet" href="${root}site.css">
+  <link rel="stylesheet" href="${root}site.css">${route === '' ? `
+  <link rel="stylesheet" href="${root}wallet.css">
+  <script src="${root}wallet.js" defer></script>` : ''}
   <script src="${root}site.js" defer></script>
 </head>
-<body id="top" class="${route ? 'interior' : 'front-page'}">
+<body id="top" class="${route === 'overview' ? 'front-page' : route ? 'interior' : 'wallet-page'}">
   <a class="skip" href="#main">Skip to content</a>
   <header class="masthead wrap">
     <a class="brand" href="${pageUrl(root)}" aria-label="${name}, home"><i aria-hidden="true">as</i> Abram Seneca</a>
