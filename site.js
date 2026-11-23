@@ -5,6 +5,7 @@ if (typeof menu.showModal === 'function') {
   toggle.hidden = false;
   document.documentElement.classList.add('has-menu');
   toggle.addEventListener('click', () => {
+    hideCursor();
     menu.showModal();
     toggle.setAttribute('aria-expanded', 'true');
   });
@@ -14,7 +15,7 @@ if (typeof menu.showModal === 'function') {
       menu.close();
       return;
     }
-    const exit = menu.animate([{ opacity:1, transform:'scale(1)' },{ opacity:0, transform:'scale(.8)' }], { duration:160, id:'closing' });
+    const exit = menu.animate([{ opacity:1, transform:'scale(1)' },{ opacity:0, transform:'scale(.88)' }], { duration:350, easing:'cubic-bezier(.16,1,.3,1)', id:'closing' });
     exit.onfinish = () => menu.close();
   }
   menu.querySelector('.menu-close').addEventListener('click', closePhone);
@@ -87,45 +88,44 @@ if (copy && navigator.clipboard?.writeText) {
 const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 const finePointer = matchMedia('(hover:hover) and (pointer:fine)');
 const stage = document.querySelector('.portrait-stage');
-const fieldwork = document.querySelector('#fieldwork');
-const motionButton = document.querySelector('.motion-toggle');
+const introduction = document.querySelector('#fieldwork');
+const motionButtons = document.querySelectorAll('.motion-toggle');
 const ring = document.querySelector('.cursor-ring');
+const root = document.documentElement;
+root.classList.add('motion-ready');
 let paused = false;
 try { paused = sessionStorage.getItem('portfolio-motion') === 'paused'; } catch {}
 function moving() { return !paused && !motionPreference.matches; }
 function syncMotion() {
   document.body.classList.toggle('motion-off', !moving());
-  if (motionButton) {
-    motionButton.hidden = motionPreference.matches;
-    motionButton.textContent = paused ? 'Resume motion' : 'Pause motion';
+  if (!moving()) document.body.classList.add('intro-read');
+  for (const button of motionButtons) {
+    button.hidden = motionPreference.matches;
+    button.textContent = paused ? 'Resume motion' : 'Pause motion';
   }
-  ring.classList.remove('active');
+  hideCursor();
   updateScroll();
 }
-motionButton?.addEventListener('click', () => {
+motionButtons.forEach(button => button.addEventListener('click', () => {
   paused = !paused;
   try { sessionStorage.setItem('portfolio-motion', paused ? 'paused' : 'on'); } catch {}
   syncMotion();
-});
+}));
 let pendingScroll = false;
 function updateScroll() {
   pendingScroll = false;
-  if (fieldwork) {
-    const distance = fieldwork.getBoundingClientRect().bottom / innerHeight;
-    const progress = moving() ? Math.max(0, Math.min(1, (1 - distance) * 1.5)) : 0;
-    fieldwork.style.setProperty('--daylight', (progress * 100).toFixed(1) + '%');
-    fieldwork.classList.toggle('daylight-ink', progress > .46);
+  if (introduction) {
+    const bottom = introduction.getBoundingClientRect().bottom;
+    const progress = moving() ? Math.max(0, Math.min(1, 1 - bottom / (innerHeight * .75))) : 0;
+    introduction.style.setProperty('--daylight', progress);
   }
   if (stage && window.scrollY < stage.offsetHeight + 200) {
     const offset = moving() ? window.scrollY : 0;
     stage.style.setProperty('--portrait-y', Math.min(offset * .1,55) + 'px');
     stage.style.setProperty('--type-y', Math.min(offset * .2,105) + 'px');
-    stage.style.setProperty('--grid-y', Math.min(offset * .055,35) + 'px');
   }
-  const surface = document.elementFromPoint(innerWidth * .5,Math.min(50,innerHeight/3));
-  toggle.classList.toggle('on-paper', Boolean(surface?.closest('.light-section,.portrait-stage,.case-inventory,.footer,.daylight-ink,.front-page .masthead')));
 }
-window.addEventListener('scroll', () => {
+if (stage) window.addEventListener('scroll', () => {
   if (!pendingScroll) { pendingScroll = true; requestAnimationFrame(updateScroll); }
 }, { passive:true });
 motionPreference.addEventListener('change',syncMotion);
@@ -133,28 +133,31 @@ syncMotion();
 
 let cursorFrame = 0;
 let pointerX = 0, pointerY = 0, ringX = 0, ringY = 0;
+function hideCursor() {
+  root.classList.remove('cursor-visible');
+  ring.classList.remove('over-control');
+}
 function followPointer() {
   cursorFrame = 0;
-  if (!moving() || !finePointer.matches || !ring.classList.contains('active')) return;
+  if (!root.classList.contains('cursor-visible')) return;
   ringX += (pointerX - ringX) * .24;
   ringY += (pointerY - ringY) * .24;
   ring.style.transform = 'translate(' + ringX + 'px,' + ringY + 'px)';
   if (Math.abs(pointerX-ringX) + Math.abs(pointerY-ringY) > .4) cursorFrame = requestAnimationFrame(followPointer);
 }
 document.addEventListener('pointermove', event => {
-  if (event.pointerType !== 'mouse' || !finePointer.matches || !moving() || menu.open) { ring.classList.remove('active'); return; }
+  if (event.pointerType !== 'mouse' || !finePointer.matches || !moving() || menu.open ||
+      event.target.closest('input,textarea,video')) { hideCursor(); return; }
   pointerX = event.clientX; pointerY = event.clientY;
-  const link = event.target.closest('button,a,summary');
-  if (link) {
-    const rect = link.getBoundingClientRect();
-    pointerX += Math.max(-7,Math.min(7,(rect.left + rect.width/2 - pointerX)*.25));
-    pointerY += Math.max(-7,Math.min(7,(rect.top + rect.height/2 - pointerY)*.25));
-  }
-  if (!ring.classList.contains('active')) { ringX = pointerX; ringY = pointerY; }
-  ring.classList.add('active');
+  ring.classList.toggle('over-control', Boolean(event.target.closest('button,a,summary')));
+  if (!root.classList.contains('cursor-visible')) { ringX = pointerX; ringY = pointerY; }
+  root.classList.add('cursor-visible');
   if (!cursorFrame) cursorFrame = requestAnimationFrame(followPointer);
 }, { passive:true });
-document.documentElement.addEventListener('pointerleave', () => ring.classList.remove('active'));
+root.addEventListener('pointerleave', hideCursor);
+window.addEventListener('blur', hideCursor);
+document.addEventListener('keydown', hideCursor);
+finePointer.addEventListener('change', hideCursor);
 document.querySelectorAll('.quick-preview').forEach(details => {
   details.addEventListener('toggle', () => { if (!details.open) details.querySelector('video').pause(); });
 });

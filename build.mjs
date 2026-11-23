@@ -7,6 +7,7 @@ const email = 'AbramSeneca2.0@gmail.com';
 const nav = [['', 'Home'], ['about', 'About'], ['projects', 'Projects'], ['experience', 'Experience'], ['certifications', 'Certifications'], ['contact', 'Contact']];
 const encodePath = (path) => path.split('/').map(encodeURIComponent).join('/');
 const pageUrl = (root, route = '') => `${root}${route ? `${route}/` : ''}index.html`;
+const letters = (word, start = 0) => `<span class="word" aria-hidden="true">${Array.from(word, (letter, i) => `<span style="--n:${i + start}">${letter}</span>`).join('')}</span>`;
 const heading = (label, title, intro) => `
   <header class="page-head wrap">
     <p class="eyebrow kicker">${label}</p>
@@ -16,8 +17,9 @@ const heading = (label, title, intro) => `
 
 const projects = [
   {
-    slug: 'determinator', title: 'DeTerminator', category: 'Robotics research',
+    slug: 'determinator', title: 'DeTerminator', category: 'Robotics research', year: 2025,
     intro: 'An Arduino-based rover that explores carbon dioxide and humidity as possible indicators of termite activity.',
+    overview: 'I built and programmed Terry, an Arduino rover for investigating termite activity.',
     cover: 'terry-assembly.webp', alt: 'Hands connecting wiring inside the DeTerminator rover beside its blue display',
     video: 'determinator-original.mp4', videoTitle: 'Science fair presentation',
     preview: 'rover-demo.mp4',
@@ -30,8 +32,9 @@ const projects = [
     transcript: 'The original presentation introduces Terry, shows the rover and its assembly, and explains the research and results. The recording includes on-screen captions.',
   },
   {
-    slug: 'inventory', title: 'Shop Inventory Manager', category: 'Desktop application',
+    slug: 'inventory', title: 'Shop Inventory Manager', category: 'Desktop application', year: 2026,
     intro: 'A Java Swing inventory system designed around the everyday needs of a sari-sari store.',
+    overview: 'Helping my mother at a canteen gave me the idea for a desktop app to track products, prices, and stock in a sari-sari store.',
     cover: 'inventory-window.webp', poster: 'inventory.jpg', alt: 'The Shop Inventory Manager product form and stock table in the original screen recording',
     video: 'inventory.mp4', videoTitle: 'Application walkthrough',
     details: [
@@ -43,14 +46,15 @@ const projects = [
   },
 ];
 
-function projectList(root) {
+function projectList(root, overview = false) {
+  const titleTag = overview ? 'h3' : 'h2';
   return `<div class="work-grid">${projects.map((project) => `
     <article class="work work-${project.slug} reveal">
       <a href="${pageUrl(root, `projects/${project.slug}`)}">
-        <div class="work-image"><img src="${root}media/${project.cover}" width="1280" height="720" loading="lazy" alt="${project.alt}"></div>
-        <div class="work-label"><span class="eyebrow">${project.category}</span></div>
-        <h2>${project.title}</h2>
-        <p>${project.intro}</p>
+        <div class="work-image"><img src="${root}media/${project.cover}" width="1280" height="720" loading="lazy" alt="${project.alt}"><span class="work-arrow" aria-hidden="true">↗</span></div>
+        <div class="work-label"><span>${project.category}</span><time>${project.year}</time></div>
+        <${titleTag}>${project.title}</${titleTag}>
+        <p>${overview ? project.overview : project.intro}</p>
         <span class="work-tools">${project.tools}</span>
         <span class="text-link">View project</span>
       </a>
@@ -101,13 +105,23 @@ function credentials(root) {
     }).join('')}</ul></section>`).join('')}</div></div>`;
 }
 
-function ribbon(label, reverse = false) {
-  const phrase = Array(5).fill(label).join('　 /　 ') + '　 /　 ';
-  return `<div class="ribbon${reverse ? ' reverse' : ''}" aria-hidden="true"><div><span>${phrase}</span><span>${phrase}</span></div></div>`;
+function photoMarquee(root) {
+  const items = [
+    ['terry-assembly.webp', 'Building Terry', 'projects/determinator'],
+    ['hacktoberfest/workshop.webp', 'Hacktoberfest workshop', 'experience'],
+    ['rover.jpg', 'DeTerminator research', 'projects/determinator'],
+    ['hacktoberfest/speaker.webp', 'Volunteer photography', 'experience'],
+    ['inventory-window.webp', 'Shop Inventory Manager', 'projects/inventory'],
+    ['hacktoberfest/abram-laptop.webp', 'Campus life', 'experience'],
+  ];
+  const run = duplicate => `<div class="photo-run"${duplicate ? ' aria-hidden="true"' : ''}>${items.map(([file, label, path]) =>
+    `<a href="${pageUrl(root, path)}" class="photo-card"${duplicate ? ' tabindex="-1"' : ''}><img src="${root}media/${file}" alt="" loading="lazy"><span>${label}</span></a>`).join('')}</div>`;
+  return `<div class="photo-marquee" role="region" aria-label="Portfolio photographs"><div class="photo-track">${run(false)}${run(true)}</div></div>`;
 }
 
 const icons = {
   Home: 'M3 11l9-8 9 8v10h-6v-7H9v7H3z',
+  Overview: 'M3 3h8v12H3z M14 3h7v6h-7z M14 12h7v9h-7z M3 18h8v3H3z',
   About: 'M8 8a4 4 0 1 0 8 0 4 4 0 0 0-8 0 M4 21c0-8 16-8 16 0',
   Projects: 'M2 7h8l2 3h10v10H2z M3 7V4h7l2 3h8v3',
   Experience: 'M3 8h18v13H3z M8 8V4h8v4 M3 13q9 5 18 0',
@@ -120,51 +134,43 @@ const pages = [
     const sections = nav.filter(([path]) => path);
     return `<section class="wallet-landing" aria-labelledby="wallet-title">
       <header class="wallet-heading">
-        <p>Portfolio directory</p>
-        <h1 id="wallet-title">Choose a <em>section.</em></h1>
+        <p class="eyebrow">Portfolio directory</p>
+        <h1 id="wallet-title" aria-label="Choose a section.">${letters('Choose')} ${letters('a', 6)}<br>${letters('section.', 7)}</h1>
+        <a class="overview-link" href="${pageUrl(root,'overview')}">View portfolio overview <span aria-hidden="true">↗</span></a>
       </header>
-      <nav class="wallet" aria-label="Portfolio sections" style="--cards:${sections.length}">
+      <div class="wallet-display"><nav class="wallet" aria-label="Portfolio sections" style="--cards:${sections.length}">
         ${sections.map(([path, label], index) => `<a class="wallet-card metal-${path}" href="${pageUrl(root, path)}" style="--i:${index}">
           <span class="wallet-tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${icons[label]}"/></svg><span>${label}</span><span class="card-arrow" aria-hidden="true">↗</span></span>
           <span class="card-engraving" aria-hidden="true">Abram Seneca</span>
         </a>`).join('')}
         <div class="wallet-pocket" aria-hidden="true"><i>as</i><div><strong>Abram Seneca</strong><span>Computer Science · CvSU</span></div></div>
-      </nav>
-      <a class="overview-link" href="${pageUrl(root,'overview')}">View portfolio overview <span aria-hidden="true">↗</span></a>
+      </nav></div>
     </section>`;
   }],
   ['overview', 'Portfolio overview', 'Computer Science student at Cavite State University. Explore selected robotics and software projects.', (root) => `
     <section class="portrait-stage">
       <div class="portrait-layout wrap">
-        <p class="stage-meta">Computer Science <span>/</span> Tanza, Cavite</p>
-        <button type="button" class="motion-toggle" hidden>Pause motion</button>
-        <h1 aria-label="${name}">Abram <em>Seneca</em></h1>
+        <p class="stage-meta eyebrow">Computer Science <span>/</span> Tanza, Cavite</p>
+        <button type="button" class="motion-toggle stage-motion" hidden>Pause motion</button>
+        <h1 aria-label="${name}">${letters('Abram')} ${letters('Seneca', 5)}</h1>
         <div class="portrait-layer"><svg viewBox="0 0 850 842" role="img" aria-label="Abram smiling and lifting his glasses">
           <defs><clipPath id="silhouette"><path d="M257 842 Q267 820 263 811 L281 681 Q297 548 274 462 Q197 439 179 397 Q151 348 230 289 L253 275 Q297 247 337 207 L346 167 Q348 154 385 151 Q399 152 404 162 L407 159 Q426 108 477 89 Q515 80 539 98 L543 115 Q597 120 594 180 Q601 204 572 231 Q571 266 555 281 L528 305 L520 330 Q529 341 532 361 Q534 374 583 393 L617 416 Q631 447 641 483 L636 536 L719 513 L728 520 L656 608 Q671 644 672 678 Q669 725 637 732 Q601 743 579 694 L561 715 L562 794 Q559 814 580 842 Z M300 337 Q319 306 343 265 L402 222 Q402 244 418 253 L421 305 Q402 299 403 320 L394 323 L392 330 L359 340 Q326 327 300 337 Z" clip-rule="evenodd"/></clipPath></defs>
           <image href="${root}media/portrait.jpg" width="850" height="842" clip-path="url(#silhouette)"/>
         </svg></div>
-        <span class="foreground-type" aria-hidden="true">Seneca</span>
-        <div class="stage-copy"><p class="eyebrow">Robotics &amp; software</p><p>I study Computer Science at Cavite State University and build robots and desktop applications.</p><a class="stage-link" href="#fieldwork">Explore my work <span aria-hidden="true">↓</span></a></div>
+        <div class="stage-copy"><p>Robotics &amp; software</p><a class="text-link" href="#fieldwork">Explore my work <span aria-hidden="true">↓</span></a></div>
         <a class="portrait-credit" href="${pageUrl(root,'about')}">About Abram</a>
       </div>
     </section>
-    ${ribbon('Robotics　 /　 Software development')}
-    <section id="fieldwork" class="section wrap feature community">
-      <a class="project-still" href="${pageUrl(root,'projects/determinator')}"><img src="${root}media/terry-assembly.webp" alt="${projects[0].alt}" loading="lazy"></a>
-      <div class="feature-copy reveal"><p class="eyebrow kicker">Robotics research</p><h2><em>DeTerminator</em></h2><p>I built and programmed Terry, an Arduino rover for investigating termite activity.</p><a class="text-link" href="${pageUrl(root,'projects/determinator')}">Explore DeTerminator</a></div>
+    ${photoMarquee(root)}
+    <section id="fieldwork" class="intro-statement dark section" aria-label="Introduction">
+      <div class="wrap reveal"><p class="eyebrow">Robotics / Software development</p><p>I study Computer Science at Cavite State University and build robots and desktop applications.</p></div>
     </section>
-    <section class="section light-section" id="selected" aria-labelledby="selected-title">
-      <div class="wrap feature">
-        <div class="feature-copy reveal"><p class="eyebrow kicker">Desktop application</p><h2 id="selected-title">Shop Inventory <em>Manager</em></h2>
-        <p>Helping my mother at a canteen gave me the idea for a desktop app to track products, prices, and stock in a sari-sari store.</p>
-        <p class="work-tools">${projects[1].tools}</p><a class="text-link" href="${pageUrl(root, 'projects/inventory')}">Explore the application</a></div>
-        <a class="software-plate reveal" href="${pageUrl(root, 'projects/inventory')}" aria-label="View Shop Inventory Manager"><img src="${root}media/${projects[1].cover}" width="742" height="430" alt="${projects[1].alt}" loading="lazy"></a>
-      </div>
+    <section class="section wrap" id="selected" aria-labelledby="selected-title">
+      <h2 id="selected-title">Selected projects</h2>${projectList(root, true)}
     </section>
-    ${ribbon('Photography　 /　 Campus life', true)}
     <section class="section wrap feature community" aria-labelledby="home-event">
       <figure class="reveal"><img src="${root}media/hacktoberfest/workshop.webp" width="1600" height="900" alt="Hacktoberfest participants working together at laptops" loading="lazy"></figure>
-      <div class="feature-copy reveal"><p class="eyebrow kicker">Volunteer photography · 2026</p><h2 id="home-event">At <em>Hacktoberfest</em></h2>
+      <div class="feature-copy reveal"><p class="eyebrow kicker">Campus life / Volunteer photography · 2026</p><h2 id="home-event">At <em>Hacktoberfest</em></h2>
       <p>I photographed Hacktoberfest with AWS Student Builder Group–Tempest at National University–Las Piñas.</p>
       <a class="text-link" href="${pageUrl(root, 'experience')}#volunteering">View the photographs</a></div>
     </section>`],
@@ -192,7 +198,7 @@ const pages = [
       <div class="case-heading"><div><p class="eyebrow kicker">${project.category}</p><h1>${project.title}</h1></div><p class="lede">${project.intro}</p></div>
       <div class="film-section">${projectVideo(root, project)}</div>
     </div></div>
-    <div class="light-section">
+    <div class="dark">
       <div class="wrap case-notes">
         <p class="eyebrow">${project.tools}</p>
         <div>${project.details.map(([title, detail]) => `<section class="reveal"><h2>${title}</h2><p>${detail}</p></section>`).join('')}
@@ -212,7 +218,7 @@ const pages = [
           ['Since Oct 2026', 'Microsoft Student Community Philippines', 'Member'],
         ])}
       </section>
-      <section class="section light-section" aria-labelledby="volunteering">
+      <section class="section dark" aria-labelledby="volunteering">
         <div class="wrap">
         <h2 id="volunteering">Volunteering</h2>
         ${rows([['2026', 'Hacktoberfest', 'Volunteer photographer with AWS Student Builder Group–Tempest at National University–Las Piñas.']])}
@@ -285,7 +291,7 @@ const pages = [
 
 for (const [route, title, description, render] of pages) {
   const root = route ? '../'.repeat(route.split('/').length) : './';
-  const navLinks = nav.map(([path, label]) => {
+  const navLinks = [nav[0], ['overview', 'Overview'], ...nav.slice(1)].map(([path, label]) => {
     const active = path === route || (path && route.startsWith(`${path}/`));
     const current = active ? ` aria-current="${path === route ? 'page' : 'location'}"` : '';
     return `<a href="${pageUrl(root, path)}"${current}><span class="app-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="${icons[label]}"/></svg></span>${label}</a>`;
@@ -298,7 +304,7 @@ for (const [route, title, description, render] of pages) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="${description}">
-  <meta name="theme-color" content="${route ? '#171916' : '#09281f'}">
+  <meta name="theme-color" content="#ffffff">
   <title>${route ? `${title} | ${name}` : name}</title>
   <link rel="stylesheet" href="${root}site.css">${route === '' ? `
   <link rel="stylesheet" href="${root}wallet.css">
@@ -308,9 +314,9 @@ for (const [route, title, description, render] of pages) {
 <body id="top" class="${route === 'overview' ? 'front-page' : route ? 'interior' : 'wallet-page'}">
   <a class="skip" href="#main">Skip to content</a>
   <header class="masthead wrap">
-    <a class="brand" href="${pageUrl(root)}" aria-label="${name}, home"><i aria-hidden="true">as</i> Abram Seneca</a>
+    <a class="brand" href="${pageUrl(root)}" aria-label="${name}, home">as</a>
     <nav class="desktop-nav" aria-label="Main navigation">${navLinks}</nav>
-    <button class="menu-toggle" type="button" aria-haspopup="dialog" aria-controls="menu" aria-expanded="false" hidden><i class="device-mini" aria-hidden="true"></i> Menu</button>
+    <button class="menu-toggle" type="button" aria-haspopup="dialog" aria-controls="menu" aria-expanded="false" hidden>Menu <span aria-hidden="true">+</span></button>
   </header>
   <dialog id="menu" aria-label="Site menu">
     <div class="menu-head"><span class="brand"><i aria-hidden="true">as</i> Abram Seneca</span><button type="button" class="menu-close" autofocus>Close <span aria-hidden="true">×</span></button></div>
@@ -319,9 +325,13 @@ for (const [route, title, description, render] of pages) {
   </dialog>
   <div class="cursor-ring" aria-hidden="true"></div>
   <main id="main" tabindex="-1">${render(root)}</main>
-  <footer class="footer">
-    <div class="wrap footer-inner"><div><a class="footer-name" href="${pageUrl(root)}">${name}</a><p>Computer Science student · Tanza, Cavite</p></div>
-    <div class="footer-links"><a href="${pageUrl(root, 'contact')}">Contact</a><a href="https://www.linkedin.com/in/abram-seneca-b700a9386/">LinkedIn</a><a href="#top">Back to top</a></div></div>
+  <footer class="footer dark">
+    <div class="wrap footer-inner">
+      <div class="footer-id"><a class="footer-name" href="${pageUrl(root)}">${name}</a><p>Computer Science student · Tanza, Cavite</p></div>
+      <div><p class="eyebrow">Socials</p><a href="https://www.linkedin.com/in/abram-seneca-b700a9386/">LinkedIn ↗</a></div>
+      <div><p class="eyebrow">Contact</p><a href="mailto:${email}">Email Abram ↗</a><a href="${pageUrl(root, 'contact')}">Contact details</a></div>
+    </div>
+    <div class="wrap footer-base"><span>© 2026 Abram Seneca</span><span>Built with HTML, CSS &amp; JavaScript</span><button class="motion-toggle" hidden type="button">Pause motion</button><a href="#top">Back to top ↑</a></div>
   </footer>
 </body>
 </html>

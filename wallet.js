@@ -29,7 +29,7 @@ wallet.addEventListener('click', event => {
     { transform: initial },
     { transform: 'translateY(-' + lift + 'px) scale(1.025)', offset: .78 },
     { transform: 'translateY(-' + (lift - 3) + 'px) scale(1.02)' }
-  ], { duration: 380, easing: 'cubic-bezier(.2,.8,.25,1)', fill: 'forwards' });
+  ], { duration: 500, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'forwards' });
   extraction.onfinish = () => location.assign(card.href);
 });
 
