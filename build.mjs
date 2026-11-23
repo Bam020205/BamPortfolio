@@ -1,9 +1,17 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { reactorBackdrop, typedHeading } from './reactor.mjs';
 
 const name = 'Abram John R. Seneca';
 const email = 'AbramSeneca2.0@gmail.com';
+const profiles = [
+  ['LinkedIn', 'https://www.linkedin.com/in/abram-seneca-b700a9386/'],
+  ['Facebook', 'https://www.facebook.com/abramjohn.seneca'],
+  ['Instagram', 'https://www.instagram.com/bammmyyyyyy/?hl=en'],
+];
+const arrow = (direction = 'out') => `<svg class="arrow arrow-${direction}" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 16 16 4M5 4h11v11"/></svg>`;
+const socialLinks = () => profiles.map(([platform, url]) => `<a class="social-link" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${platform} profile (opens in a new tab)">${platform} ${arrow()}</a>`).join('');
 const nav = [['', 'Home'], ['about', 'About'], ['projects', 'Projects'], ['experience', 'Experience'], ['certifications', 'Certifications'], ['contact', 'Contact']];
 const encodePath = (path) => path.split('/').map(encodeURIComponent).join('/');
 const pageUrl = (root, route = '') => `${root}${route ? `${route}/` : ''}index.html`;
@@ -51,7 +59,7 @@ function projectList(root, overview = false) {
   return `<div class="work-grid">${projects.map((project) => `
     <article class="work work-${project.slug} reveal">
       <a href="${pageUrl(root, `projects/${project.slug}`)}">
-        <div class="work-image"><img src="${root}media/${project.cover}" width="1280" height="720" loading="lazy" alt="${project.alt}"><span class="work-arrow" aria-hidden="true">↗</span></div>
+        <div class="work-image"><img src="${root}media/${project.cover}" width="1280" height="720" loading="lazy" alt="${project.alt}"><span class="work-arrow" aria-hidden="true">${arrow()}</span></div>
         <div class="work-label"><span>${project.category}</span><time>${project.year}</time></div>
         <${titleTag}>${project.title}</${titleTag}>
         <p>${overview ? project.overview : project.intro}</p>
@@ -132,20 +140,20 @@ const icons = {
 const pages = [
   ['', name, 'Open a portfolio card to explore Abram Seneca’s work, experience, and credentials.', (root) => {
     const sections = nav.filter(([path]) => path);
-    return `<section class="wallet-landing" aria-labelledby="wallet-title">
+    return `<section class="reactor-stage" aria-labelledby="wallet-title">${reactorBackdrop()}<div class="wallet-landing">
       <header class="wallet-heading">
         <p class="eyebrow">Portfolio directory</p>
-        <h1 id="wallet-title" aria-label="Choose a section.">${letters('Choose')} ${letters('a', 6)}<br>${letters('section.', 7)}</h1>
-        <a class="overview-link" href="${pageUrl(root,'overview')}">View portfolio overview <span aria-hidden="true">↗</span></a>
+        ${typedHeading(['Choose a','section.'], 'wallet-title')}
+        <a class="overview-link" href="${pageUrl(root,'overview')}">View portfolio overview ${arrow()}</a>
       </header>
       <div class="wallet-display"><nav class="wallet" aria-label="Portfolio sections" style="--cards:${sections.length}">
         ${sections.map(([path, label], index) => `<a class="wallet-card metal-${path}" href="${pageUrl(root, path)}" style="--i:${index}">
-          <span class="wallet-tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${icons[label]}"/></svg><span>${label}</span><span class="card-arrow" aria-hidden="true">↗</span></span>
+          <span class="wallet-tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${icons[label]}"/></svg><span>${label}</span><span class="card-arrow">${arrow()}</span></span>
           <span class="card-engraving" aria-hidden="true">Abram Seneca</span>
         </a>`).join('')}
         <div class="wallet-pocket" aria-hidden="true"><i>as</i><div><strong>Abram Seneca</strong><span>Computer Science · CvSU</span></div></div>
       </nav></div>
-    </section>`;
+    </div></section>`;
   }],
   ['overview', 'Portfolio overview', 'Computer Science student at Cavite State University. Explore selected robotics and software projects.', (root) => `
     <section class="portrait-stage">
@@ -157,7 +165,7 @@ const pages = [
           <defs><clipPath id="silhouette"><path d="M257 842 Q267 820 263 811 L281 681 Q297 548 274 462 Q197 439 179 397 Q151 348 230 289 L253 275 Q297 247 337 207 L346 167 Q348 154 385 151 Q399 152 404 162 L407 159 Q426 108 477 89 Q515 80 539 98 L543 115 Q597 120 594 180 Q601 204 572 231 Q571 266 555 281 L528 305 L520 330 Q529 341 532 361 Q534 374 583 393 L617 416 Q631 447 641 483 L636 536 L719 513 L728 520 L656 608 Q671 644 672 678 Q669 725 637 732 Q601 743 579 694 L561 715 L562 794 Q559 814 580 842 Z M300 337 Q319 306 343 265 L402 222 Q402 244 418 253 L421 305 Q402 299 403 320 L394 323 L392 330 L359 340 Q326 327 300 337 Z" clip-rule="evenodd"/></clipPath></defs>
           <image href="${root}media/portrait.jpg" width="850" height="842" clip-path="url(#silhouette)"/>
         </svg></div>
-        <div class="stage-copy"><p>Robotics &amp; software</p><a class="text-link" href="#fieldwork">Explore my work <span aria-hidden="true">↓</span></a></div>
+        <div class="stage-copy"><p>Robotics &amp; software</p><a class="text-link" href="#fieldwork">Explore my work ${arrow('down')}</a></div>
         <a class="portrait-credit" href="${pageUrl(root,'about')}">About Abram</a>
       </div>
     </section>
@@ -175,8 +183,8 @@ const pages = [
       <a class="text-link" href="${pageUrl(root, 'experience')}#volunteering">View the photographs</a></div>
     </section>`],
   ['about', 'About', 'Education, interests, and skills.', (root) => `
-    <header class="wrap about-head"><div><p class="eyebrow kicker">About</p><h1>Abram John<br><em>R. Seneca</em></h1><p class="lede">Computer Science student at Cavite State University.</p></div>
-      <figure class="bio-photo"><img src="${root}media/portrait.jpg" alt="Portrait of Abram Seneca" fetchpriority="high"></figure></header>
+    <header class="reactor-stage about-stage">${reactorBackdrop()}<div class="wrap about-head"><div><p class="eyebrow kicker">About</p>${typedHeading(['Abram John','R. Seneca'])}<p class="lede">Computer Science student at Cavite State University.</p></div>
+      <figure class="bio-photo"><img src="${root}media/portrait.jpg" alt="Portrait of Abram Seneca" fetchpriority="high"></figure></div></header>
     <section class="light-section section">
       <div class="wrap bio">
       <div>
@@ -263,7 +271,7 @@ const pages = [
     <section class="section light-section" aria-label="Credentials"><div class="wrap">
       ${credentials(root)}
     </div></section>`],
-  ['contact', 'Contact', 'Email, phone, and LinkedIn for Abram Seneca.', () => `
+  ['contact', 'Contact', 'Email, phone, and social profiles for Abram Seneca.', () => `
     <header class="page-head wrap"><h1 class="entrance">Contact</h1><p class="lede entrance">Tanza, Cavite</p></header>
     <div class="light-section"><div class="wrap contact-grid section">
       <section aria-label="Contact details">
@@ -274,7 +282,7 @@ const pages = [
           <span class="copy-status" role="status"></span>
         </div>
         <div class="contact-line"><p class="eyebrow">Phone</p><a href="tel:+639946642782">0994 664 2782</a></div>
-        <div class="contact-line"><p class="eyebrow">LinkedIn</p><a href="https://www.linkedin.com/in/abram-seneca-b700a9386/">Abram Seneca</a></div>
+        <div class="contact-line"><p class="eyebrow">Social profiles</p>${socialLinks()}</div>
       </section>
       <section class="compose" hidden aria-labelledby="compose-title">
         <h2 id="compose-title">Draft an email</h2>
@@ -308,7 +316,9 @@ for (const [route, title, description, render] of pages) {
   <title>${route ? `${title} | ${name}` : name}</title>
   <link rel="stylesheet" href="${root}site.css">${route === '' ? `
   <link rel="stylesheet" href="${root}wallet.css">
-  <script src="${root}wallet.js" defer></script>` : ''}
+  <script src="${root}wallet.js" defer></script>` : ''}${route === '' || route === 'about' ? `
+  <link rel="preload" href="${root}media/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="${root}reactor.css">` : ''}
   <script src="${root}site.js" defer></script>
 </head>
 <body id="top" class="${route === 'overview' ? 'front-page' : route ? 'interior' : 'wallet-page'}">
@@ -328,10 +338,10 @@ for (const [route, title, description, render] of pages) {
   <footer class="footer dark">
     <div class="wrap footer-inner">
       <div class="footer-id"><a class="footer-name" href="${pageUrl(root)}">${name}</a><p>Computer Science student · Tanza, Cavite</p></div>
-      <div><p class="eyebrow">Socials</p><a href="https://www.linkedin.com/in/abram-seneca-b700a9386/">LinkedIn ↗</a></div>
-      <div><p class="eyebrow">Contact</p><a href="mailto:${email}">Email Abram ↗</a><a href="${pageUrl(root, 'contact')}">Contact details</a></div>
+      <div><p class="eyebrow">Socials</p>${socialLinks()}</div>
+      <div><p class="eyebrow">Contact</p><a href="mailto:${email}">Email Abram ${arrow()}</a><a href="${pageUrl(root, 'contact')}">Contact details</a></div>
     </div>
-    <div class="wrap footer-base"><span>© 2026 Abram Seneca</span><span>Built with HTML, CSS &amp; JavaScript</span><button class="motion-toggle" hidden type="button">Pause motion</button><a href="#top">Back to top ↑</a></div>
+    <div class="wrap footer-base"><span>© 2026 Abram Seneca</span><span>Built with HTML, CSS &amp; JavaScript</span><button class="motion-toggle" hidden type="button">Pause motion</button><a href="#top">Back to top ${arrow('up')}</a></div>
   </footer>
 </body>
 </html>

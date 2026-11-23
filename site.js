@@ -88,6 +88,13 @@ if (copy && navigator.clipboard?.writeText) {
 const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 const finePointer = matchMedia('(hover:hover) and (pointer:fine)');
 const stage = document.querySelector('.portrait-stage');
+const reactor = document.querySelector('.reactor-stage');
+if (reactor && 'IntersectionObserver' in window) {
+  const visibility = new IntersectionObserver(([entry]) => {
+    reactor.classList.toggle('reactor-resting', !entry.isIntersecting);
+  });
+  visibility.observe(reactor);
+}
 const introduction = document.querySelector('#fieldwork');
 const motionButtons = document.querySelectorAll('.motion-toggle');
 const ring = document.querySelector('.cursor-ring');

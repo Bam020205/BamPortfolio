@@ -6,8 +6,8 @@
 .wallet-heading { padding-bottom: 1rem; }
 .wallet-heading h1 { font-size: clamp(4rem,8.3vw,9rem); margin-block: 1.4rem 2.4rem; }
 .overview-link { display: inline-flex; gap: 1rem; align-items: center; text-decoration: none; border-bottom: 1px solid currentColor; padding-block: .3rem; }
-.overview-link span { transition: transform .55s var(--ease); }
-.overview-link:hover span { transform: translate(.15rem,-.15rem); }
+.overview-link .arrow { transition: transform .55s var(--ease); }
+.overview-link:hover .arrow { transform: translate(.15rem,-.15rem); }
 .wallet-display {
   min-height: clamp(29rem,64svh,45rem); display: grid; place-items: center;
   padding: 1.7rem clamp(1rem,3.3vw,4rem) 2.25rem; border-radius: .5rem clamp(4rem,9vw,10rem) .5rem .5rem;
@@ -42,7 +42,7 @@
 .metal-certifications { --metal: #343434; --light: #555; --card-ink: #fff; }
 .metal-contact { --metal: #bbb; --light: #f4f4f4; }
 .wallet-tab { display: flex; align-items: center; gap: .8rem; height: var(--step); font-size: 1rem; font-weight: 600; }
-.wallet-tab svg { width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.wallet-tab > svg { width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .card-arrow { margin-left: auto; }
 .card-engraving { position: absolute; top: calc(var(--step) + var(--pocket-height) - 4.3rem); left: 1.15rem; font-size: 1.65rem; font-weight: 600; letter-spacing: -.06em; pointer-events: none; }
 .wallet-pocket {

@@ -5,6 +5,11 @@
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("media/fonts/jetbrains-mono-latin.woff2") format("woff2");
+  font-style: normal; font-weight: 300 500; font-display: swap;
+}
 :root {
   color-scheme: light;
   --paper: #fff;
@@ -42,6 +47,9 @@ p + p { margin-top: 1em; }
 [hidden] { display: none !important; }
 a, button, summary { color: inherit; }
 a { text-underline-offset: .25em; text-decoration-thickness: 1px; }
+.arrow { display: inline-block; width: .88em; height: .88em; vertical-align: -.05em; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.arrow-down { transform: rotate(135deg); }
+.arrow-up { transform: rotate(-45deg); }
 button, input, textarea { color: inherit; font: inherit; }
 button, summary { cursor: pointer; }
 button { background: none; border: 0; padding: 0; }
@@ -214,6 +222,13 @@ img { filter: grayscale(1); transition: filter .7s var(--ease), transform .7s va
 .footer-id p { margin-top: 1rem; color: var(--muted); }
 .footer .eyebrow { margin-bottom: .85rem; }
 .footer .eyebrow ~ a { display: block; width: fit-content; margin-top: .4rem; }
+.social-link, .contact-line > .social-link {
+  color: var(--muted); font: 500 .95rem/1.6 "JetBrains Mono", var(--mono); letter-spacing: 0;
+  transition: color .5s var(--ease), text-shadow .5s var(--ease);
+}
+.social-link:is(:hover,:focus-visible), .contact-line > .social-link:is(:hover,:focus-visible) {
+  color: var(--ink); text-shadow: 0 0 4px color-mix(in srgb, var(--ink) 28%, transparent);
+}
 .footer-base { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem 2rem; border-top: 1px solid rgb(255 255 255 / 10%); padding-block: 1.2rem; text-transform: none; letter-spacing: -.01em; }
 .footer-base span:first-child { margin-right: auto; }
 .footer-base button { text-decoration: underline; text-underline-offset: .25em; }
