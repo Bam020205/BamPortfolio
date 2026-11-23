@@ -83,13 +83,3 @@ export function reactorBackdrop() {
     </svg>
   </div>`;
 }
-
-export function typedHeading(lines, id) {
-  let offset = 0;
-  const markup = lines.map(line => {
-    const delay = offset * 50;
-    offset += line.length;
-    return `<span class="type-line" aria-hidden="true" style="--count:${line.length};--duration:${line.length * 50}ms;--delay:${delay}ms"><span>${line}</span></span>`;
-  }).join(' ');
-  return `<h1 class="typed-headline"${id ? ` id="${id}"` : ''} aria-label="${lines.join(' ')}">${markup}</h1>`;
-}

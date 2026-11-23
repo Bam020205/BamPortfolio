@@ -1,0 +1,11 @@
+{
+  "name": "abram-seneca-portfolio",
+  "private": true,
+  "scripts": {
+    "build": "tailwindcss -i ./headings.tailwind.css -o ./headings.css --minify && node build.mjs"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.5",
+    "tailwindcss": "4.3.5"
+  }
+}

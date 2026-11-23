@@ -93,7 +93,7 @@ if (reactor && 'IntersectionObserver' in window) {
   const visibility = new IntersectionObserver(([entry]) => {
     reactor.classList.toggle('reactor-resting', !entry.isIntersecting);
   });
-  visibility.observe(reactor);
+  visibility.observe(reactor.querySelector('.reactor-backdrop'));
 }
 const introduction = document.querySelector('#fieldwork');
 const motionButtons = document.querySelectorAll('.motion-toggle');
@@ -103,9 +103,22 @@ root.classList.add('motion-ready');
 let paused = false;
 try { paused = sessionStorage.getItem('portfolio-motion') === 'paused'; } catch {}
 function moving() { return !paused && !motionPreference.matches; }
+if ('IntersectionObserver' in window) {
+  const headingObserver = new IntersectionObserver(entries => {
+    for (const { target, isIntersecting } of entries) {
+      if (!isIntersecting) continue;
+      if (moving()) target.classList.add('letters-enter');
+      headingObserver.unobserve(target);
+    }
+  });
+  document.querySelectorAll('.blur-heading').forEach(heading => headingObserver.observe(heading));
+}
 function syncMotion() {
   document.body.classList.toggle('motion-off', !moving());
-  if (!moving()) document.body.classList.add('intro-read');
+  if (!moving()) {
+    document.body.classList.add('intro-read');
+    document.querySelectorAll('.letters-enter').forEach(heading => heading.classList.remove('letters-enter'));
+  }
   for (const button of motionButtons) {
     button.hidden = motionPreference.matches;
     button.textContent = paused ? 'Resume motion' : 'Pause motion';
