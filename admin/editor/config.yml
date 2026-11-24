@@ -1,0 +1,59 @@
+backend:
+  name: github
+  repo: Bam020205/YohananTimes-Writing
+  branch: main
+  auth_methods: [token]
+publish_mode:
+  type: editorial_workflow
+  stages: [draft]
+  direct_publish: true
+site_url: https://bam020205.github.io/BamPortfolio
+display_url: https://bam020205.github.io/BamPortfolio/journal/
+media_folder: media/journal
+public_folder: /media/journal
+slug:
+  encoding: ascii
+  clean_accents: true
+collections:
+  - name: journal
+    label: Journal
+    label_singular: Journal entry
+    folder: entries
+    create: true
+    slug:
+      template: '{{slug}}'
+      editable: [create]
+      pattern: ['^[a-z0-9]+(-[a-z0-9]+)*
+    preview_path: 'journal/{{slug}}/'
+    fields:
+      - {name: title, label: Title, widget: string}
+      - {name: date, label: Publication date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ"}
+      - {name: cover, label: Cover photo, widget: image, choose_url: false, accept: "image/jpeg,image/png,image/webp,image/avif,image/gif"}
+      - {name: alt, label: Image description, widget: string}
+      - {name: caption, label: Caption, widget: string, required: false}
+      - {name: body, label: Article, widget: markdown}
+      - name: gallery
+        label: Additional photos
+        widget: list
+        required: false
+        fields:
+          - {name: image, label: Photo, widget: image, choose_url: false, accept: "image/jpeg,image/png,image/webp,image/avif,image/gif"}
+          - {name: alt, label: Image description, widget: string}
+          - {name: caption, label: Caption, widget: string, required: false}
+, 'Use lowercase letters, numbers and hyphens.']
+    preview_path: 'journal/{{slug}}/'
+    fields:
+      - {name: title, label: Title, widget: string}
+      - {name: date, label: Publication date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ"}
+      - {name: cover, label: Cover photo, widget: image, choose_url: false, accept: "image/jpeg,image/png,image/webp,image/avif,image/gif"}
+      - {name: alt, label: Image description, widget: string}
+      - {name: caption, label: Caption, widget: string, required: false}
+      - {name: body, label: Article, widget: markdown}
+      - name: gallery
+        label: Additional photos
+        widget: list
+        required: false
+        fields:
+          - {name: image, label: Photo, widget: image, choose_url: false, accept: "image/jpeg,image/png,image/webp,image/avif,image/gif"}
+          - {name: alt, label: Image description, widget: string}
+          - {name: caption, label: Caption, widget: string, required: false}

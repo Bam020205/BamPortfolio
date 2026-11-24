@@ -1,0 +1,21 @@
+@font-face{font-family:Playfair;src:url("media/fonts/playfair.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:SourceSerif;src:url("media/fonts/source-serif.woff2") format("woff2");font-weight:400 700;font-display:swap}
+.journal-shell{width:min(70rem,calc(100% - 2 * var(--gutter,1.2rem)));margin:0 auto;padding:1.5rem 0 4rem;color:#161616;background:white}
+.edition{display:block;text-align:center;font:700 clamp(2.8rem,8vw,7rem)/1.04 Playfair,Georgia,serif;letter-spacing:-.065em}
+.edition i{display:block;font:italic 400 clamp(1rem,2.1vw,1.65rem)/1.5 Georgia,serif;letter-spacing:.01em}
+.paper-head{border-top:1px solid;padding-top:1.3rem}.paper-head h1{margin:0}
+.paper-line{display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;border-bottom:3px double;padding:.8rem 0;font-size:.85rem}
+.journal-meta, .reading figcaption{font:400 .85rem/1.4 Inter,Arial,sans-serif;color:#555}
+.story-card a,.edition-link{display:block;color:inherit;text-decoration:none}.story-card a:hover h2{text-decoration:underline;text-decoration-thickness:1px}
+.story-card h2,.reading h1{font:700 clamp(2rem,4.4vw,4.6rem)/1.04 Playfair,Georgia,serif;letter-spacing:-.045em;margin:.7rem 0}
+.story-card p,.prose{font:400 clamp(1.1rem,1.8vw,1.35rem)/1.6 SourceSerif,Georgia,serif;letter-spacing:0}
+.story-card img,.reading img{width:100%;height:auto;filter:none}
+.lead-story a,.archive-grid .story-card a{display:grid;grid-template-columns:minmax(0,.83fr) minmax(0,1.17fr);gap:clamp(1.3rem,4vw,4rem);align-items:center;padding:1.8rem 0}
+.lead-story img{aspect-ratio:1.57;object-fit:cover}
+.archive{border-top:1px solid;padding-top:1rem}.archive>h2{font:700 1.45rem SourceSerif,Georgia,serif}
+.archive-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem}.archive-grid .story-card a{grid-template-columns:1.3fr .7fr;gap:1rem;align-items:start}.archive-grid h2{font-size:1.55rem}.archive-grid p{font-size:1rem}.archive-grid img{aspect-ratio:1;object-fit:cover}
+.edition-link{padding:0 0 1rem;border-bottom:3px double}.edition-small{font-size:clamp(2rem,4vw,3.4rem)}.edition-small i{font-size:1rem}
+.reading header,.prose,.back-journal{max-width:42rem;margin:2rem auto}.reading h1{font-size:clamp(2.3rem,5vw,4.8rem)}.reading figure{margin:0}.reading .cover{max-width:54rem;margin:auto}.reading figcaption{padding:.45rem 0}
+.prose p,.prose ul,.prose ol,.prose blockquote{margin:1em 0}.prose h2,.prose h3,.prose h4{font:700 1.65em/1.15 Playfair,Georgia,serif;margin:1em 0 .4em}.prose blockquote{border-left:2px solid;padding-left:1em;font-style:italic}
+.story-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem;align-items:start}.reading a{text-underline-offset:.2em}
+@media(max-width:700px){.lead-story a,.archive-grid,.story-gallery{grid-template-columns:1fr}.archive-grid .story-card a{grid-template-columns:minmax(0,1.5fr) minmax(0,.6fr)}.paper-line{font-size:.75rem}}

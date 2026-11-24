@@ -1,3 +1,4 @@
+import { journalPages } from './journal.mjs';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -13,7 +14,7 @@ const profiles = [
 ];
 const arrow = (direction = 'out') => `<svg class="arrow arrow-${direction}" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 16 16 4M5 4h11v11"/></svg>`;
 const socialLinks = () => profiles.map(([platform, url]) => `<a class="social-link" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${platform} profile (opens in a new tab)">${platform} ${arrow()}</a>`).join('');
-const nav = [['', 'Home'], ['about', 'About'], ['projects', 'Projects'], ['experience', 'Experience'], ['certifications', 'Certifications'], ['contact', 'Contact']];
+const nav = [['', 'Home'], ['about', 'About'], ['projects', 'Projects'], ['experience', 'Experience'], ['certifications', 'Certifications'], ['journal', 'Journal'], ['contact', 'Contact']];
 const encodePath = (path) => path.split('/').map(encodeURIComponent).join('/');
 const pageUrl = (root, route = '') => `${root}${route ? `${route}/` : ''}index.html`;
 const heading = (label, title, intro) => `
@@ -115,12 +116,12 @@ function credentials(root) {
 function photoMarquee(root) {
   const items = [
     ['terry-assembly.webp', 'Building Terry', 'projects/determinator'],
-    ['hacktoberfest/workshop.webp', 'Hacktoberfest workshop', 'experience'],
+    ['hacktoberfest/workshop.webp', 'Hacktoberfest workshop', 'journal/behind-the-lens-at-hacktoberfest'],
     ['rover.jpg', 'DeTerminator research', 'projects/determinator'],
-    ['hacktoberfest/speaker.webp', 'Volunteer photography', 'experience'],
+    ['hacktoberfest/speaker.webp', 'Volunteer photography', 'journal/behind-the-lens-at-hacktoberfest'],
     ['inventory-window.webp', 'Shop Inventory Manager', 'projects/inventory'],
-    ['hacktoberfest/abram-laptop.webp', 'Campus life', 'experience'],
-    ['devfest/attendees.webp', 'DevFest Manila After Hours', 'experience', '#devfest'],
+    ['hacktoberfest/abram-laptop.webp', 'Campus life', 'journal/behind-the-lens-at-hacktoberfest'],
+    ['devfest/attendees.webp', 'DevFest Manila After Hours', 'journal/devfest-manila-after-hours'],
   ];
   const run = duplicate => `<div class="photo-run"${duplicate ? ' aria-hidden="true"' : ''}>${items.map(([file, label, path, fragment = '']) =>
     `<a href="${pageUrl(root, path)}${fragment}" class="photo-card"${duplicate ? ' tabindex="-1"' : ''}><img src="${root}media/${file}" alt="" loading="lazy"><span>${label}</span></a>`).join('')}</div>`;
@@ -128,6 +129,7 @@ function photoMarquee(root) {
 }
 
 const icons = {
+  Journal: 'M3 4h18v16H3z M6 8h5v4H6z M14 8h4 M14 11h4 M6 15h12',
   Home: 'M3 11l9-8 9 8v10h-6v-7H9v7H3z',
   Overview: 'M3 3h8v12H3z M14 3h7v6h-7z M14 12h7v9h-7z M3 18h8v3H3z',
   About: 'M8 8a4 4 0 1 0 8 0 4 4 0 0 0-8 0 M4 21c0-8 16-8 16 0',
@@ -138,6 +140,7 @@ const icons = {
 };
 
 const pages = [
+  ...journalPages,
   ['', name, 'Open a portfolio card to explore Abram Seneca’s work, experience, and credentials.', (root) => {
     const sections = nav.filter(([path]) => path);
     return `<section class="wallet-landing" aria-labelledby="wallet-title">
@@ -180,7 +183,7 @@ const pages = [
       <figure class="reveal"><img src="${root}media/hacktoberfest/workshop.webp" width="1600" height="900" alt="Hacktoberfest participants working together at laptops" loading="lazy"></figure>
       <div class="feature-copy reveal"><p class="eyebrow kicker">Campus life / Volunteer photography · 2026</p>${blurHeading('At Hacktoberfest', { level: 2, id: 'home-event' })}
       <p>I photographed Hacktoberfest with AWS Student Builder Group–Tempest at National University–Las Piñas.</p>
-      <a class="text-link" href="${pageUrl(root, 'experience')}#volunteering">View the photographs</a></div>
+      <a class="text-link" href="${pageUrl(root, 'journal/behind-the-lens-at-hacktoberfest')}">View the photographs</a></div>
     </section>`],
   ['about', 'About', 'Education, interests, and skills.', (root) => `
     <header class="wrap about-head"><div><p class="eyebrow kicker">About</p>${blurHeading(['Abram John','R. Seneca'], { level: 1 })}<p class="lede">Computer Science student at Cavite State University.</p></div>
@@ -230,42 +233,12 @@ const pages = [
         <div class="wrap">
         ${blurHeading('Volunteering', { level: 2, id: 'volunteering' })}
         ${rows([['2026', 'Hacktoberfest', 'Volunteer photographer with AWS Student Builder Group–Tempest at National University–Las Piñas.']])}
-        <div class="event-photos reveal">
-          <img src="${root}media/hacktoberfest/workshop.webp" width="1600" height="900" alt="Hacktoberfest attendees working at laptops" loading="lazy">
-          <img src="${root}media/hacktoberfest/abram-laptop.webp" width="1800" height="1200" alt="Abram holding a laptop beside the Hacktoberfest 2026 welcome screen" loading="lazy">
-        </div>
-        <details class="event-gallery">
-          <summary>More Hacktoberfest photos</summary>
-          <div class="event-gallery-grid">
-            ${[
-              ['speaker', 'A Hacktoberfest speaker holding a microphone', 675],
-              ['audience', 'Attendees watching a speaker at Hacktoberfest', 675],
-              ['lanyards', 'Blue event lanyards laid out on a table', 675],
-              ['session', 'A seated Hacktoberfest audience', 675],
-              ['participants', 'Participants standing together at the event', 675],
-              ['abram-welcome', 'Abram standing beside the Hacktoberfest welcome screen', 800],
-            ].map(([file, alt, height]) => `<img src="${root}media/hacktoberfest/${file}.webp" width="1200" height="${height}" alt="${alt}" loading="lazy">`).join('')}
-          </div>
-        </details>
+        <a class="text-link" href="${pageUrl(root, 'journal/behind-the-lens-at-hacktoberfest')}">Read the photo journal</a>
         </div>
       </section>
       <section class="wrap section" aria-labelledby="learning">
         ${blurHeading('Training & events', { level: 2, id: 'learning' })}
-        <article class="devfest" id="devfest" aria-labelledby="devfest-title">
-          <div class="event-story"><p class="eyebrow">2026 · Attendee</p>
-            ${blurHeading('DevFest Manila 2026 After Hours', { id: 'devfest-title' })}
-            <p>At DevFest Manila, I followed Jeremy Ephraim Villa and Sermil Matoto’s hands-on workflows with Google Antigravity. They showed how to coordinate AI agents, build a full-stack application, review its architecture, deploy it to the cloud, and check the live result.</p>
-            <p>I especially enjoyed seeing where people reviewed the agents’ work, from the first architecture decisions to the checks on the live application.</p>
-          </div>
-          <figure><img src="${root}media/devfest/stage.webp" width="1480" height="987" loading="lazy" alt="DevFest Manila projected above the stage as attendees gather at the front"></figure>
-          <details class="devfest-album"><summary>View DevFest photos</summary>
-            <div class="event-gallery-grid">
-              <img src="${root}media/devfest/gdg-letters.webp" width="1280" height="853" loading="lazy" alt="Three attendees holding oversized G, D and G letters">
-              <img src="${root}media/devfest/attendees.webp" width="1280" height="853" loading="lazy" alt="DevFest attendees posing together beside the stage">
-              <img src="${root}media/devfest/conversation.webp" width="1040" height="693" loading="lazy" alt="A group of attendees talking during After Hours">
-            </div>
-          </details>
-        </article>
+        <p id="devfest" class="journal-mention"><a class="text-link" href="${pageUrl(root, 'journal/devfest-manila-after-hours')}">DevFest Manila 2026 After Hours · Read the journal entry</a></p>
         ${rows([
           ['Oct 18–25, 2026', 'Packet Capture: Beneath the Network CTF', 'Team participant with SINT-O SINT-O in the CyberPH competition.'],
           ['2026', 'Data Engineering Pilipinas × DataCamp Scholarship', 'Accepted into the scholarship program.'],
@@ -313,6 +286,7 @@ const pages = [
 ];
 
 for (const [route, title, description, render] of pages) {
+  const isJournal = route === 'journal' || route.startsWith('journal/');
   const root = route ? '../'.repeat(route.split('/').length) : './';
   const navLinks = [nav[0], ['overview', 'Overview'], ...nav.slice(1)].map(([path, label]) => {
     const active = path === route || (path && route.startsWith(`${path}/`));
@@ -328,13 +302,13 @@ for (const [route, title, description, render] of pages) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="${description}">
   <meta name="theme-color" content="#ffffff">
-  <title>${route ? `${title} | ${name}` : name}</title>
+  <title>${route ? `${title.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')} | ${name}` : name}</title>
   <link rel="stylesheet" href="${root}site.css">
   <link rel="stylesheet" href="${root}headings.css">${route === '' ? `
   <link rel="stylesheet" href="${root}wallet.css">
   <script src="${root}wallet.js" defer></script>` : ''}${route === '' || route === 'about' ? `
   <link rel="preload" href="${root}media/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>` : ''}
-  <link rel="stylesheet" href="${root}reactor.css">
+  ${isJournal ? `<link rel="stylesheet" href="${root}journal.css">` : `<link rel="stylesheet" href="${root}reactor.css">`}
   <script src="${root}site.js" defer></script>
 </head>
 <body id="top" class="${route === 'overview' ? 'front-page' : route ? 'interior' : 'wallet-page'}">
@@ -350,7 +324,7 @@ for (const [route, title, description, render] of pages) {
     <button type="button" class="home-bar" aria-label="Close menu"></button>
   </dialog>
   <div class="cursor-ring" aria-hidden="true"></div>
-  <main id="main" tabindex="-1" class="reactor-stage ${route === 'about' ? 'about-stage' : route ? 'reading-stage' : ''}">${reactorBackdrop()}${render(root)}</main>
+  <main id="main" tabindex="-1" class="${isJournal ? 'journal-main' : 'reactor-stage'} ${route === 'about' ? 'about-stage' : route ? 'reading-stage' : ''}">${isJournal ? '' : reactorBackdrop()}${render(root)}</main>
   <footer class="footer dark">
     <div class="wrap footer-inner">
       <div class="footer-id"><a class="footer-name" href="${pageUrl(root)}">${name}</a><p>Computer Science student · Tanza, Cavite</p></div>
