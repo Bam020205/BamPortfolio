@@ -13,7 +13,7 @@ gallery:
     caption: Datacamp x DEP Scholarship Status
 ---
 
-# A New Step in My Journey: Accepted into the Data Engineering Pilipinas × DataCamp Scholarship Program
+##### A New Step in My Journey: Accepted into the Data Engineering Pilipinas × DataCamp Scholarship Program
 
 On October 9, I discovered an opportunity that felt closely connected to my goals: the Data Engineering Pilipinas × DataCamp Scholarship Program. The next day, I submitted my application. Less than three days later, I received the wonderful news that I had been accepted.
 
