@@ -13,7 +13,9 @@ function privateFile(path) {
   if (rel.startsWith('..' + sep) || isAbsolute(rel) || file !== resolve(source,path)) throw Error('Invalid private source path');
   return file;
 }
-for (const file of readdirSync(privateFile('entries')).sort()) {
+mkdirSync(entries, {recursive:true});
+const files = existsSync(resolve(source,'entries')) ? readdirSync(privateFile('entries')).sort() : [];
+for (const file of files) {
   if (!file.endsWith('.md')) continue;
   const slug = file.slice(0,-3);
   const markdown = readFileSync(privateFile('entries/'+file),'utf8');
