@@ -23,24 +23,7 @@ collections:
     slug:
       template: '{{slug}}'
       editable: [create]
-      pattern: ['^[a-z0-9]+(-[a-z0-9]+)*
-    preview_path: 'journal/{{slug}}/'
-    fields:
-      - {name: title, label: Title, widget: string}
-      - {name: date, label: Publication date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ"}
-      - {name: cover, label: Cover photo, widget: image, choose_url: false, accept: "image/jpeg,image/png,image/webp,image/avif,image/gif"}
-      - {name: alt, label: Image description, widget: string}
-      - {name: caption, label: Caption, widget: string, required: false}
-      - {name: body, label: Article, widget: markdown}
-      - name: gallery
-        label: Additional photos
-        widget: list
-        required: false
-        fields:
-          - {name: image, label: Photo, widget: image, choose_url: false, accept: "image/jpeg,image/png,image/webp,image/avif,image/gif"}
-          - {name: alt, label: Image description, widget: string}
-          - {name: caption, label: Caption, widget: string, required: false}
-, 'Use lowercase letters, numbers and hyphens.']
+      pattern: ['^[a-z0-9]+(-[a-z0-9]+)*$', 'Use lowercase letters, numbers and hyphens.']
     preview_path: 'journal/{{slug}}/'
     fields:
       - {name: title, label: Title, widget: string}
