@@ -37,7 +37,7 @@
 }
 .story-card .journal-meta { margin-bottom: .65rem; }
 
-@media (hover: hover) and (pointer: fine) and (forced-colors: none) {
+@media (forced-colors: none) {
   body { cursor: url("media/fountain-pen-24.png") 2 22, auto; }
   :is(a[href], button:enabled, summary) {
     cursor: url("media/fountain-pen-27.png") 2 25, pointer;

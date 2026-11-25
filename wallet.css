@@ -59,14 +59,9 @@
 .wallet-card:focus-visible { outline: 0; }
 .wallet-card:focus-visible .wallet-tab { outline: 2px solid currentColor; outline-offset: -4px; border-radius: .5rem; }
 .wallet-card.is-leaving { z-index: 2; }
-@media (prefers-reduced-motion: no-preference) {
-  .wallet:focus-within .wallet-card { transform: translateY(calc((var(--i) - var(--cards)) * .24rem)); }
-  @media (hover:hover) and (pointer:fine) {
-    .wallet:hover .wallet-card { transform: translateY(calc((var(--i) - var(--cards)) * .24rem)); }
-    .wallet .wallet-card:hover { transform: translateY(calc((var(--i) - var(--cards)) * .24rem - .25rem)); }
-  }
-}
-.motion-off .wallet .wallet-card { transform: none; }
+.wallet:is(:hover,:focus-within) .wallet-card { transform: translateY(calc((var(--i) - var(--cards)) * .24rem)); }
+.wallet .wallet-card:is(:hover,:focus-visible) { transform: translateY(calc((var(--i) - var(--cards)) * .24rem - .25rem)); }
+@media (prefers-reduced-motion: reduce) { .wallet-card { transition: none; } }
 @media (max-width: 760px) {
   .wallet-landing { grid-template-columns: 1fr; gap: 1.6rem; padding-block: 1.5rem 2.5rem; min-height: auto; }
   .wallet-heading { padding: 0; }

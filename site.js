@@ -86,7 +86,6 @@ if (copy && navigator.clipboard?.writeText) {
 }
 
 const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
-const finePointer = matchMedia('(hover:hover) and (pointer:fine)');
 const stage = document.querySelector('.portrait-stage');
 const reactor = document.querySelector('.reactor-stage');
 if (reactor && 'IntersectionObserver' in window) {
@@ -166,11 +165,11 @@ function followPointer() {
   if (Math.abs(pointerX-ringX) + Math.abs(pointerY-ringY) > .4) cursorFrame = requestAnimationFrame(followPointer);
 }
 function movePortfolioCursor(event) {
-  if (event.pointerType !== 'mouse' || !finePointer.matches || !moving() || menu.open ||
+  if (event.pointerType !== 'mouse' || menu.open ||
       event.target.closest('input,textarea,video')) { hideCursor(); return; }
   pointerX = event.clientX; pointerY = event.clientY;
   ring.classList.toggle('over-control', Boolean(event.target.closest('button:enabled,a[href],summary')));
-  if (!root.classList.contains('cursor-visible')) { ringX = pointerX; ringY = pointerY; }
+  if (!moving() || !root.classList.contains('cursor-visible')) { ringX = pointerX; ringY = pointerY; }
   root.classList.add('cursor-visible');
   if (!cursorFrame) cursorFrame = requestAnimationFrame(followPointer);
 }
@@ -180,7 +179,6 @@ if (!document.querySelector('.journal-main')) {
 root.addEventListener('pointerleave', hideCursor);
 window.addEventListener('blur', hideCursor);
 document.addEventListener('keydown', hideCursor);
-finePointer.addEventListener('change', hideCursor);
 document.querySelectorAll('.quick-preview').forEach(details => {
   details.addEventListener('toggle', () => { if (!details.open) details.querySelector('video').pause(); });
 });

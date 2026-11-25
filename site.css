@@ -244,9 +244,12 @@ img { filter: grayscale(1); transition: filter .7s var(--ease), transform .7s va
 .cursor-ring { display: none; position: fixed; z-index: 9999; pointer-events: none; top: -8px; left: -8px; width: 16px; height: 16px; mix-blend-mode: difference; }
 .cursor-ring::before { content: ""; display: block; width: 100%; height: 100%; border: 1px solid #000; border-radius: 50%; background: #fff; transition: transform .55s var(--ease); }
 .cursor-ring.over-control::before { transform: scale(1.125); }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) and (forced-colors: none) {
+@media (forced-colors: none) {
+  body:not(:has(.journal-main)), body:not(:has(.journal-main)) :is(a[href], button, summary) {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Ccircle cx='8' cy='8' r='6' fill='white' stroke='black'/%3E%3C/svg%3E") 8 8, auto;
+  }
   .cursor-visible .cursor-ring { display: block; }
-  .cursor-visible, .cursor-visible * { cursor: none; }
+  .cursor-visible, .cursor-visible * { cursor: none !important; }
 }
 @keyframes letter-focus {
   from { opacity: 0; transform: translateY(.45em); filter: blur(.15em); }
