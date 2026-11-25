@@ -1,5 +1,5 @@
 import { journalPages } from './journal.mjs';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { reactorBackdrop } from './reactor.mjs';
@@ -87,29 +87,23 @@ function projectVideo(root, project) {
   </figure>`;
 }
 
-const certs = [
-  ['Introduction to Git', 'DataCamp', 'Oct 27, 2026', 'Statement of Accomplishment', 'Introduction to Git - DataCamp.png', 'a72439ba58bacfe98139735033e3a0d2277f347f'],
-  ['Introduction to Java', 'DataCamp', 'Oct 2026', 'Statement of Accomplishment', 'Introduction to Java - DataCamp.png', 'd7539cb2d500b06ca0e4951b307a67c7e36fbc05'],
-  ['Intermediate Java', 'DataCamp', 'Oct 18, 2026', 'Statement of Accomplishment', 'Intermediate Java - DataCamp.png', 'f50372de5d469cd20af304d108d699541bd97de9'],
-  ['Introduction to Object-Oriented Programming in Java', 'DataCamp', 'Oct 21, 2026', 'Statement of Accomplishment', 'Introduction to Object-Oriented Programming in Java - DataCamp.png', '33c6444b9933f51c07cb60959c070b3d3b35ebc5'],
-  ['C++ Programming Part 3', 'Project Tuklas Teknolohiya', 'Nov 10, 2026', 'Attendance', 'C++ Programming Part 3 - Tuklas.png'],
-  ['Java Programming Part 3 (Connecting to Database)', 'Project Tuklas Teknolohiya', 'Nov 9, 2026', 'Attendance', 'Java Programming Part 3 (Connecting to Database) - Tuklas.png'],
-  ['Basic SQL and Database Management', 'Project Tuklas Teknolohiya', 'Sep 26, 2026', 'Attendance', 'Basic SQL and Database Management - Tuklas.png'],
-  ['Basic Web Development (HTML & CSS)', 'Zuitt', 'Sep 2026', 'Participation', 'Basic Web Development (HTML & CSS) - Zuitt.png'],
-  ['Packet Capture: Beneath the Network CTF', 'CyberPH', 'Oct 26, 2026', 'Participation', 'Packet Capture Beneath the Network CTF - CyberPH.png'],
-];
+const certs = JSON.parse(readFileSync(new URL('./certifications/records.json', import.meta.url), 'utf8'));
+const html = value => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 
 function credentials(root) {
-  const issuers = [...new Set(certs.map(([, issuer]) => issuer))];
-  const anchor = (issuer) => issuer.toLowerCase().replaceAll(' ', '-');
+  const known = ['DataCamp', 'Project Tuklas Teknolohiya', 'Zuitt', 'CyberPH'];
+  const issuers = [...new Set([...known.filter(name => certs.some(cert => cert.issuer === name)), ...certs.map(cert => cert.issuer)])];
+  const anchor = issuer => encodeURIComponent(issuer.toLowerCase().replaceAll(' ', '-'));
+  const asset = path => html(root + encodePath(path.slice(1)));
   return `<div class="credential-index">
-    <nav aria-label="Certificate issuers"><p class="eyebrow">Issuers</p>${issuers.map(issuer => `<a href="#${anchor(issuer)}">${issuer}</a>`).join('')}</nav>
-    <div>${issuers.map(issuer => `<section class="issuer" id="${anchor(issuer)}">${blurHeading(issuer, { level: 2 })}<ul class="cert-list">${certs.filter(cert => cert[1] === issuer).map(([title, , date, type, image, id]) => {
-      const src = `${root}media/credentials/${encodePath(image)}`;
-      const label = title.replaceAll('&', '&amp;');
-      return `<li class="credential"><a class="cert-image" href="${src}" aria-label="View ${label} certificate"><img src="${src}" alt="" loading="lazy"></a>
-        <div><p class="eyebrow">${date}</p>${blurHeading(title)}<p>${type}</p>
-        <a class="text-link" href="${src}">View certificate</a>${id ? ` <a class="text-link" href="https://www.datacamp.com/completed/statement-of-accomplishment/course/${id}">Verify with DataCamp</a>` : ''}</div></li>`;
+    <nav aria-label="Certificate issuers"><p class="eyebrow">Issuers</p>${issuers.map(issuer => `<a href="#${encodeURIComponent(anchor(issuer))}">${html(issuer)}</a>`).join('')}</nav>
+    <div>${issuers.map(issuer => `<section class="issuer" id="${anchor(issuer)}">${blurHeading(issuer, { level: 2 })}<ul class="cert-list">${certs.filter(cert => cert.issuer === issuer).map(cert => {
+      const src = asset(cert.file);
+      const fullDate = cert.date.length === 10;
+      const date = new Date((fullDate ? cert.date : cert.date + '-01') + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', year: 'numeric', day: fullDate ? 'numeric' : undefined, timeZone: 'UTC' });
+      return `<li class="credential"><a class="cert-image" href="${src}" aria-label="View ${html(cert.title)} certificate"><img src="${asset(cert.thumbnail || cert.file)}" alt="" loading="lazy"></a>
+        <div><p class="eyebrow">${date}</p>${blurHeading(cert.title)}<p>${html(cert.type)}</p>
+        <a class="text-link" href="${src}">View certificate</a>${cert.verification ? ` <a class="text-link" href="${html(cert.verification)}">Verify with ${html(cert.issuer)}</a>` : ''}</div></li>`;
     }).join('')}</ul></section>`).join('')}</div></div>`;
 }
 

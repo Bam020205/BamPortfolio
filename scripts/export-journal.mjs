@@ -20,7 +20,7 @@ for (const file of files) {
   const slug = file.slice(0,-3);
   const markdown = readFileSync(privateFile('entries/'+file),'utf8');
   const entry = parseEntry(markdown,slug);
-  for (const path of [entry.cover,...(entry.gallery ?? []).map(item=>item.image)]) {
+  for (const path of entry.images) {
     const dest = path.slice(1);
     if (dest.startsWith('media/journal/')) {
       mkdirSync(dirname(dest),{recursive:true});

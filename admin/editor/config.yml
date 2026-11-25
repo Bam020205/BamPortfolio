@@ -36,7 +36,33 @@ collections:
       - {name: cover, label: Cover photo, widget: image, choose_url: false, accept: "image/jpeg,image/png,image/webp,image/avif,image/gif"}
       - {name: alt, label: Image description, widget: string}
       - {name: caption, label: Caption, widget: string, required: false}
-      - {name: body, label: Article, widget: markdown, editor_components: []}
+      - {name: body, label: Opening text, required: false, widget: markdown, editor_components: []}
+      - name: sections
+        label: Article sections
+        widget: list
+        required: false
+        types:
+          - name: text
+            label: Text
+            widget: object
+            fields:
+              - &passage {name: text, label: Paragraphs, widget: text}
+          - name: image
+            label: Image between paragraphs
+            widget: object
+            fields:
+              - &photo {name: image, label: Photo, widget: image, choose_url: false, accept: "image/jpeg,image/png,image/webp,image/avif,image/gif"}
+              - &alt {name: alt, label: Image description, widget: string}
+              - &caption {name: caption, label: Caption, widget: string, required: false}
+          - name: paired
+            label: Text beside image
+            widget: object
+            fields:
+              - *passage
+              - *photo
+              - *alt
+              - *caption
+              - {name: side, label: Image position, widget: select, options: [left, right], default: right}
       - name: gallery
         label: Additional photos
         widget: list
@@ -45,3 +71,26 @@ collections:
           - {name: image, label: Photo, widget: image, choose_url: false, accept: "image/jpeg,image/png,image/webp,image/avif,image/gif"}
           - {name: alt, label: Image description, widget: string}
           - {name: caption, label: Caption, widget: string, required: false}
+  - name: certificates
+    label: Certifications
+    label_singular: Certificate
+    folder: certificates
+    extension: json
+    format: json
+    create: true
+    media_folder: /media/credentials
+    public_folder: /media/credentials
+    preview_path: certifications/
+    summary: '{{title}} · {{issuer}}'
+    fields:
+      - {name: title, label: Certificate title, widget: string}
+      - {name: issuer, label: Issuer, widget: string}
+      - name: date
+        label: Completion date
+        widget: string
+        hint: Enter YYYY-MM or YYYY-MM-DD.
+        pattern: ['^[0-9]{4}-(0[1-9]|1[0-2])(-(0[1-9]|[12][0-9]|3[01]))?$', 'Use a month or full date.']
+      - {name: type, label: Certificate type, widget: string, default: Statement of Accomplishment}
+      - {name: file, label: Certificate image or PDF, widget: file, choose_url: false, accept: "application/pdf,image/png,image/jpeg,image/webp,image/avif,image/gif"}
+      - {name: credential_id, label: Credential ID, widget: string, required: false}
+      - {name: verification, label: Verification URL, widget: string, required: false, pattern: ['^https?://[^ ]+$', 'Enter a full verification link.']}

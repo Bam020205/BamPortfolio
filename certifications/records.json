@@ -1,0 +1,83 @@
+[
+  {
+    "title": "C++ Programming Part 3",
+    "issuer": "Project Tuklas Teknolohiya",
+    "type": "Attendance",
+    "date": "2026-11-10",
+    "file": "/media/credentials/C++ Programming Part 3 - Tuklas.png"
+  },
+  {
+    "title": "Java Programming Part 3 (Connecting to Database)",
+    "issuer": "Project Tuklas Teknolohiya",
+    "type": "Attendance",
+    "date": "2026-11-09",
+    "file": "/media/credentials/Java Programming Part 3 (Connecting to Database) - Tuklas.png"
+  },
+  {
+    "title": "Intermediate SQL",
+    "issuer": "DataCamp",
+    "type": "Statement of Accomplishment",
+    "date": "2026-11",
+    "file": "/media/credentials/intermediate-sql.pdf",
+    "credential_id": "e2b4ba5b9b61aba3234848118f727a7b8c1b3c8d",
+    "verification": "https://www.datacamp.com/completed/statement-of-accomplishment/course/e2b4ba5b9b61aba3234848118f727a7b8c1b3c8d",
+    "thumbnail": "/media/certificate-previews/intermediate-sql.png"
+  },
+  {
+    "title": "Introduction to Git",
+    "issuer": "DataCamp",
+    "type": "Statement of Accomplishment",
+    "date": "2026-10-27",
+    "file": "/media/credentials/Introduction to Git - DataCamp.png",
+    "credential_id": "a72439ba58bacfe98139735033e3a0d2277f347f",
+    "verification": "https://www.datacamp.com/completed/statement-of-accomplishment/course/a72439ba58bacfe98139735033e3a0d2277f347f"
+  },
+  {
+    "title": "Packet Capture: Beneath the Network CTF",
+    "issuer": "CyberPH",
+    "type": "Participation",
+    "date": "2026-10-26",
+    "file": "/media/credentials/Packet Capture Beneath the Network CTF - CyberPH.png"
+  },
+  {
+    "title": "Introduction to Object-Oriented Programming in Java",
+    "issuer": "DataCamp",
+    "type": "Statement of Accomplishment",
+    "date": "2026-10-21",
+    "file": "/media/credentials/Introduction to Object-Oriented Programming in Java - DataCamp.png",
+    "credential_id": "33c6444b9933f51c07cb60959c070b3d3b35ebc5",
+    "verification": "https://www.datacamp.com/completed/statement-of-accomplishment/course/33c6444b9933f51c07cb60959c070b3d3b35ebc5"
+  },
+  {
+    "title": "Intermediate Java",
+    "issuer": "DataCamp",
+    "type": "Statement of Accomplishment",
+    "date": "2026-10-18",
+    "file": "/media/credentials/Intermediate Java - DataCamp.png",
+    "credential_id": "f50372de5d469cd20af304d108d699541bd97de9",
+    "verification": "https://www.datacamp.com/completed/statement-of-accomplishment/course/f50372de5d469cd20af304d108d699541bd97de9"
+  },
+  {
+    "title": "Introduction to Java",
+    "issuer": "DataCamp",
+    "type": "Statement of Accomplishment",
+    "date": "2026-10",
+    "file": "/media/credentials/Introduction to Java - DataCamp.png",
+    "credential_id": "d7539cb2d500b06ca0e4951b307a67c7e36fbc05",
+    "verification": "https://www.datacamp.com/completed/statement-of-accomplishment/course/d7539cb2d500b06ca0e4951b307a67c7e36fbc05"
+  },
+  {
+    "title": "Basic SQL and Database Management",
+    "issuer": "Project Tuklas Teknolohiya",
+    "type": "Attendance",
+    "date": "2026-09-26",
+    "file": "/media/credentials/Basic SQL and Database Management - Tuklas.png"
+  },
+  {
+    "title": "Basic Web Development (HTML & CSS)",
+    "issuer": "Zuitt",
+    "type": "Participation",
+    "date": "2026-09",
+    "file": "/media/credentials/Basic Web Development (HTML & CSS) - Zuitt.png"
+  }
+]
