@@ -2,31 +2,124 @@ const menu = document.querySelector('#menu');
 const toggle = document.querySelector('.menu-toggle');
 
 if (typeof menu.showModal === 'function') {
+  const screen = menu.querySelector('.phone-screen');
+  const lock = menu.querySelector('.phone-lock');
+  const apps = menu.querySelector('.phone-apps');
+  const home = menu.querySelector('.phone-home');
+  const light = menu.querySelector('.flashlight');
+  const camera = menu.querySelector('.camera');
+  const memory = menu.querySelector('.phone-memory');
+  const photo = memory.querySelector('img');
+  const flash = menu.querySelector('.phone-flash');
+  const boot = menu.querySelector('.phone-boot');
+  const clock = menu.querySelector('.phone-time');
+  const date = menu.querySelector('.phone-date');
+  const timeFormat = new Intl.DateTimeFormat(undefined, {hour:'numeric',minute:'2-digit'});
+  const dateFormat = new Intl.DateTimeFormat(undefined, {weekday:'short',month:'short',day:'numeric'});
+  let clockTimer, bootTimer, photoTimer, session = 0;
+  let busy = false;
+  function syncClock() {
+    clearTimeout(clockTimer);
+    if (!menu.open) return;
+    const now = new Date();
+    clock.textContent = timeFormat.formatToParts(now).filter(p => ['hour','minute','literal'].includes(p.type)).map(p => p.value).join('').trim();
+    clock.dateTime = now.toISOString();
+    clock.setAttribute('aria-label', timeFormat.format(now));
+    date.textContent = dateFormat.format(now);
+    clockTimer = setTimeout(syncClock, 60000 - now.getTime() % 60000);
+  }
+  function setTheme(dark) {
+    screen.dataset.theme = dark ? 'dark' : 'light';
+    light.setAttribute('aria-pressed', String(dark));
+  }
+  function showApps(open, focus = true) {
+    screen.dataset.view = open ? 'apps' : 'lock';
+    lock.hidden = open;
+    apps.hidden = !open;
+    home.querySelector('span').textContent = open ? 'Lock screen' : 'Open menu';
+    if (focus) (open ? apps.querySelector('a') : home).focus({preventScroll:true});
+  }
+  function finishBoot() {
+    boot.hidden = true;
+    lock.inert = false;
+    home.inert = false;
+  }
+  function closePhone() {
+    if (menu.open) menu.close();
+  }
   toggle.hidden = false;
   document.documentElement.classList.add('has-menu');
   toggle.addEventListener('click', () => {
     hideCursor();
+    let dark = false;
+    try { dark = localStorage.getItem('portfolio-phone-theme') === 'dark'; } catch {}
+    setTheme(dark);
+    showApps(false, false);
+    const animateBoot = moving();
+    boot.hidden = !animateBoot;
+    lock.inert = home.inert = animateBoot;
     menu.showModal();
-    toggle.setAttribute('aria-expanded', 'true');
+    if (!photo.hasAttribute('src')) photo.src = photo.dataset.src;
+    syncClock();
+    toggle.setAttribute('aria-expanded','true');
+    if (animateBoot) bootTimer = setTimeout(finishBoot, 780);
   });
-  function closePhone() {
-    if (menu.getAnimations().some(animation => animation.id === 'closing')) return;
-    if (!menu.animate || matchMedia('(prefers-reduced-motion:reduce)').matches || document.body.classList.contains('motion-off')) {
-      menu.close();
-      return;
-    }
-    const exit = menu.animate([{ opacity:1, transform:'scale(1)' },{ opacity:0, transform:'scale(.88)' }], { duration:350, easing:'cubic-bezier(.16,1,.3,1)', id:'closing' });
-    exit.onfinish = () => menu.close();
-  }
-  menu.querySelector('.menu-close').addEventListener('click', closePhone);
-  menu.querySelector('.home-bar').addEventListener('click', closePhone);
-  menu.addEventListener('cancel', event => { event.preventDefault(); closePhone(); });
-  let startY;
-  menu.addEventListener('touchstart', event => { startY = event.touches[0].clientY; }, {passive:true});
-  menu.addEventListener('touchend', event => {
-    if (event.changedTouches[0].clientY - startY > 75 && !menu.scrollTop) closePhone();
+  light.addEventListener('click', () => {
+    setTheme(screen.dataset.theme !== 'dark');
+    try { localStorage.setItem('portfolio-phone-theme',screen.dataset.theme); } catch {}
+  });
+  camera.addEventListener('click', async () => {
+    if (busy) return;
+    const opened = session;
+    busy = true;
+    try {
+      await photo.decode();
+      if (opened !== session || !menu.open) return;
+      memory.hidden = false;
+      if (moving()) flash.animate([{opacity:1},{opacity:0}], {duration:150,easing:'ease-out'});
+      photoTimer = setTimeout(async () => {
+        if (moving()) {
+          try { await memory.animate([{opacity:1},{opacity:0}], {duration:300,easing:'ease-out'}).finished; } catch {}
+        }
+        if (opened === session) {
+          memory.hidden = true;
+          busy = false;
+        }
+      }, moving() ? 1650 : 1500);
+    } catch { if (opened === session) busy = false; }
+  });
+  home.addEventListener('click', () => { if (!busy) showApps(apps.hidden); });
+  menu.querySelector('.phone-close').addEventListener('click',closePhone);
+  menu.addEventListener('click', event => {
+    if (event.target !== menu) return;
+    const bounds = menu.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closePhone();
+  });
+  let touchStart;
+  screen.addEventListener('touchstart', event => {
+    touchStart = event.touches.length === 1 ? event.touches[0] : null;
   }, {passive:true});
-  menu.addEventListener('close', () => toggle.setAttribute('aria-expanded', 'false'));
+  screen.addEventListener('touchend', event => {
+    if (!touchStart || busy || !boot.hidden || !apps.hidden) return;
+    const end = event.changedTouches[0];
+    const dy = end.clientY - touchStart.clientY;
+    if (Math.abs(dy) > 60 && Math.abs(dy) > Math.abs(end.clientX - touchStart.clientX)) {
+      if (dy < 0) showApps(true); else closePhone();
+    }
+    touchStart = null;
+  }, {passive:true});
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && menu.open) syncClock(); });
+  menu.addEventListener('close', () => {
+    session++;
+    clearTimeout(clockTimer);
+    clearTimeout(bootTimer);
+    clearTimeout(photoTimer);
+    for (const el of [memory,flash]) el.getAnimations().forEach(a => a.cancel());
+    finishBoot();
+    memory.hidden = true;
+    busy = false;
+    toggle.setAttribute('aria-expanded','false');
+  });
 }
 
 if ('IntersectionObserver' in window && matchMedia('(prefers-reduced-motion: no-preference)').matches) {

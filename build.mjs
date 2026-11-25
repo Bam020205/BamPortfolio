@@ -322,10 +322,25 @@ for (const [route, title, description, render] of pages) {
     <nav class="desktop-nav" aria-label="Main navigation">${navLinks}</nav>
     <button class="menu-toggle" type="button" aria-haspopup="dialog" aria-controls="menu" aria-expanded="false" hidden>Menu <span aria-hidden="true">+</span></button>
   </header>
-  <dialog id="menu" aria-label="Site menu">
-    <div class="menu-head"><span class="brand"><i aria-hidden="true">as</i> Abram Seneca</span><button type="button" class="menu-close" autofocus>Close <span aria-hidden="true">×</span></button></div>
-    <nav aria-label="Portfolio apps">${navLinks}</nav>
-    <button type="button" class="home-bar" aria-label="Close menu"></button>
+  <dialog id="menu" aria-label="Portfolio phone">
+    <div class="phone-screen" data-view="lock">
+      <div class="phone-wallpaper" aria-hidden="true"></div>
+      <div class="phone-status"><span aria-hidden="true">Abram Seneca</span><i class="phone-island" aria-hidden="true"></i>
+        <button type="button" class="phone-close" aria-label="Close phone" autofocus><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10m0-10L7 17"/></svg></button>
+      </div>
+      <div class="phone-lock">
+        <div class="phone-clock"><span class="phone-date"></span><time class="phone-time"></time></div>
+        <div class="phone-actions">
+          <button type="button" class="glass-key flashlight" aria-label="Dark phone theme" aria-pressed="false" title="Switch phone theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v3H7zM8 8h8l-2 4v8a2 2 0 0 1-4 0v-8z"/><circle cx="12" cy="15" r=".85"/></svg></button>
+          <button type="button" class="glass-key camera" aria-label="Show sunset photo" title="Show sunset photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13" r="3.2"/></svg></button>
+        </div>
+      </div>
+      <div class="phone-apps" hidden><h2>Portfolio</h2><nav aria-label="Portfolio apps">${navLinks}</nav></div>
+      <button class="phone-home" type="button"><span>Open menu</span><i aria-hidden="true"></i></button>
+      <div class="phone-memory" hidden><img data-src="${root}media/phone-sunset.jpg" alt="A sunset together on the boat"></div>
+      <div class="phone-flash" aria-hidden="true"></div>
+      <div class="phone-boot" hidden aria-hidden="true"><span>as</span><i></i></div>
+    </div>
   </dialog>
   <div class="cursor-ring" aria-hidden="true"></div>
   <main id="main" tabindex="-1" class="${isJournal ? 'journal-main' : 'reactor-stage'} ${route === 'about' ? 'about-stage' : route ? 'reading-stage' : ''}">${isJournal ? '' : reactorBackdrop()}${render(root)}</main>
