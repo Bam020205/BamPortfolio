@@ -107,7 +107,7 @@ body:has(dialog[open]) { overflow: hidden; }
   filter:invert(1) hue-rotate(180deg) brightness(.84); opacity:0;
 }
 .phone-screen[data-theme="dark"] .phone-wallpaper::after { opacity:1; }
-.phone-screen[data-view="apps"] .phone-wallpaper { opacity:.44; }
+.phone-screen[data-view="apps"] > .phone-wallpaper { opacity:.44; }
 .phone-status { position:absolute; inset:0 6% auto; height:9%; min-height:38px; display:flex; align-items:center; justify-content:space-between; z-index:3; font-size:.73rem; font-weight:650; }
 .phone-status > span { margin-left:.3rem; letter-spacing:.035em; }
 .phone-island { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:27%; height:1.3rem; background:#090909; border-radius:2rem; box-shadow:inset 0 1px 2px #333; }
@@ -115,6 +115,13 @@ body:has(dialog[open]) { overflow: hidden; }
 .phone-close { width:44px; height:44px; display:grid; place-items:center; color:inherit; }
 .phone-screen button svg { width:1.45rem; height:1.45rem; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linejoin:round; stroke-linecap:round; }
 .phone-close svg { width:1.05rem !important; }
+.phone-lock {
+  position:absolute; inset:0; z-index:2; isolation:isolate; overflow:hidden;
+  border-radius:inherit; background:var(--paper); box-shadow:0 6px 18px #0002;
+}
+.phone-screen[data-view="lock"] { touch-action:none; user-select:none; }
+.phone-home { z-index:2; }
+.phone-screen[data-unlocking] .phone-apps { overflow:visible; pointer-events:none; }
 .phone-clock { position:absolute; top:12%; width:100%; text-align:center; color:var(--clock-ink); }
 .phone-date { display:block; font-size:clamp(.95rem,5.4cqw,1.22rem); font-weight:600; }
 .phone-time { display:block; font:520 34cqw/.95 Inter,Arial,sans-serif; font-variant-numeric:tabular-nums; letter-spacing:-.085em; padding-right:.085em; transform:scale(.99,1.62); transform-origin:top; text-shadow:0 1px 1px #fff6; }

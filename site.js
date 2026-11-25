@@ -68,7 +68,7 @@ if (typeof menu.showModal === 'function') {
     setTheme(screen.dataset.theme !== 'dark');
     try { localStorage.setItem('portfolio-phone-theme',screen.dataset.theme); } catch {}
   });
-  const wallpaper = screen.querySelector('.phone-wallpaper');
+  const wallpaper = lock.querySelector('.phone-wallpaper');
   const clockFace = screen.querySelector('.phone-clock');
   const statusBar = screen.querySelector('.phone-status');
   const glyph = camera.querySelector('svg').cloneNode(true);
@@ -157,7 +157,147 @@ if (typeof menu.showModal === 'function') {
     event.preventDefault();
     dismissCamera();
   });
-  home.addEventListener('click', () => { if (!preview) showApps(apps.hidden); });
+  // Scrub the same timeline with a finger, a mouse, or the Open menu button.
+  const sheetEnd = .72;
+  const duration = 560;
+  const links = Array.from(apps.querySelectorAll('nav a'));
+  let transition = null;
+  let drag = null;
+  let settleFrame = 0;
+  let suppressClick = false;
+
+  function clearTransition() {
+    cancelAnimationFrame(settleFrame);
+    if (transition) {
+      for (const effect of transition.effects) effect.cancel();
+      transition = null;
+    }
+    delete screen.dataset.unlocking;
+    apps.inert = false;
+    lock.inert = false;
+  }
+
+  function beginTransition() {
+    if (transition) return;
+    const fromApps = screen.dataset.view === 'apps';
+    const height = screen.clientHeight;
+    transition = {progress:fromApps ? 1 : 0, effects:[]};
+    lock.hidden = apps.hidden = false;
+    apps.inert = lock.inert = true;
+    screen.dataset.unlocking = '';
+    function track(element, frames) {
+      const effect = element.animate(frames, {duration, fill:'both'});
+      effect.pause();
+      transition.effects.push(effect);
+    }
+    track(lock, [
+      {transform:'translateY(0)'}, {offset:sheetEnd, transform:'translateY(-101%)'},
+      {transform:'translateY(-101%)'}
+    ]);
+    track(home, [
+      {translate:'0 0',opacity:1}, {offset:sheetEnd,translate:'0 -' + height + 'px',opacity:0},
+      {offset:.73,translate:'0 8px',opacity:0}, {translate:'0 0',opacity:1}
+    ]);
+    track(screen.querySelector(':scope > .phone-wallpaper'), [
+      {filter:'brightness(.68)',opacity:1}, {offset:.55,filter:'brightness(.76) blur(2px)',opacity:1},
+      {filter:'brightness(1) blur(0)',opacity:.44}
+    ]);
+    track(apps.querySelector('nav'), [
+      {transform:'scale(1.95)'}, {offset:.60,transform:'scale(1.95)',easing:'cubic-bezier(.15,.75,.25,1)'},
+      {transform:'scale(1)'}
+    ]);
+    track(apps.querySelector('h2'), [{opacity:0},{offset:.72,opacity:0},{opacity:1}]);
+    links.forEach((link,index) => {
+      const start = .59 + (index % 3) * .012 + Math.floor(index / 3) * .02;
+      track(link, [
+        {opacity:0,transform:'scale(1.12)'}, {offset:start,opacity:0},
+        {offset:start+.14,opacity:1}, {opacity:1,transform:'scale(1)'}
+      ]);
+    });
+    scrub(transition.progress);
+  }
+
+  function scrub(progress) {
+    transition.progress = Math.max(0, Math.min(1, progress));
+    for (const effect of transition.effects) effect.currentTime = transition.progress * duration;
+    const label = transition.progress > sheetEnd ? 'Lock screen' : 'Open menu';
+    if (home.firstElementChild.textContent !== label) home.firstElementChild.textContent = label;
+  }
+
+  function settle(open) {
+    cancelAnimationFrame(settleFrame);
+    const finish = () => {
+      clearTransition();
+      showApps(open);
+    };
+    if (!moving()) { finish(); return; }
+    beginTransition();
+    const start = transition.progress;
+    const target = open ? 1 : 0;
+    const time = Math.max(130, duration * Math.abs(target - start));
+    const began = performance.now();
+    function tick(now) {
+      const fraction = Math.min(1, (now - began) / time);
+      scrub(start + (target - start) * (1 - (1 - fraction) ** 2));
+      if (fraction < 1) settleFrame = requestAnimationFrame(tick);
+      else finish();
+    }
+    settleFrame = requestAnimationFrame(tick);
+  }
+
+  home.addEventListener('click', () => {
+    if (!preview && !transition) settle(screen.dataset.view === 'lock');
+  });
+  screen.addEventListener('click', event => {
+    if (event.detail && suppressClick) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }, true);
+  screen.addEventListener('pointerdown', event => {
+    if (!event.isPrimary || event.button !== 0) return;
+    suppressClick = false;
+    if (!boot.hidden || preview || transition || screen.dataset.view !== 'lock') return;
+    const control = event.target.closest('button, a');
+    if (control && control !== home) return;
+    drag = {id:event.pointerId, x:event.clientX, y:event.clientY, moved:false,
+      height:screen.clientHeight, lastY:event.clientY, lastTime:event.timeStamp, velocity:0};
+  });
+  screen.addEventListener('pointermove', event => {
+    if (!drag || drag.id !== event.pointerId) return;
+    if (!event.buttons) { endDrag(event,true); return; }
+    const lift = drag.y - event.clientY;
+    if (!drag.moved) {
+      if (Math.abs(lift) < 5 || Math.abs(lift) < Math.abs(event.clientX - drag.x)) return;
+      drag.moved = true;
+      screen.setPointerCapture(event.pointerId);
+    }
+    drag.velocity = (drag.lastY - event.clientY) / Math.max(1,event.timeStamp - drag.lastTime);
+    drag.lastY = event.clientY;
+    drag.lastTime = event.timeStamp;
+    if (moving() && (lift > 0 || transition)) {
+      beginTransition();
+      scrub(sheetEnd * lift / drag.height);
+    }
+  });
+  function endDrag(event, cancelled) {
+    if (!drag || drag.id !== event.pointerId) return;
+    const gesture = drag;
+    drag = null;
+    if (!gesture.moved) return;
+    suppressClick = true;
+    if (screen.hasPointerCapture(event.pointerId)) screen.releasePointerCapture(event.pointerId);
+    const lift = gesture.y - event.clientY;
+    if (!cancelled && lift < -70) { closePhone(); return; }
+    const flick = lift > 24 && gesture.velocity > .42 && event.timeStamp - gesture.lastTime < 110;
+    const open = !cancelled && (lift > Math.min(115, gesture.height * .25) || flick);
+    if (open || transition) settle(open);
+  }
+  screen.addEventListener('pointerup', event => endDrag(event,false));
+  screen.addEventListener('pointercancel', event => endDrag(event,true));
+  screen.addEventListener('lostpointercapture', event => {
+    if (event.target === screen) endDrag(event,true);
+  });
   menu.querySelector('.phone-close').addEventListener('click',closePhone);
   menu.addEventListener('click', event => {
     if (event.target !== menu) return;
@@ -166,22 +306,22 @@ if (typeof menu.showModal === 'function') {
   });
   let touchStart;
   screen.addEventListener('touchstart', event => {
-    touchStart = event.touches.length === 1 ? event.touches[0] : null;
+    touchStart = preview && event.touches.length === 1 ? event.touches[0] : null;
   }, {passive:true});
   screen.addEventListener('touchend', event => {
     if (!touchStart || !boot.hidden || !apps.hidden) return;
     const end = event.changedTouches[0];
     const dy = end.clientY - touchStart.clientY;
     if (Math.abs(dy) > 60 && Math.abs(dy) > Math.abs(end.clientX - touchStart.clientX)) {
-      if (preview) {
-        if (dy > 0) dismissCamera();
-      } else if (dy < 0) showApps(true);
-      else closePhone();
+      if (preview && dy > 0) dismissCamera();
     }
     touchStart = null;
   }, {passive:true});
   document.addEventListener('visibilitychange', () => { if (!document.hidden && menu.open) syncClock(); });
   menu.addEventListener('close', () => {
+    drag = null;
+    suppressClick = false;
+    clearTransition();
     resetCamera(false);
     clearTimeout(clockTimer);
     clearTimeout(bootTimer);
