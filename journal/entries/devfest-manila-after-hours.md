@@ -1,5 +1,6 @@
 ---
 title: What I took home from DevFest Manila After Hours
+category: Event
 date: '2026-11-24T09:01:00+08:00'
 cover: /media/devfest/stage.webp
 alt: Attendees gathering in front of the DevFest Manila After Hours stage

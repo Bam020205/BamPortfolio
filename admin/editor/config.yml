@@ -27,6 +27,11 @@ collections:
     preview_path: 'journal/{{slug}}/'
     fields:
       - {name: title, label: Title, widget: string}
+      - name: category
+        label: Category
+        widget: select
+        default: Article
+        options: [Article, Event, Devotion, Career, Workshop, Reflection, Campus Life, Project Notes]
       - {name: date, label: Publication date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ"}
       - {name: cover, label: Cover photo, widget: image, choose_url: false, accept: "image/jpeg,image/png,image/webp,image/avif,image/gif"}
       - {name: alt, label: Image description, widget: string}

@@ -1,5 +1,6 @@
 ---
 title: Behind the lens at Hacktoberfest 2026
+category: Event
 date: '2026-11-24T09:00:00+08:00'
 cover: /media/hacktoberfest/workshop.webp
 alt: Hacktoberfest participants working together at laptops

@@ -1,5 +1,6 @@
 ---
 title: A New Opportunity to Grow
+category: Career
 date: 2026-10-12T20:23:00+08:00
 cover: /media/journal/datacamp.png
 alt: DataCamp Logo
