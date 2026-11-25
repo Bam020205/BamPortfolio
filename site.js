@@ -165,15 +165,18 @@ function followPointer() {
   ring.style.transform = 'translate(' + ringX + 'px,' + ringY + 'px)';
   if (Math.abs(pointerX-ringX) + Math.abs(pointerY-ringY) > .4) cursorFrame = requestAnimationFrame(followPointer);
 }
-document.addEventListener('pointermove', event => {
+function movePortfolioCursor(event) {
   if (event.pointerType !== 'mouse' || !finePointer.matches || !moving() || menu.open ||
       event.target.closest('input,textarea,video')) { hideCursor(); return; }
   pointerX = event.clientX; pointerY = event.clientY;
-  ring.classList.toggle('over-control', Boolean(event.target.closest('button,a,summary')));
+  ring.classList.toggle('over-control', Boolean(event.target.closest('button:enabled,a[href],summary')));
   if (!root.classList.contains('cursor-visible')) { ringX = pointerX; ringY = pointerY; }
   root.classList.add('cursor-visible');
   if (!cursorFrame) cursorFrame = requestAnimationFrame(followPointer);
-}, { passive:true });
+}
+if (!document.querySelector('.journal-main')) {
+  document.addEventListener('pointermove', movePortfolioCursor, {passive:true});
+}
 root.addEventListener('pointerleave', hideCursor);
 window.addEventListener('blur', hideCursor);
 document.addEventListener('keydown', hideCursor);

@@ -241,10 +241,10 @@ img { filter: grayscale(1); transition: filter .7s var(--ease), transform .7s va
 .footer-base span:first-child { margin-right: auto; }
 .footer-base button { text-decoration: underline; text-underline-offset: .25em; }
 
-.cursor-ring { display: none; position: fixed; z-index: 9999; pointer-events: none; top: -16px; left: -16px; width: 32px; height: 32px; mix-blend-mode: difference; }
+.cursor-ring { display: none; position: fixed; z-index: 9999; pointer-events: none; top: -8px; left: -8px; width: 16px; height: 16px; mix-blend-mode: difference; }
 .cursor-ring::before { content: ""; display: block; width: 100%; height: 100%; border: 1px solid #000; border-radius: 50%; background: #fff; transition: transform .55s var(--ease); }
-.cursor-ring.over-control::before { transform: scale(2.5); }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+.cursor-ring.over-control::before { transform: scale(1.125); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) and (forced-colors: none) {
   .cursor-visible .cursor-ring { display: block; }
   .cursor-visible, .cursor-visible * { cursor: none; }
 }
