@@ -84,11 +84,17 @@ body:has(dialog[open]) { overflow: hidden; }
   position: fixed; inset: .8rem var(--gutter) auto auto; margin: 0; width: min(21rem, calc(100vw - 2rem));
   height: min(32rem, calc(100dvh - 1.6rem)); max-height: calc(100dvh - 1.6rem); overflow: auto;
   padding: 2.2rem 1.25rem 1rem; border: 1px solid #111; border-radius: 2.6rem;
-  color: #000; background: #fafafa; box-shadow: inset 0 0 0 4px #151515, 0 1.25rem 4rem #0003;
+  color: #111;
+  background:
+    linear-gradient(125deg, transparent 16%, #ffffffa8 29%, #ffffff70 32%, transparent 33%),
+    linear-gradient(150deg, #fffffff2 4%, #e3e7eade 48%, #cbd1d7e8 74%, #fbfcfdf2);
+  backdrop-filter: blur(18px) saturate(1.15);
+  box-shadow: inset 0 0 0 1px #fffc, inset 0 0 0 4px #35383c,
+    inset 0 0 0 5px #f6f8fa, inset 0 7px 12px #fffa, 0 1.25rem 4rem #0004;
   transform-origin: 95% 0;
 }
 #menu[open] { display: flex; flex-direction: column; }
-#menu::before { content: ""; position: absolute; top: .65rem; left: 39%; width: 22%; height: .55rem; border-radius: 1rem; background: #111; }
+#menu::before { content: ""; position: absolute; top: .65rem; left: 39%; width: 22%; height: .55rem; border-radius: 1rem; background: linear-gradient(#494c50, #111 65%); box-shadow: 0 1px 0 #fffd; }
 #menu::backdrop { backdrop-filter: blur(5px); background: #0004; }
 .menu-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: .55rem; border-bottom: 1px solid var(--line); }
 .menu-head .brand { font-size: 1rem; letter-spacing: -.04em; }
@@ -98,7 +104,11 @@ body:has(dialog[open]) { overflow: hidden; }
 #menu nav a[aria-current] { text-decoration: underline; }
 .app-icon { display: grid; place-items: center; width: 3.35rem; height: 3.35rem; border: 1px solid #0002; border-radius: 1rem; background: #eee; transition: transform .55s var(--ease), background-color .55s var(--ease); }
 .app-icon svg { width: 1.6rem; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-#menu nav a[aria-current] .app-icon { background: #161616; color: #fff; }
+#menu .app-icon {
+  background: linear-gradient(155deg, #fff 2%, #f2f4f6 45%, #d9dee2 49%, #e9ecef 100%);
+  box-shadow: inset 0 1px 0 #fff, 0 2px 4px #17202a20;
+}
+#menu nav a[aria-current] .app-icon { background: linear-gradient(155deg, #555b60, #35393d 45%, #181b1e 49%, #282c30); color: #fff; }
 #menu nav a:is(:hover,:focus-visible) .app-icon { transform: translateY(-3px); }
 .home-bar { display: grid; place-items: center; width: 6rem; min-height: 2rem; margin: auto auto 0; }
 .home-bar::after { content: ""; width: 4.8rem; height: .25rem; border-radius: 1rem; background: #111; }
@@ -242,11 +252,14 @@ img { filter: grayscale(1); transition: filter .7s var(--ease), transform .7s va
 .footer-base button { text-decoration: underline; text-underline-offset: .25em; }
 
 .cursor-ring { display: none; position: fixed; z-index: 9999; pointer-events: none; top: -8px; left: -8px; width: 16px; height: 16px; mix-blend-mode: difference; }
-.cursor-ring::before { content: ""; display: block; width: 100%; height: 100%; border: 1px solid #000; border-radius: 50%; background: #fff; transition: transform .55s var(--ease); }
-.cursor-ring.over-control::before { transform: scale(1.125); }
+.cursor-ring::before { content: ""; display: block; width: 100%; height: 100%; border: 1px solid #000; border-radius: 50%; background: #fff; transition: transform .18s var(--ease); }
+.cursor-ring.over-control::before { transform: scale(1.5); }
 @media (forced-colors: none) {
-  body:not(:has(.journal-main)), body:not(:has(.journal-main)) :is(a[href], button, summary) {
+  body:not(:has(.journal-main)) {
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Ccircle cx='8' cy='8' r='6' fill='white' stroke='black'/%3E%3C/svg%3E") 8 8, auto;
+  }
+  body:not(:has(.journal-main)) :is(a[href], button:enabled, summary) {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='12' cy='12' r='9' fill='white' stroke='black'/%3E%3C/svg%3E") 12 12, pointer;
   }
   .cursor-visible .cursor-ring { display: block; }
   .cursor-visible, .cursor-visible * { cursor: none !important; }
