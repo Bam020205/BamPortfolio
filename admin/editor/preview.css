@@ -1,0 +1,10 @@
+.portfolio-preview { padding: 1rem; overflow-wrap: anywhere; }
+.preview-part { padding: 1rem 0 2rem; }
+.preview-label { margin: 0 0 1rem; padding: .5rem 0; border-bottom: 1px solid #aaa; font: 600 .85rem system-ui, sans-serif; }
+.portfolio-preview .work-grid { grid-template-columns: 1fr; }
+.portfolio-preview .photo-run { max-width: 100%; overflow-x: auto; margin-top: 1rem; }
+.portfolio-preview .photo-card { flex-shrink: 0; }
+.portfolio-preview .section { padding-block: 1.25rem; }
+.portfolio-preview .reveal { opacity: 1; transform: none; }
+.portfolio-preview .dark { background: #151515; color: #fff; }
+.portfolio-preview .dark p { color: inherit; }

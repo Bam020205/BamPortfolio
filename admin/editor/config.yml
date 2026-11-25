@@ -7,8 +7,8 @@ publish_mode:
   type: editorial_workflow
   stages: [draft]
   direct_publish: true
-site_url: https://bam020205.github.io/BamPortfolio
-display_url: https://bam020205.github.io/BamPortfolio/journal/
+site_url: https://bamportfolio-two.vercel.app
+display_url: https://bamportfolio-two.vercel.app/overview/
 media_folder: media/journal
 public_folder: /media/journal
 slug:
@@ -94,3 +94,115 @@ collections:
       - {name: file, label: Certificate image or PDF, widget: file, choose_url: false, accept: "application/pdf,image/png,image/jpeg,image/webp,image/avif,image/gif"}
       - {name: credential_id, label: Credential ID, widget: string, required: false}
       - {name: verification, label: Verification URL, widget: string, required: false, pattern: ['^https?://[^ ]+$', 'Enter a full verification link.']}
+  - name: projects
+    label: Projects
+    label_singular: Project
+    folder: projects
+    format: json
+    extension: json
+    create: true
+    media_folder: /media/portfolio
+    public_folder: /media/portfolio
+    slug:
+      template: '{{slug}}'
+      editable: [create]
+      pattern: ['^[a-z0-9]+(-[a-z0-9]+)*$', 'Use lowercase letters, numbers and hyphens.']
+    preview_path: 'projects/{{slug}}/'
+    summary: '{{title}} · {{date}}'
+    fields:
+      - {"name":"title","label":"Project title","widget":"string","required":true}
+      - {"name":"category","label":"Category","widget":"string","required":true}
+      - {"name":"date","label":"Sort date","widget":"string","required":true,"hint":"Use the project or experience date. A year, month, or full date works.","pattern":["^[0-9]{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12][0-9]|3[01]))?)?$","Use YYYY, YYYY-MM, or YYYY-MM-DD."]}
+      - {"name":"intro","label":"Project introduction","widget":"text","required":true}
+      - {"name":"cover","label":"Cover image","widget":"image","choose_url":false,"accept":"image/jpeg,image/png,image/webp,image/gif,image/avif","required":true}
+      - {"name":"alt","label":"Image description","widget":"string","required":true}
+      - {"name":"tools","label":"Tools and technologies","widget":"string","required":false,"hint":"Separate tools with a middle dot or comma."}
+      - {"name":"details","label":"Case study sections","widget":"list","required":false,"collapsed":true,"fields":[{"name":"heading","label":"Heading","widget":"string","required":true},{"name":"text","label":"Paragraphs","widget":"text","required":true}]}
+      - {"name":"gallery","label":"Photo gallery","widget":"list","required":false,"collapsed":true,"fields":[{"name":"image","label":"Image","widget":"image","choose_url":false,"accept":"image/jpeg,image/png,image/webp,image/gif,image/avif","required":true},{"name":"alt","label":"Image description","widget":"string","required":true},{"name":"caption","label":"Caption","widget":"string","required":false}]}
+      - {"name":"liveUrl","label":"Live project or demo URL","widget":"string","required":false,"pattern":["^https?://[^\\s]+$","Enter a complete https:// or http:// address."]}
+      - {"name":"repoUrl","label":"Source code URL","widget":"string","required":false,"pattern":["^https?://[^\\s]+$","Enter a complete https:// or http:// address."]}
+      - {"name":"journal","label":"Related journal entry","widget":"relation","collection":"journal","value_field":"{{slug}}","display_fields":["title"],"search_fields":["title"],"required":false}
+      - {"name":"attachment","label":"Recognition or supporting file","widget":"file","choose_url":false,"accept":"application/pdf,image/jpeg,image/png,image/webp,image/gif,image/avif","required":false}
+      - {"name":"attachmentLabel","label":"Attachment link text","widget":"string","required":false}
+      - {"name":"video","label":"Demonstration video","widget":"file","choose_url":false,"accept":"video/mp4,video/webm","required":false}
+      - {"name":"videoTitle","label":"Video title","widget":"string","required":false}
+      - {"name":"preview","label":"Short preview clip","widget":"file","choose_url":false,"accept":"video/mp4,video/webm","required":false}
+      - {"name":"previewLabel","label":"Preview caption","widget":"string","required":false}
+      - {"name":"poster","label":"Video poster","widget":"image","choose_url":false,"accept":"image/jpeg,image/png,image/webp,image/gif,image/avif","required":false}
+      - {"name":"fullVideoUrl","label":"Full video URL","widget":"string","required":false,"pattern":["^https?://[^\\s]+$","Enter a complete https:// or http:// address."]}
+      - {"name":"transcript","label":"Video description or transcript","widget":"text","required":false}
+      - {"name":"showOnOverview","label":"Eligible for Overview","widget":"boolean","default":true,"required":false,"hint":"Overview shows up to two projects and one experience with a cover. Pinned entries appear first, followed by the most recent dates."}
+      - {"name":"pinned","label":"Pin on Overview","widget":"boolean","default":false,"required":false,"hint":"Use this to keep a favorite in the selected projects or community feature."}
+      - {"name":"overview","label":"Short Overview summary","widget":"text","required":false}
+      - {"name":"showInSlider","label":"Include in the Overview photo slider","widget":"boolean","default":true,"required":false,"hint":"Uses your cover and title automatically. Turn this off to omit all slides for this entry."}
+      - {name: sliderFit, label: Slider image fit, widget: select, options: [cover, contain], default: cover, hint: "Choose contain to show a whole screenshot or diagram."}
+      - {"name":"slideImage","label":"Alternate slider crop","widget":"image","choose_url":false,"accept":"image/jpeg,image/png,image/webp,image/gif,image/avif","required":false}
+      - {"name":"slideCaption","label":"Short slider caption","widget":"string","required":false}
+      - {"name":"extraSlides","label":"More slider photos","widget":"list","required":false,"collapsed":true,"fields":[{"name":"image","label":"Image","widget":"image","choose_url":false,"accept":"image/jpeg,image/png,image/webp,image/gif,image/avif","required":true},{"name":"caption","label":"Caption","widget":"string","required":false}]}
+  - name: experiences
+    label: Experience
+    label_singular: Experience
+    folder: experiences
+    format: json
+    extension: json
+    create: true
+    media_folder: /media/portfolio
+    public_folder: /media/portfolio
+    slug:
+      template: '{{slug}}'
+      editable: [create]
+      pattern: ['^[a-z0-9]+(-[a-z0-9]+)*$', 'Use lowercase letters, numbers and hyphens.']
+    preview_path: 'experience/#experience-{{slug}}'
+    summary: '{{title}} · {{date}}'
+    fields:
+      - {"name":"title","label":"Experience title","widget":"string","required":true}
+      - {"name":"group","label":"Experience section","widget":"select","options":[{"value":"organizations","label":"Student organizations"},{"value":"volunteering","label":"Volunteering"},{"value":"learning","label":"Training & events"},{"value":"awards","label":"Academic achievements"}]}
+      - {"name":"date","label":"Sort date","widget":"string","required":true,"hint":"Use the project or experience date. A year, month, or full date works.","pattern":["^[0-9]{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12][0-9]|3[01]))?)?$","Use YYYY, YYYY-MM, or YYYY-MM-DD."]}
+      - {"name":"dateLabel","label":"Displayed dates","widget":"string","required":false,"hint":"Optional, e.g. “Since Aug 2026” or “Jan–Mar 2027”. Defaults to your sort date."}
+      - {"name":"organization","label":"Organization","widget":"string","required":false}
+      - {"name":"role","label":"Role","widget":"string","required":false}
+      - {"name":"location","label":"Location","widget":"string","required":false}
+      - {"name":"description","label":"What you did","widget":"text","required":false}
+      - {"name":"cover","label":"Cover photo","widget":"image","choose_url":false,"accept":"image/jpeg,image/png,image/webp,image/gif,image/avif","required":false}
+      - {"name":"alt","label":"Cover image description","widget":"string","required":false,"hint":"Describe the photo for screen readers. Defaults to the entry title."}
+      - {"name":"gallery","label":"Photo gallery","widget":"list","required":false,"collapsed":true,"fields":[{"name":"image","label":"Image","widget":"image","choose_url":false,"accept":"image/jpeg,image/png,image/webp,image/gif,image/avif","required":true},{"name":"alt","label":"Image description","widget":"string","required":true},{"name":"caption","label":"Caption","widget":"string","required":false}]}
+      - {"name":"journal","label":"Related journal entry","widget":"relation","collection":"journal","value_field":"{{slug}}","display_fields":["title"],"search_fields":["title"],"required":false}
+      - {"name":"journalLabel","label":"Journal link text","widget":"string","required":false}
+      - {"name":"project","label":"Related project","widget":"relation","collection":"projects","value_field":"{{slug}}","display_fields":["title"],"search_fields":["title"],"required":false}
+      - {"name":"projectLabel","label":"Project link text","widget":"string","required":false}
+      - {"name":"url","label":"Event or organization URL","widget":"string","required":false,"pattern":["^https?://[^\\s]+$","Enter a complete https:// or http:// address."]}
+      - {"name":"linkLabel","label":"External link text","widget":"string","required":false}
+      - {"name":"attachment","label":"Recognition or supporting file","widget":"file","choose_url":false,"accept":"application/pdf,image/jpeg,image/png,image/webp,image/gif,image/avif","required":false}
+      - {"name":"attachmentLabel","label":"Attachment link text","widget":"string","required":false}
+      - {"name":"overviewTitle","label":"Community feature headline","widget":"string","required":false}
+      - {"name":"featureLabel","label":"Community feature category","widget":"string","required":false}
+      - {"name":"featureLinkLabel","label":"Featured journal link text","widget":"string","required":false}
+      - {"name":"showOnOverview","label":"Eligible for Overview","widget":"boolean","default":true,"required":false,"hint":"Overview shows up to two projects and one experience with a cover. Pinned entries appear first, followed by the most recent dates."}
+      - {"name":"pinned","label":"Pin on Overview","widget":"boolean","default":false,"required":false,"hint":"Use this to keep a favorite in the selected projects or community feature."}
+      - {"name":"overview","label":"Short Overview summary","widget":"text","required":false}
+      - {"name":"showInSlider","label":"Include in the Overview photo slider","widget":"boolean","default":true,"required":false,"hint":"Uses your cover and title automatically. Turn this off to omit all slides for this entry."}
+      - {name: sliderFit, label: Slider image fit, widget: select, options: [cover, contain], default: cover, hint: "Choose contain to show a whole screenshot or diagram."}
+      - {"name":"slideImage","label":"Alternate slider crop","widget":"image","choose_url":false,"accept":"image/jpeg,image/png,image/webp,image/gif,image/avif","required":false}
+      - {"name":"slideCaption","label":"Short slider caption","widget":"string","required":false}
+      - {"name":"extraSlides","label":"More slider photos","widget":"list","required":false,"collapsed":true,"fields":[{"name":"image","label":"Image","widget":"image","choose_url":false,"accept":"image/jpeg,image/png,image/webp,image/gif,image/avif","required":true},{"name":"caption","label":"Caption","widget":"string","required":false}]}
+  - name: settings
+    label: Site Settings
+    files:
+      - name: site
+        label: Portfolio profile and contact
+        file: settings/site.json
+        format: json
+        preview_path: overview/
+        fields:
+          - {"name":"headline","label":"Overview headline","widget":"string","required":true}
+          - {"name":"focus","label":"Introduction label","widget":"string","required":true}
+          - {"name":"introduction","label":"Overview introduction","widget":"string","required":true}
+          - {"name":"discipline","label":"Discipline","widget":"string","required":true}
+          - {"name":"location","label":"Location","widget":"string","required":true}
+          - {"name":"aboutHeadline","label":"About headline","widget":"string","required":true}
+          - {"name":"bio","label":"About bio paragraphs","widget":"list","field":{"name":"paragraph","label":"Paragraph","widget":"text"}}
+          - {"name":"footerRole","label":"Role in footer","widget":"string","required":true}
+          - {"name":"email","label":"Contact email","widget":"string","required":true,"pattern":["^[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+$","Enter a valid email address."]}
+          - {"name":"phone","label":"Displayed phone number","widget":"string","required":false}
+          - {"name":"dial","label":"International dial number","widget":"string","required":false,"hint":"Include the country code, e.g. +639946642782.","pattern":["^\\+[1-9][0-9]{5,14}$","Use + followed by the country code and number."]}
+          - {"name":"socials","label":"Social profiles","widget":"list","required":false,"collapsed":true,"fields":[{"name":"label","label":"Platform","widget":"string","required":true},{"name":"url","label":"Profile URL","widget":"string","required":true,"pattern":["^https?://[^\\s]+$","Enter a complete https:// or http:// address."]}]}

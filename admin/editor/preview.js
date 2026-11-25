@@ -1,3 +1,4 @@
+import './portfolio-preview.js';
 import { readingMinutes } from './reading-time.mjs';
 
 const publicationRoot = new URL('../../', location.href);

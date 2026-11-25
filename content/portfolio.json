@@ -1,0 +1,251 @@
+{
+  "projects": [
+    {
+      "slug": "determinator",
+      "title": "DeTerminator",
+      "category": "Robotics research",
+      "date": "2025",
+      "intro": "An Arduino-based rover that explores carbon dioxide and humidity as possible indicators of termite activity.",
+      "cover": "/media/portfolio/terry-assembly.webp",
+      "alt": "Hands connecting wiring inside the DeTerminator rover beside its blue display",
+      "tools": "Arduino · C++ · Environmental sensors",
+      "details": [
+        {
+          "heading": "The build",
+          "text": "I programmed, integrated the hardware, and built the rover, named Terry. It collects environmental readings from sites where termite activity is suspected."
+        },
+        {
+          "heading": "The science fair",
+          "text": "DeTerminator earned fourth place in the individual Robotics and Intelligent Machines category at the 2025 Division Science and Technology Fair in Bulihan, Silang, Cavite."
+        }
+      ],
+      "attachment": "/media/portfolio/fair.jpg",
+      "attachmentLabel": "View recognition certificate",
+      "videoTitle": "Science fair presentation",
+      "preview": "/media/portfolio/rover-demo.mp4",
+      "previewLabel": "Science fair preview · 14 seconds",
+      "fullVideoUrl": "https://drive.google.com/file/d/1tQ78QHXYtkHzy3e_hV68IHwHDJrSgSiy/view?usp=drivesdk",
+      "transcript": "The original presentation introduces Terry, shows the rover and its assembly, and explains the research and results. The recording includes on-screen captions.",
+      "showOnOverview": true,
+      "pinned": false,
+      "overview": "I built and programmed Terry, an Arduino rover for investigating termite activity.",
+      "showInSlider": true,
+      "sliderFit": "cover",
+      "slideCaption": "Building Terry",
+      "extraSlides": [
+        {
+          "image": "/media/portfolio/rover.jpg",
+          "caption": "DeTerminator research"
+        }
+      ]
+    },
+    {
+      "slug": "inventory",
+      "title": "Shop Inventory Manager",
+      "category": "Desktop application",
+      "date": "2026",
+      "intro": "A Java Swing inventory system designed around the everyday needs of a sari-sari store.",
+      "cover": "/media/portfolio/inventory-window.webp",
+      "alt": "The Shop Inventory Manager product form and stock table in the original screen recording",
+      "tools": "Java Swing · SQLite · DBeaver",
+      "details": [
+        {
+          "heading": "The idea",
+          "text": "Helping my mother at a canteen inspired me to build a simple tool for tracking products, prices, and stock. I left supplier and item code fields out of the product form."
+        },
+        {
+          "heading": "The build",
+          "text": "I built the desktop interface with Java Swing and used SQLite with DBeaver. A Project Tuklas Teknolohiya workshop on connecting Java to a database helped me apply the approach to this project."
+        }
+      ],
+      "video": "/media/portfolio/inventory.mp4",
+      "videoTitle": "Application walkthrough",
+      "poster": "/media/portfolio/inventory.jpg",
+      "transcript": "The recording shows the desktop product form and inventory table, including controls for adding and updating products and searching the stock list.",
+      "showOnOverview": true,
+      "pinned": false,
+      "overview": "Helping my mother at a canteen gave me the idea for a desktop app to track products, prices, and stock in a sari-sari store.",
+      "showInSlider": true,
+      "sliderFit": "contain"
+    }
+  ],
+  "experiences": [
+    {
+      "slug": "aws-spade",
+      "title": "AWS Student Builder Group–Spade",
+      "group": "organizations",
+      "date": "2026-08",
+      "dateLabel": "Since Aug 2026",
+      "description": "Relations & Communications Office · ACE",
+      "showOnOverview": true,
+      "pinned": false,
+      "showInSlider": true,
+      "sliderFit": "cover"
+    },
+    {
+      "slug": "csso",
+      "title": "Computer Science Student Organization (CSSO)",
+      "group": "organizations",
+      "date": "2026-10",
+      "dateLabel": "Since Oct 2026",
+      "description": "Committee on Records and Documentation (COMRECS) · Member and photographer",
+      "showOnOverview": true,
+      "pinned": false,
+      "showInSlider": true,
+      "sliderFit": "cover"
+    },
+    {
+      "slug": "datacamp-scholarship",
+      "title": "Data Engineering Pilipinas × DataCamp Scholarship",
+      "group": "learning",
+      "date": "2026",
+      "dateLabel": "2026",
+      "description": "Accepted into the scholarship program.",
+      "showOnOverview": true,
+      "pinned": false,
+      "showInSlider": true,
+      "sliderFit": "cover"
+    },
+    {
+      "slug": "devfest",
+      "title": "DevFest Manila 2026 After Hours",
+      "group": "learning",
+      "date": "2026",
+      "dateLabel": "2026",
+      "cover": "/media/portfolio/attendees.webp",
+      "alt": "Attendees at DevFest Manila After Hours",
+      "journal": "devfest-manila-after-hours",
+      "journalLabel": "Read the journal entry",
+      "showOnOverview": false,
+      "pinned": false,
+      "showInSlider": true,
+      "sliderFit": "cover",
+      "slideCaption": "DevFest Manila After Hours"
+    },
+    {
+      "slug": "division-science-fair",
+      "title": "Fourth place · Division Science and Technology Fair",
+      "group": "awards",
+      "date": "2025-10",
+      "dateLabel": "Oct 2025",
+      "description": "Robotics and Intelligent Machines, individual category.",
+      "project": "determinator",
+      "projectLabel": "View DeTerminator",
+      "showOnOverview": true,
+      "pinned": false,
+      "showInSlider": true,
+      "sliderFit": "cover"
+    },
+    {
+      "slug": "hacktoberfest",
+      "title": "Hacktoberfest",
+      "group": "volunteering",
+      "date": "2026",
+      "dateLabel": "2026",
+      "description": "Volunteer photographer with AWS Student Builder Group–Tempest at National University–Las Piñas.",
+      "cover": "/media/portfolio/workshop.webp",
+      "alt": "Hacktoberfest participants working together at laptops",
+      "journal": "behind-the-lens-at-hacktoberfest",
+      "journalLabel": "Read the photo journal",
+      "overviewTitle": "At Hacktoberfest",
+      "featureLabel": "Campus life / Volunteer photography",
+      "featureLinkLabel": "View the photographs",
+      "showOnOverview": true,
+      "pinned": false,
+      "overview": "I photographed Hacktoberfest with AWS Student Builder Group–Tempest at National University–Las Piñas.",
+      "showInSlider": true,
+      "sliderFit": "cover",
+      "slideCaption": "Hacktoberfest workshop",
+      "extraSlides": [
+        {
+          "image": "/media/portfolio/speaker.webp",
+          "caption": "Volunteer photography"
+        },
+        {
+          "image": "/media/portfolio/abram-laptop.webp",
+          "caption": "Campus life"
+        }
+      ]
+    },
+    {
+      "slug": "linguistics-challenge",
+      "title": "Silver Award · 2nd National Linguistics Challenge",
+      "group": "awards",
+      "date": "2025-11-16",
+      "dateLabel": "Nov 16, 2025",
+      "description": "Represented Cavite Science Integrated School–RSHS in Grade 12.",
+      "attachment": "/media/portfolio/nlc.png",
+      "attachmentLabel": "View award",
+      "showOnOverview": true,
+      "pinned": false,
+      "showInSlider": true,
+      "sliderFit": "cover"
+    },
+    {
+      "slug": "microsoft-student-community",
+      "title": "Microsoft Student Community Philippines",
+      "group": "organizations",
+      "date": "2026-10",
+      "dateLabel": "Since Oct 2026",
+      "description": "Member",
+      "showOnOverview": true,
+      "pinned": false,
+      "showInSlider": true,
+      "sliderFit": "cover"
+    },
+    {
+      "slug": "packet-capture",
+      "title": "Packet Capture: Beneath the Network CTF",
+      "group": "learning",
+      "date": "2026-10-25",
+      "dateLabel": "Oct 18–25, 2026",
+      "description": "Team participant with SINT-O SINT-O in the CyberPH competition.",
+      "showOnOverview": true,
+      "pinned": false,
+      "showInSlider": true,
+      "sliderFit": "cover"
+    },
+    {
+      "slug": "tuklas-workshops",
+      "title": "Project Tuklas Teknolohiya workshops",
+      "group": "learning",
+      "date": "2026",
+      "dateLabel": "2026",
+      "description": "Attended sessions on Java database connectivity, C++ programming, and SQL and database management.",
+      "showOnOverview": true,
+      "pinned": false,
+      "showInSlider": true,
+      "sliderFit": "cover"
+    }
+  ],
+  "settings": {
+    "headline": "Robotics & software",
+    "focus": "Robotics / Software development",
+    "introduction": "I study Computer Science at Cavite State University and build robots and desktop applications.",
+    "discipline": "Computer Science",
+    "location": "Tanza, Cavite",
+    "aboutHeadline": "Computer Science student at Cavite State University.",
+    "bio": [
+      "I’m interested in software development, robotics, databases, and cybersecurity. My goal is to become a software engineer and build a stronger foundation in data and technology.",
+      "I have basic knowledge of Java and Python, and hands-on experience with SQL and database management, Arduino programming, and robotics hardware."
+    ],
+    "footerRole": "Computer Science student",
+    "email": "AbramSeneca2.0@gmail.com",
+    "phone": "0994 664 2782",
+    "dial": "+639946642782",
+    "socials": [
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/in/abram-seneca-b700a9386/"
+      },
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/abramjohn.seneca"
+      },
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/bammmyyyyyy/?hl=en"
+      }
+    ]
+  }
+}

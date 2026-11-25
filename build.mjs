@@ -1,3 +1,4 @@
+import { escape as html, newest, portfolioSelection, portfolioViews } from './admin/editor/portfolio-views.mjs';
 import { journalPages } from './journal.mjs';
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -6,14 +7,14 @@ import { reactorBackdrop } from './reactor.mjs';
 import { blurHeading } from './headings.mjs';
 
 const name = 'Abram John R. Seneca';
-const email = 'AbramSeneca2.0@gmail.com';
-const profiles = [
-  ['LinkedIn', 'https://www.linkedin.com/in/abram-seneca-b700a9386/'],
-  ['Facebook', 'https://www.facebook.com/abramjohn.seneca'],
-  ['Instagram', 'https://www.instagram.com/bammmyyyyyy/?hl=en'],
-];
+const records = JSON.parse(readFileSync(new URL('./content/portfolio.json', import.meta.url), 'utf8'));
+const { settings, experiences } = records;
+const projects = [...records.projects].sort(newest);
+const { selected, community, slides } = portfolioSelection(projects, experiences);
+const journalRoutes = new Set(journalPages.map(([route]) => route));
+const email = html(settings.email);
 const arrow = (direction = 'out') => `<svg class="arrow arrow-${direction}" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 16 16 4M5 4h11v11"/></svg>`;
-const socialLinks = () => profiles.map(([platform, url]) => `<a class="social-link" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${platform} profile (opens in a new tab)">${platform} ${arrow()}</a>`).join('');
+const socialLinks = () => settings.socials?.map(({label, url}) => `<a class="social-link" href="${html(url)}" target="_blank" rel="noopener noreferrer" aria-label="${html(label)} profile (opens in a new tab)">${html(label)} ${arrow()}</a>`).join('') || '';
 const nav = [['', 'Home'], ['about', 'About'], ['projects', 'Projects'], ['experience', 'Experience'], ['certifications', 'Certifications'], ['journal', 'Journal'], ['contact', 'Contact']];
 const encodePath = (path) => path.split('/').map(encodeURIComponent).join('/');
 const pageUrl = (root, route = '') => `${root}${route ? `${route}/` : ''}index.html`;
@@ -24,50 +25,15 @@ const heading = (label, title, intro) => `
     <p class="lede entrance">${intro}</p>
   </header>`;
 
-const projects = [
-  {
-    slug: 'determinator', title: 'DeTerminator', category: 'Robotics research', year: 2025,
-    intro: 'An Arduino-based rover that explores carbon dioxide and humidity as possible indicators of termite activity.',
-    overview: 'I built and programmed Terry, an Arduino rover for investigating termite activity.',
-    cover: 'terry-assembly.webp', alt: 'Hands connecting wiring inside the DeTerminator rover beside its blue display',
-    video: 'determinator-original.mp4', videoTitle: 'Science fair presentation',
-    preview: 'rover-demo.mp4',
-    fullVideoUrl: 'https://drive.google.com/file/d/1tQ78QHXYtkHzy3e_hV68IHwHDJrSgSiy/view?usp=drivesdk',
-    details: [
-      ['The build', 'I programmed, integrated the hardware, and built the rover, named Terry. It collects environmental readings from sites where termite activity is suspected.'],
-      ['The science fair', 'DeTerminator earned fourth place in the individual Robotics and Intelligent Machines category at the 2025 Division Science and Technology Fair in Bulihan, Silang, Cavite.'],
-    ],
-    tools: 'Arduino · C++ · Environmental sensors',
-    transcript: 'The original presentation introduces Terry, shows the rover and its assembly, and explains the research and results. The recording includes on-screen captions.',
-  },
-  {
-    slug: 'inventory', title: 'Shop Inventory Manager', category: 'Desktop application', year: 2026,
-    intro: 'A Java Swing inventory system designed around the everyday needs of a sari-sari store.',
-    overview: 'Helping my mother at a canteen gave me the idea for a desktop app to track products, prices, and stock in a sari-sari store.',
-    cover: 'inventory-window.webp', poster: 'inventory.jpg', alt: 'The Shop Inventory Manager product form and stock table in the original screen recording',
-    video: 'inventory.mp4', videoTitle: 'Application walkthrough',
-    details: [
-      ['The idea', 'Helping my mother at a canteen inspired me to build a simple tool for tracking products, prices, and stock. I left supplier and item code fields out of the product form.'],
-      ['The build', 'I built the desktop interface with Java Swing and used SQLite with DBeaver. A Project Tuklas Teknolohiya workshop on connecting Java to a database helped me apply the approach to this project.'],
-    ],
-    tools: 'Java Swing · SQLite · DBeaver',
-    transcript: 'The recording shows the desktop product form and inventory table, including controls for adding and updating products and searching the stock list.',
-  },
-];
-
-function projectList(root, overview = false) {
-  return `<div class="work-grid">${projects.map((project) => `
-    <article class="work work-${project.slug} reveal">
-      <a href="${pageUrl(root, `projects/${project.slug}`)}">
-        <div class="work-image"><img src="${root}media/${project.cover}" width="1280" height="720" loading="lazy" alt="${project.alt}"><span class="work-arrow" aria-hidden="true">${arrow()}</span></div>
-        <div class="work-label"><span>${project.category}</span><time>${project.year}</time></div>
-        ${blurHeading(project.title, { level: overview ? 3 : 2 })}
-        <p>${overview ? project.overview : project.intro}</p>
-        <span class="work-tools">${project.tools}</span>
-        <span class="text-link">View project</span>
-      </a>
-      <details class="quick-preview"><summary>Preview demonstration</summary><video controls playsinline preload="none" poster="${root}media/${project.cover}" aria-label="${project.videoTitle}"><source src="${root}media/${project.preview ?? project.video}" type="video/mp4"></video></details>
-    </article>`).join('')}</div>`;
+function views(root) {
+  return portfolioViews({
+    asset: path => root + encodePath(path.slice(1)),
+    page: route => pageUrl(root, route),
+    heading: (title, level, id) => blurHeading(title, {level, id}),
+    arrow: arrow(),
+    journalExists: slug => journalRoutes.has('journal/' + slug),
+    projectExists: slug => projects.some(project => project.slug === slug),
+  });
 }
 
 function rows(items) {
@@ -75,21 +41,7 @@ function rows(items) {
     <div class="entry reveal"><dt><span class="eyebrow">${tag}</span><strong>${title}</strong></dt><dd>${detail}</dd></div>`).join('')}</dl>`;
 }
 
-function projectVideo(root, project) {
-  const videoPath = `${root}media/${project.video}`;
-  const videoLink = project.fullVideoUrl ?? videoPath;
-  const linkLabel = project.fullVideoUrl ? 'Watch the full video on Google Drive' : 'Open video';
-  return `<figure class="film reveal">
-    <video controls playsinline preload="none" width="1280" height="720" poster="${root}media/${project.poster ?? project.cover}" aria-label="${project.videoTitle}"${project.preview ? ` data-local-original="${videoPath}"` : ''}>
-      <source src="${project.preview ? root + 'media/' + project.preview : videoPath}" type="video/mp4">
-    </video>
-    <figcaption><span${project.preview ? ' data-video-label' : ''}>${project.preview ? 'Science fair preview · 14 seconds' : project.videoTitle}</span> <a class="text-link" href="${videoLink}">${linkLabel}</a></figcaption>
-  </figure>`;
-}
-
 const certs = JSON.parse(readFileSync(new URL('./certifications/records.json', import.meta.url), 'utf8'));
-const html = value => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
-
 function credentials(root) {
   const known = ['DataCamp', 'Project Tuklas Teknolohiya', 'Zuitt', 'CyberPH'];
   const issuers = [...new Set([...known.filter(name => certs.some(cert => cert.issuer === name)), ...certs.map(cert => cert.issuer)])];
@@ -105,21 +57,6 @@ function credentials(root) {
         <div><p class="eyebrow">${date}</p>${blurHeading(cert.title)}<p>${html(cert.type)}</p>
         <a class="text-link" href="${src}">View certificate</a>${cert.verification ? ` <a class="text-link" href="${html(cert.verification)}">Verify with ${html(cert.issuer)}</a>` : ''}</div></li>`;
     }).join('')}</ul></section>`).join('')}</div></div>`;
-}
-
-function photoMarquee(root) {
-  const items = [
-    ['terry-assembly.webp', 'Building Terry', 'projects/determinator'],
-    ['hacktoberfest/workshop.webp', 'Hacktoberfest workshop', 'journal/behind-the-lens-at-hacktoberfest'],
-    ['rover.jpg', 'DeTerminator research', 'projects/determinator'],
-    ['hacktoberfest/speaker.webp', 'Volunteer photography', 'journal/behind-the-lens-at-hacktoberfest'],
-    ['inventory-window.webp', 'Shop Inventory Manager', 'projects/inventory'],
-    ['hacktoberfest/abram-laptop.webp', 'Campus life', 'journal/behind-the-lens-at-hacktoberfest'],
-    ['devfest/attendees.webp', 'DevFest Manila After Hours', 'journal/devfest-manila-after-hours'],
-  ];
-  const run = duplicate => `<div class="photo-run"${duplicate ? ' aria-hidden="true"' : ''}>${items.map(([file, label, path, fragment = '']) =>
-    `<a href="${pageUrl(root, path)}${fragment}" class="photo-card"${duplicate ? ' tabindex="-1"' : ''}><img src="${root}media/${file}" alt="" loading="lazy"><span>${label}</span></a>`).join('')}</div>`;
-  return `<div class="photo-marquee" role="region" aria-label="Portfolio photographs"><div class="photo-track">${run(false)}${run(true)}</div></div>`;
 }
 
 const icons = {
@@ -155,32 +92,27 @@ const pages = [
   ['overview', 'Portfolio overview', 'Computer Science student at Cavite State University. Explore selected robotics and software projects.', (root) => `
     <section class="portrait-stage">
       <div class="portrait-layout wrap">
-        <p class="stage-meta eyebrow">Computer Science <span>/</span> Tanza, Cavite</p>
+        <p class="stage-meta eyebrow">${html(settings.discipline)} <span>/</span> ${html(settings.location)}</p>
         <button type="button" class="motion-toggle stage-motion" hidden>Pause motion</button>
         ${blurHeading('Abram Seneca', { level: 1, label: name })}
         <div class="portrait-layer"><svg viewBox="0 0 850 842" role="img" aria-label="Abram smiling and lifting his glasses">
           <defs><clipPath id="silhouette"><path d="M257 842 Q267 820 263 811 L281 681 Q297 548 274 462 Q197 439 179 397 Q151 348 230 289 L253 275 Q297 247 337 207 L346 167 Q348 154 385 151 Q399 152 404 162 L407 159 Q426 108 477 89 Q515 80 539 98 L543 115 Q597 120 594 180 Q601 204 572 231 Q571 266 555 281 L528 305 L520 330 Q529 341 532 361 Q534 374 583 393 L617 416 Q631 447 641 483 L636 536 L719 513 L728 520 L656 608 Q671 644 672 678 Q669 725 637 732 Q601 743 579 694 L561 715 L562 794 Q559 814 580 842 Z M300 337 Q319 306 343 265 L402 222 Q402 244 418 253 L421 305 Q402 299 403 320 L394 323 L392 330 L359 340 Q326 327 300 337 Z" clip-rule="evenodd"/></clipPath></defs>
           <image href="${root}media/portrait.jpg" width="850" height="842" clip-path="url(#silhouette)"/>
         </svg></div>
-        <div class="stage-copy"><p>Robotics &amp; software</p><a class="text-link" href="#fieldwork">Explore my work ${arrow('down')}</a></div>
+        <div class="stage-copy"><p>${html(settings.headline)}</p><a class="text-link" href="#fieldwork">Explore my work ${arrow('down')}</a></div>
         <a class="portrait-credit" href="${pageUrl(root,'about')}">About Abram</a>
       </div>
     </section>
-    ${photoMarquee(root)}
+    ${views(root).photoMarquee(slides)}
     <section id="fieldwork" class="intro-statement dark section" aria-label="Introduction">
-      <div class="wrap reveal"><p class="eyebrow">Robotics / Software development</p><p>I study Computer Science at Cavite State University and build robots and desktop applications.</p></div>
+      <div class="wrap reveal"><p class="eyebrow">${html(settings.focus)}</p><p>${html(settings.introduction)}</p></div>
     </section>
-    <section class="section wrap" id="selected" aria-labelledby="selected-title">
-      ${blurHeading('Selected projects', { level: 2, id: 'selected-title' })}${projectList(root, true)}
-    </section>
-    <section class="section wrap feature community" aria-labelledby="home-event">
-      <figure class="reveal"><img src="${root}media/hacktoberfest/workshop.webp" width="1600" height="900" alt="Hacktoberfest participants working together at laptops" loading="lazy"></figure>
-      <div class="feature-copy reveal"><p class="eyebrow kicker">Campus life / Volunteer photography · 2026</p>${blurHeading('At Hacktoberfest', { level: 2, id: 'home-event' })}
-      <p>I photographed Hacktoberfest with AWS Student Builder Group–Tempest at National University–Las Piñas.</p>
-      <a class="text-link" href="${pageUrl(root, 'journal/behind-the-lens-at-hacktoberfest')}">View the photographs</a></div>
-    </section>`],
+    ${selected.length ? `<section class="section wrap" id="selected" aria-labelledby="selected-title">
+      ${blurHeading('Selected projects', { level: 2, id: 'selected-title' })}${views(root).projectGrid(selected, true)}
+    </section>` : ''}
+    ${views(root).communityFeature(community)}`],
   ['about', 'About', 'Education, interests, and skills.', (root) => `
-    <header class="wrap about-head"><div><p class="eyebrow kicker">About</p>${blurHeading(['Abram John','R. Seneca'], { level: 1 })}<p class="lede">Computer Science student at Cavite State University.</p></div>
+    <header class="wrap about-head"><div><p class="eyebrow kicker">About</p>${blurHeading(['Abram John','R. Seneca'], { level: 1 })}<p class="lede">${html(settings.aboutHeadline)}</p></div>
       <figure class="bio-photo"><img src="${root}media/abram-about.webp" width="1040" height="1560" alt="Abram smiling in glasses and a striped shirt, holding a laptop" fetchpriority="high"></figure></header>
     <section class="light-section section">
       <div class="wrap bio">
@@ -189,72 +121,25 @@ const pages = [
         ${rows([['2026–2030 expected', 'Cavite State University · Indang (Main)', 'Bachelor of Science in Computer Science'], ['Senior high school', 'Cavite Science Integrated School–RSHS', '']])}
       </div><div>
         ${blurHeading('Interests & skills', { level: 2 })}
-        <p>I’m interested in software development, robotics, databases, and cybersecurity. My goal is to become a software engineer and build a stronger foundation in data and technology.</p>
-        <p>I have basic knowledge of Java and Python, and hands-on experience with SQL and database management, Arduino programming, and robotics hardware.</p>
+        ${settings.bio.map(paragraph => `<p>${html(paragraph)}</p>`).join('')}
       </div>
       </div>
     </section>`],
-  ['projects', 'Projects', 'Robotics research and desktop software projects.', (root) => `
-    ${heading('Selected work', 'Projects', 'An individual robotics research project and a desktop inventory application.')}
-    <section class="section light-section" aria-label="Project index"><div class="wrap">${projectList(root)}</div></section>`],
-  ...projects.map((project, index) => [`projects/${project.slug}`, project.title, project.intro, (root) => `
-    <div class="case-opening case-${project.slug}"><div class="wrap">
-      <a class="text-link breadcrumb" href="${pageUrl(root, 'projects')}">All projects</a>
-      <div class="case-heading"><div><p class="eyebrow kicker">${project.category}</p>${blurHeading(project.title, { level: 1 })}</div><p class="lede">${project.intro}</p></div>
-      <div class="film-section">${projectVideo(root, project)}</div>
-    </div></div>
-    <div class="dark">
-      <div class="wrap case-notes">
-        <p class="eyebrow">${project.tools}</p>
-        <div>${project.details.map(([title, detail]) => `<section class="reveal">${blurHeading(title, { level: 2 })}<p>${detail}</p></section>`).join('')}
-          <details><summary>Video description</summary><p>${project.transcript}</p></details>
-          ${index === 0 ? `<p><a class="text-link" href="${root}media/fair.jpg">View recognition certificate</a></p>` : ''}
-        </div>
-      </div>
-    </div>
-    <nav class="wrap section" aria-label="Project navigation"><p class="next-project"><a href="${pageUrl(root, `projects/${projects[1 - index].slug}`)}"><span class="eyebrow">Next project</span><strong>${projects[1 - index].title}</strong></a></p></nav>`]),
+  ['projects', 'Projects', 'Selected projects and case studies.', (root) => `
+    ${heading('Selected work', 'Projects', 'A collection of my projects, with notes on the ideas, tools, and work behind each one.')}
+    <section class="section light-section" aria-label="Project index"><div class="wrap">${projects.length ? views(root).projectGrid(projects) : '<p>Projects will appear here.</p>'}</div></section>`],
+  ...projects.map((project, index) => [`projects/${project.slug}`, project.title, project.intro,
+    root => views(root).projectCase(project, projects.length > 1 ? projects[(index + 1) % projects.length] : null)]),
   ['experience', 'Experience', 'Student organizations, volunteering, training, and academic achievements.', (root) => `
     ${heading('Campus &amp; community', 'Experience', 'Student organizations, volunteering, and learning beyond the classroom.')}
-      <section class="wrap section" aria-labelledby="organizations">
-        ${blurHeading('Student organizations', { level: 2, id: 'organizations' })}
-        ${rows([
-          ['Since Aug 2026', 'AWS Student Builder Group–Spade', 'Relations &amp; Communications Office · ACE'],
-          ['Since Oct 2026', 'Computer Science Student Organization (CSSO)', 'Committee on Records and Documentation (COMRECS) · Member and photographer'],
-          ['Since Oct 2026', 'Microsoft Student Community Philippines', 'Member'],
-        ])}
-      </section>
-      <section class="section dark" aria-labelledby="volunteering">
-        <div class="wrap">
-        ${blurHeading('Volunteering', { level: 2, id: 'volunteering' })}
-        ${rows([['2026', 'Hacktoberfest', 'Volunteer photographer with AWS Student Builder Group–Tempest at National University–Las Piñas.']])}
-        <a class="text-link" href="${pageUrl(root, 'journal/behind-the-lens-at-hacktoberfest')}">Read the photo journal</a>
-        </div>
-      </section>
-      <section class="wrap section" aria-labelledby="learning">
-        ${blurHeading('Training & events', { level: 2, id: 'learning' })}
-        <p id="devfest" class="journal-mention"><a class="text-link" href="${pageUrl(root, 'journal/devfest-manila-after-hours')}">DevFest Manila 2026 After Hours · Read the journal entry</a></p>
-        ${rows([
-          ['Oct 18–25, 2026', 'Packet Capture: Beneath the Network CTF', 'Team participant with SINT-O SINT-O in the CyberPH competition.'],
-          ['2026', 'Data Engineering Pilipinas × DataCamp Scholarship', 'Accepted into the scholarship program.'],
-          ['2026', 'Project Tuklas Teknolohiya workshops', 'Attended sessions on Java database connectivity, C++ programming, and SQL and database management.'],
-        ])}
-      </section>
-      <section class="section light-section" aria-labelledby="awards">
-        <div class="wrap">
-        ${blurHeading('Academic achievements', { level: 2, id: 'awards' })}
-        ${rows([
-          ['Nov 16, 2025', 'Silver Award · 2nd National Linguistics Challenge', `Represented Cavite Science Integrated School–RSHS in Grade 12. <a class="text-link" href="${root}media/nlc.png">View award</a>`],
-          ['Oct 2025', 'Fourth place · Division Science and Technology Fair', `Robotics and Intelligent Machines, individual category. <a class="text-link" href="${pageUrl(root, 'projects/determinator')}">View DeTerminator</a>`],
-        ])}
-        </div>
-      </section>`],
+    ${experiences.length ? views(root).experiencesPage(experiences) : '<p class="wrap section">Experience updates will appear here.</p>'}`],
   ['certifications', 'Certifications', 'Course accomplishments and certificates of attendance and participation.', (root) => `
     ${heading('Coursework &amp; participation', 'Certifications', 'Course accomplishments, workshop attendance, and event participation.')}
     <section class="section light-section" aria-label="Credentials"><div class="wrap">
       ${credentials(root)}
     </div></section>`],
   ['contact', 'Contact', 'Email, phone, and social profiles for Abram Seneca.', () => `
-    <header class="page-head wrap">${blurHeading('Contact', { level: 1 })}<p class="lede entrance">Tanza, Cavite</p></header>
+    <header class="page-head wrap">${blurHeading('Contact', { level: 1 })}<p class="lede entrance">${html(settings.location)}</p></header>
     <div class="light-section"><div class="wrap contact-grid section">
       <section aria-label="Contact details">
         <div class="contact-line">
@@ -263,8 +148,8 @@ const pages = [
           <button class="copy-button" type="button" data-copy="${email}" hidden>Copy email</button>
           <span class="copy-status" role="status"></span>
         </div>
-        <div class="contact-line"><p class="eyebrow">Phone</p><a href="tel:+639946642782">0994 664 2782</a></div>
-        <div class="contact-line"><p class="eyebrow">Social profiles</p>${socialLinks()}</div>
+        ${settings.phone || settings.dial ? `<div class="contact-line"><p class="eyebrow">Phone</p>${settings.dial ? `<a href="tel:${html(settings.dial)}">${html(settings.phone || settings.dial)}</a>` : html(settings.phone)}</div>` : ''}
+        ${settings.socials?.length ? `<div class="contact-line"><p class="eyebrow">Social profiles</p>${socialLinks()}</div>` : ''}
       </section>
       <section class="compose" hidden aria-labelledby="compose-title">
         ${blurHeading('Draft an email', { level: 2, id: 'compose-title' })}
@@ -294,7 +179,7 @@ for (const [route, title, description, render] of pages) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="${description}">
+  <meta name="description" content="${html(description)}">
   <meta name="theme-color" content="#ffffff">${route === '' ? `
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://bamportfolio-two.vercel.app/">
@@ -347,8 +232,8 @@ for (const [route, title, description, render] of pages) {
   <main id="main" tabindex="-1" class="${isJournal ? 'journal-main' : 'reactor-stage'} ${route === 'about' ? 'about-stage' : route ? 'reading-stage' : ''}">${isJournal ? '' : reactorBackdrop()}${render(root)}</main>
   <footer class="footer dark">
     <div class="wrap footer-inner">
-      <div class="footer-id"><a class="footer-name" href="${pageUrl(root)}">${name}</a><p>Computer Science student · Tanza, Cavite</p><p data-visit-count hidden></p></div>
-      <div><p class="eyebrow">Socials</p>${socialLinks()}</div>
+      <div class="footer-id"><a class="footer-name" href="${pageUrl(root)}">${name}</a><p>${html(settings.footerRole)} · ${html(settings.location)}</p><p data-visit-count hidden></p></div>
+      ${settings.socials?.length ? `<div><p class="eyebrow">Socials</p>${socialLinks()}</div>` : ''}
       <div><p class="eyebrow">Contact</p><a href="mailto:${email}">Email Abram ${arrow()}</a><a href="${pageUrl(root, 'contact')}">Contact details</a></div>
     </div>
     <div class="wrap footer-base"><span>© 2026 Abram Seneca</span><span>Built with HTML, CSS &amp; JavaScript</span><button class="motion-toggle" hidden type="button">Pause motion</button><a href="#top">Back to top ${arrow('up')}</a></div>
