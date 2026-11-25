@@ -102,7 +102,11 @@ body:has(dialog[open]) { overflow: hidden; }
 .phone-screen [hidden] { display:none !important; }
 .phone-wallpaper,.phone-boot,.phone-memory,.phone-flash { position:absolute; inset:0; pointer-events:none; }
 .phone-wallpaper { z-index:-1; background:center / cover url("media/phone-wallpaper.jpg"); }
-.phone-screen[data-theme="dark"] .phone-wallpaper { filter:invert(1) hue-rotate(180deg) brightness(.84); }
+.phone-wallpaper::after {
+  content:""; position:absolute; inset:0; background:inherit;
+  filter:invert(1) hue-rotate(180deg) brightness(.84); opacity:0;
+}
+.phone-screen[data-theme="dark"] .phone-wallpaper::after { opacity:1; }
 .phone-screen[data-view="apps"] .phone-wallpaper { opacity:.44; }
 .phone-status { position:absolute; inset:0 6% auto; height:9%; min-height:38px; display:flex; align-items:center; justify-content:space-between; z-index:3; font-size:.73rem; font-weight:650; }
 .phone-status > span { margin-left:.3rem; letter-spacing:.035em; }
@@ -128,8 +132,16 @@ body:has(dialog[open]) { overflow: hidden; }
 #menu .app-icon { display:grid; place-items:center; width:3.1rem; height:3.1rem; border-radius:1rem; transition:transform .25s var(--ease); }
 .app-icon svg { width:1.55rem; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
 #menu nav a:is(:hover,:focus-visible) .app-icon { transform:translateY(-3px); }
-.phone-memory { z-index:4; background:#32251f; }
-.phone-memory img { display:block; width:100%; height:100%; object-fit:cover; object-position:58% 62%; filter:none; }
+.phone-memory { z-index:4; display:grid; place-items:center; overflow:hidden; background:#000; border-radius:inherit; pointer-events:auto; touch-action:none; }
+.phone-memory img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; filter:none; }
+.camera-morph-glyph { position:relative; opacity:0; color:var(--phone-ink); }
+.flashlight[aria-pressed="true"] { background-image:linear-gradient(145deg,#fffb,transparent 27%,transparent 74%,#bad6eb55); }
+@media (prefers-reduced-motion:no-preference) {
+  .phone-wallpaper::after { transition:opacity .25s ease-in-out; }
+  .phone-screen,.phone-clock,.phone-home,.phone-close,.glass-key { transition:color .25s ease, background-color .25s ease; }
+  .phone-screen .camera { transition:transform .12s ease-out, backdrop-filter .12s ease-out, background-color .25s ease, color .25s ease; }
+  .camera:active { transform:scale(1.2); backdrop-filter:blur(12px) brightness(1.15); }
+}
 .phone-flash { z-index:5; background:white; opacity:0; }
 .phone-boot { z-index:6; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.2rem; background:#090a0c; color:#faf9f6; }
 .phone-boot span { font:650 3.4rem/1 Inter,sans-serif; letter-spacing:-.09em; animation:phone-power .48s ease both; }

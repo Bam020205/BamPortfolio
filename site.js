@@ -16,8 +16,8 @@ if (typeof menu.showModal === 'function') {
   const date = menu.querySelector('.phone-date');
   const timeFormat = new Intl.DateTimeFormat(undefined, {hour:'numeric',minute:'2-digit'});
   const dateFormat = new Intl.DateTimeFormat(undefined, {weekday:'short',month:'short',day:'numeric'});
-  let clockTimer, bootTimer, photoTimer, session = 0;
-  let busy = false;
+  let clockTimer, bootTimer, photoTimer;
+  let preview = null;
   function syncClock() {
     clearTimeout(clockTimer);
     if (!menu.open) return;
@@ -68,27 +68,96 @@ if (typeof menu.showModal === 'function') {
     setTheme(screen.dataset.theme !== 'dark');
     try { localStorage.setItem('portfolio-phone-theme',screen.dataset.theme); } catch {}
   });
+  const wallpaper = screen.querySelector('.phone-wallpaper');
+  const clockFace = screen.querySelector('.phone-clock');
+  const statusBar = screen.querySelector('.phone-status');
+  const glyph = camera.querySelector('svg').cloneNode(true);
+  glyph.classList.add('camera-morph-glyph');
+  memory.append(glyph);
+
+  function resetCamera(restoreFocus = true) {
+    if (!preview) return;
+    clearTimeout(photoTimer);
+    for (const animation of preview.animations) animation.cancel();
+    preview.flash?.cancel();
+    preview = null;
+    memory.hidden = true;
+    lock.inert = home.inert = statusBar.inert = false;
+    if (restoreFocus && menu.open) camera.focus({preventScroll:true});
+  }
+
+  async function dismissCamera() {
+    const current = preview;
+    if (!current || current.closing) return;
+    current.closing = true;
+    clearTimeout(photoTimer);
+    current.flash?.cancel();
+    if (moving() && current.animations.length) {
+      for (const animation of current.animations) animation.reverse();
+      await Promise.allSettled(current.animations.map(animation => animation.finished));
+    }
+    if (preview === current) resetCamera();
+  }
+
+  function animateCamera(current) {
+    const button = camera.getBoundingClientRect();
+    const display = screen.getBoundingClientRect();
+    const percentX = px => (px / display.width * 100) + '%';
+    const percentY = px => (px / display.height * 100) + '%';
+    const origin = [
+      percentY(button.top - display.top), percentX(display.right - button.right),
+      percentY(display.bottom - button.bottom), percentX(button.left - display.left)
+    ].join(' ');
+    const animate = (element, frames, easing = 'linear') => {
+      current.animations.push(element.animate(frames, {duration:440, easing, fill:'both'}));
+    };
+    const settle = 'cubic-bezier(.19,.87,.27,1)';
+    animate(memory, [
+      {inset:origin,borderRadius:'50%',backgroundColor:getComputedStyle(camera).backgroundColor},
+      {inset:'0% 0% 0% 0%',borderRadius:getComputedStyle(screen).borderTopLeftRadius,backgroundColor:'#000'}
+    ], settle);
+    animate(glyph, [{opacity:1},{opacity:0,offset:.25},{opacity:0}]);
+    animate(photo, [
+      {opacity:0,transform:'scale(1.08)'},{opacity:0,offset:.20},
+      {opacity:1,offset:.85},{opacity:1,transform:'scale(1)'}
+    ]);
+    for (const element of [wallpaper, clockFace]) {
+      animate(element, [
+        {transform:'scale(1)',filter:'brightness(1) blur(0px)'},
+        {transform:'scale(.94)',filter:'brightness(.8) blur(2px)'}
+      ], settle);
+    }
+  }
+
   camera.addEventListener('click', async () => {
-    if (busy) return;
-    const opened = session;
-    busy = true;
+    if (preview) return;
+    const current = {animations:[], closing:false};
+    preview = current;
     try {
       await photo.decode();
-      if (opened !== session || !menu.open) return;
+      if (preview !== current || !menu.open) return;
+      lock.inert = home.inert = statusBar.inert = true;
       memory.hidden = false;
-      if (moving()) flash.animate([{opacity:1},{opacity:0}], {duration:150,easing:'ease-out'});
-      photoTimer = setTimeout(async () => {
-        if (moving()) {
-          try { await memory.animate([{opacity:1},{opacity:0}], {duration:300,easing:'ease-out'}).finished; } catch {}
-        }
-        if (opened === session) {
-          memory.hidden = true;
-          busy = false;
-        }
-      }, moving() ? 1650 : 1500);
-    } catch { if (opened === session) busy = false; }
+      memory.focus({preventScroll:true});
+      if (moving()) {
+        animateCamera(current);
+        await current.animations[0].finished;
+        if (preview !== current || current.closing) return;
+        current.flash = flash.animate([{opacity:.9},{opacity:0}], {duration:130,easing:'ease-out'});
+        await current.flash.finished;
+      }
+      if (preview === current && !current.closing) photoTimer = setTimeout(dismissCamera,1500);
+    } catch {
+      if (preview === current && !current.closing) resetCamera();
+    }
   });
-  home.addEventListener('click', () => { if (!busy) showApps(apps.hidden); });
+  memory.addEventListener('click', dismissCamera);
+  menu.addEventListener('cancel', event => {
+    if (!preview) return;
+    event.preventDefault();
+    dismissCamera();
+  });
+  home.addEventListener('click', () => { if (!preview) showApps(apps.hidden); });
   menu.querySelector('.phone-close').addEventListener('click',closePhone);
   menu.addEventListener('click', event => {
     if (event.target !== menu) return;
@@ -100,24 +169,23 @@ if (typeof menu.showModal === 'function') {
     touchStart = event.touches.length === 1 ? event.touches[0] : null;
   }, {passive:true});
   screen.addEventListener('touchend', event => {
-    if (!touchStart || busy || !boot.hidden || !apps.hidden) return;
+    if (!touchStart || !boot.hidden || !apps.hidden) return;
     const end = event.changedTouches[0];
     const dy = end.clientY - touchStart.clientY;
     if (Math.abs(dy) > 60 && Math.abs(dy) > Math.abs(end.clientX - touchStart.clientX)) {
-      if (dy < 0) showApps(true); else closePhone();
+      if (preview) {
+        if (dy > 0) dismissCamera();
+      } else if (dy < 0) showApps(true);
+      else closePhone();
     }
     touchStart = null;
   }, {passive:true});
   document.addEventListener('visibilitychange', () => { if (!document.hidden && menu.open) syncClock(); });
   menu.addEventListener('close', () => {
-    session++;
+    resetCamera(false);
     clearTimeout(clockTimer);
     clearTimeout(bootTimer);
-    clearTimeout(photoTimer);
-    for (const el of [memory,flash]) el.getAnimations().forEach(a => a.cancel());
     finishBoot();
-    memory.hidden = true;
-    busy = false;
     toggle.setAttribute('aria-expanded','false');
   });
 }

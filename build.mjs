@@ -332,12 +332,12 @@ for (const [route, title, description, render] of pages) {
         <div class="phone-clock"><span class="phone-date"></span><time class="phone-time"></time></div>
         <div class="phone-actions">
           <button type="button" class="glass-key flashlight" aria-label="Dark phone theme" aria-pressed="false" title="Switch phone theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v3H7zM8 8h8l-2 4v8a2 2 0 0 1-4 0v-8z"/><circle cx="12" cy="15" r=".85"/></svg></button>
-          <button type="button" class="glass-key camera" aria-label="Show sunset photo" title="Show sunset photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13" r="3.2"/></svg></button>
+          <button type="button" class="glass-key camera" aria-label="Open camera preview" title="Open camera preview"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13" r="3.2"/></svg></button>
         </div>
       </div>
       <div class="phone-apps" hidden><h2>Portfolio</h2><nav aria-label="Portfolio apps">${navLinks}</nav></div>
       <button class="phone-home" type="button"><span>Open menu</span><i aria-hidden="true"></i></button>
-      <div class="phone-memory" hidden><img data-src="${root}media/phone-sunset.jpg" alt="A sunset together on the boat"></div>
+      <button type="button" class="phone-memory" aria-label="Camera preview. Return to lock screen" hidden><img data-src="${root}media/phone-camera-preview.jpg" alt="Camera view of a sunset together on the boat" draggable="false"></button>
       <div class="phone-flash" aria-hidden="true"></div>
       <div class="phone-boot" hidden aria-hidden="true"><span>as</span><i></i></div>
     </div>
