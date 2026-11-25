@@ -301,7 +301,16 @@ for (const [route, title, description, render] of pages) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="${description}">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#ffffff">${route === '' ? `
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://bamportfolio-two.vercel.app/">
+  <meta property="og:title" content="Abram Seneca | Portfolio">
+  <meta property="og:description" content="Explore my projects, photography, and writing in Yohanan Times.">
+  <meta property="og:image" content="https://bamportfolio-two.vercel.app/media/abram-seneca-portfolio.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1734">
+  <meta property="og:image:height" content="907">
+  <meta property="og:image:alt" content="Abram Seneca Portfolio beside a black monogrammed wallet and a silver reactor dial.">` : ''}
   <title>${route ? `${title.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')} | ${name}` : name}</title>
   <link rel="stylesheet" href="${root}site.css">
   <link rel="stylesheet" href="${root}headings.css">${route === '' ? `
