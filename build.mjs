@@ -319,6 +319,7 @@ for (const [route, title, description, render] of pages) {
   <link rel="preload" href="${root}media/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>` : ''}
   ${isJournal ? `<link rel="stylesheet" href="${root}journal.css">` : `<link rel="stylesheet" href="${root}reactor.css">`}
   <script src="${root}site.js" defer></script>
+  <script src="${root}visits.js" defer></script>
 </head>
 <body id="top" class="${route === 'overview' ? 'front-page' : route ? 'interior' : 'wallet-page'}">
   <a class="skip" href="#main">Skip to content</a>
@@ -336,7 +337,7 @@ for (const [route, title, description, render] of pages) {
   <main id="main" tabindex="-1" class="${isJournal ? 'journal-main' : 'reactor-stage'} ${route === 'about' ? 'about-stage' : route ? 'reading-stage' : ''}">${isJournal ? '' : reactorBackdrop()}${render(root)}</main>
   <footer class="footer dark">
     <div class="wrap footer-inner">
-      <div class="footer-id"><a class="footer-name" href="${pageUrl(root)}">${name}</a><p>Computer Science student · Tanza, Cavite</p></div>
+      <div class="footer-id"><a class="footer-name" href="${pageUrl(root)}">${name}</a><p>Computer Science student · Tanza, Cavite</p><p data-visit-count hidden></p></div>
       <div><p class="eyebrow">Socials</p>${socialLinks()}</div>
       <div><p class="eyebrow">Contact</p><a href="mailto:${email}">Email Abram ${arrow()}</a><a href="${pageUrl(root, 'contact')}">Contact details</a></div>
     </div>

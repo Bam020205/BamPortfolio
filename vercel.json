@@ -1,6 +1,6 @@
 {
   "framework": null,
   "installCommand": "npm ci --include=dev --include=optional",
-  "buildCommand": "npm run build && mkdir -p dist && cp -R about admin certifications contact experience journal media overview projects index.html headings.css journal.css reactor.css site.css site.js wallet.css wallet.js dist/",
+  "buildCommand": "npm run build && mkdir -p dist && cp -R about admin certifications contact experience journal media overview projects index.html headings.css journal.css reactor.css site.css site.js visits.js wallet.css wallet.js dist/",
   "outputDirectory": "dist"
 }
