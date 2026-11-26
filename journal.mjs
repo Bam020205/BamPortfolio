@@ -54,7 +54,7 @@ const edition=(root,small=false)=>`<span class="edition${small?' edition-small':
 const category=e=>`<div class="story-category">${escape(e.category)}</div>`;
 const published=e=>`<time datetime="${escape(e.date)}">${e.dateLabel}</time>`;
 function shareMenu(root, entry) {
-  const image = root + 'journal/' + entry.slug + '/story.png';
+  const image = root + 'journal/' + entry.slug + '/' + entry.slug + '-story.png';
   return `<a class="article-share" id="open-share" href="${image}"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3m-4 4 4-4 4 4M6 11H4v10h16V11h-2"/></svg>Share</a>
     <dialog id="article-share-dialog" aria-labelledby="share-heading">
       <div class="share-sheet">

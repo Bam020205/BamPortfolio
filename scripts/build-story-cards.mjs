@@ -57,7 +57,7 @@ export async function buildStoryCards(entries) {
   try {
     for (const entry of entries) {
       const directory = new URL('journal/' + entry.slug + '/', root);
-      const output = new URL('story.png', directory);
+      const output = new URL(entry.slug + '-story.png', directory);
       const fields = {
         title: entry.title, category: entry.category, date: entry.dateLabel, minutes: entry.minutes,
         excerpt: shortExcerpt(entry.storyExcerpt), cover: entry.cover,
@@ -82,7 +82,7 @@ export async function buildStoryCards(entries) {
   }
   for (const slug of Object.keys(previous)) {
     if (!Object.hasOwn(next, slug) && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
-      rmSync(new URL('journal/' + slug + '/story.png', root), { force: true });
+      rmSync(new URL('journal/' + slug + '/' + slug + '-story.png', root), { force: true });
     }
   }
   const json = JSON.stringify(next, null, 2) + '\n';
