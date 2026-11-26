@@ -1,6 +1,6 @@
 (() => {
   const footer = document.querySelector('[data-visit-count]');
-  const hosts = ['bam020205.github.io', 'bamportfolio-two.vercel.app', 'bamportfolio-1zg2.vercel.app'];
+  const hosts = ['bam020205.github.io', 'abramseneca.vercel.app', 'bamportfolio-two.vercel.app', 'bamportfolio-1zg2.vercel.app'];
   if (!footer || !hosts.includes(location.hostname)) return;
 
   const lastPageKey = 'BamPortfolio:last-counted-page';

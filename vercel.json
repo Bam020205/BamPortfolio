@@ -2,5 +2,13 @@
   "framework": null,
   "installCommand": "npm ci --include=dev --include=optional",
   "buildCommand": "npm run build && mkdir -p dist && cp -R about admin certifications content contact experience journal media overview projects index.html headings.css journal.css reactor.css site.css site.js visits.js wallet.css wallet.js dist/",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "bamportfolio-two.vercel.app" }],
+      "destination": "https://abramseneca.vercel.app/:path*",
+      "permanent": true
+    }
+  ]
 }
