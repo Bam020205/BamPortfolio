@@ -5,7 +5,7 @@
       "title": "DeTerminator",
       "category": "Robotics research",
       "date": "2025",
-      "intro": "An Arduino-based rover that explores carbon dioxide and humidity as possible indicators of termite activity.",
+      "intro": "I built and programmed Terry, an Arduino rover that measures carbon dioxide and humidity to investigate possible signs of termite activity. The project earned fourth place in individual Robotics and Intelligent Machines at the 2025 Division Science and Technology Fair.",
       "cover": "/media/portfolio/terry-assembly.webp",
       "alt": "Hands connecting wiring inside the DeTerminator rover beside its blue display",
       "tools": "Arduino · C++ · Environmental sensors",
@@ -17,6 +17,18 @@
         {
           "heading": "The science fair",
           "text": "DeTerminator earned fourth place in the individual Robotics and Intelligent Machines category at the 2025 Division Science and Technology Fair in Bulihan, Silang, Cavite."
+        }
+      ],
+      "gallery": [
+        {
+          "image": "/media/portfolio/terry-circuit.webp",
+          "alt": "Terry’s wiring layout, including the controller, sensors, breadboard, motor driver, display and power supplies.",
+          "caption": "Terry’s circuit, drawn from my Cirkit Designer project. Open the diagram to inspect the wiring."
+        },
+        {
+          "image": "/media/portfolio/terry-sensor-detail.webp",
+          "alt": "Arduino Uno controller, MG811 carbon dioxide sensor, and the temperature and humidity sensor.",
+          "caption": "The Uno reads the environmental sensors. Carbon dioxide and humidity were the two measurements I investigated."
         }
       ],
       "attachment": "/media/portfolio/fair.jpg",
@@ -44,7 +56,7 @@
       "title": "Shop Inventory Manager",
       "category": "Desktop application",
       "date": "2026",
-      "intro": "A Java Swing inventory system designed around the everyday needs of a sari-sari store.",
+      "intro": "Helping my mother at a canteen inspired me to build a sari-sari store inventory app with Java Swing and SQLite. The product form lets you change a price or stock count and see the updated item in the inventory table.",
       "cover": "/media/portfolio/inventory-window.webp",
       "alt": "The Shop Inventory Manager product form and stock table in the original screen recording",
       "tools": "Java Swing · SQLite · DBeaver",
@@ -56,6 +68,23 @@
         {
           "heading": "The build",
           "text": "I built the desktop interface with Java Swing and used SQLite with DBeaver. A Project Tuklas Teknolohiya workshop on connecting Java to a database helped me apply the approach to this project."
+        }
+      ],
+      "gallery": [
+        {
+          "image": "/media/portfolio/inventory-window.webp",
+          "alt": "The complete Java desktop window with its product form, search controls and inventory table.",
+          "caption": "The full Shop Inventory Manager interface."
+        },
+        {
+          "image": "/media/portfolio/inventory-product-fields.webp",
+          "alt": "Product name, unit price and low-stock alert fields.",
+          "caption": "Each product has a unit price and its own low-stock threshold."
+        },
+        {
+          "image": "/media/portfolio/inventory-stock-detail.webp",
+          "alt": "Inventory rows showing unit price, quantity, reorder level and stock status.",
+          "caption": "The stock table shows which products are in stock and which have reached their reorder level."
         }
       ],
       "video": "/media/portfolio/inventory.mp4",
@@ -83,12 +112,36 @@
       "sliderFit": "cover"
     },
     {
+      "slug": "church-leadership",
+      "title": "Church leadership",
+      "group": "community",
+      "dateLabel": "Ongoing",
+      "organization": "Jesus the Great Minister and Christ the Hope of All Nations",
+      "role": "Church leader",
+      "showOnOverview": true,
+      "pinned": false,
+      "showInSlider": true,
+      "sliderFit": "cover"
+    },
+    {
       "slug": "csso",
       "title": "Computer Science Student Organization (CSSO)",
       "group": "organizations",
       "date": "2026-10",
       "dateLabel": "Since Oct 2026",
       "role": "Committee on Records and Documentation (COMRECS) · Member and photographer",
+      "showOnOverview": true,
+      "pinned": false,
+      "showInSlider": true,
+      "sliderFit": "cover"
+    },
+    {
+      "slug": "cyberph",
+      "title": "CyberPH",
+      "group": "organizations",
+      "date": "2026",
+      "dateLabel": "Since 2026",
+      "role": "Member",
       "showOnOverview": true,
       "pinned": false,
       "showInSlider": true,
@@ -206,6 +259,19 @@
       "sliderFit": "cover"
     },
     {
+      "slug": "supreme-secondary-learners-government",
+      "title": "Supreme Secondary Learner’s Government",
+      "group": "organizations",
+      "date": "2026",
+      "dateLabel": "2024–2026",
+      "organization": "Cavite Science Integrated School",
+      "role": "Student member, co-head of the Secretariat Committee and photographer",
+      "showOnOverview": true,
+      "pinned": false,
+      "showInSlider": true,
+      "sliderFit": "cover"
+    },
+    {
       "slug": "tuklas-workshops",
       "title": "Project Tuklas Teknolohiya workshops",
       "group": "learning",
@@ -219,9 +285,12 @@
     }
   ],
   "settings": {
-    "headline": "Robotics & software",
-    "focus": "Robotics / Software development",
-    "introduction": "I study Computer Science at Cavite State University and build robots and desktop applications.",
+    "homeHeadline": "I build Java applications and work with databases.",
+    "homeBio": "I’m Abram, a Computer Science student at Cavite State University, a robotics enthusiast, and an active member of student tech communities. I’ve served in student government and continue to serve as a church leader.",
+    "signature": "Saved by Grace",
+    "headline": "Java, databases & robotics",
+    "focus": "Java engineering / Database management",
+    "introduction": "I build Java applications, work with relational databases, and explore robotics through hands-on projects.",
     "discipline": "Computer Science",
     "location": "Tanza, Cavite",
     "aboutHeadline": "Computer Science student at Cavite State University.",

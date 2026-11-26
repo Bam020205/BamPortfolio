@@ -49,6 +49,15 @@ if (typeof menu.showModal === 'function') {
   }
   toggle.hidden = false;
   document.documentElement.classList.add('has-menu');
+  function trackPhoneInput(event) {
+    if (event.type === 'keydown') delete menu.dataset.touch;
+    else if (event.pointerType === 'touch') menu.dataset.touch = 'true';
+    else delete menu.dataset.touch;
+  }
+  for (const control of [toggle, menu]) {
+    control.addEventListener('pointerdown', trackPhoneInput, true);
+    control.addEventListener('keydown', trackPhoneInput, true);
+  }
   toggle.addEventListener('click', () => {
     hideCursor();
     let dark = false;

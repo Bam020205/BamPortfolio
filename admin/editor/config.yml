@@ -156,8 +156,8 @@ collections:
     summary: '{{title}} · {{date}}'
     fields:
       - {"name":"title","label":"Experience title","widget":"string","required":true}
-      - {"name":"group","label":"Experience section","widget":"select","options":[{"value":"organizations","label":"Student organizations"},{"value":"volunteering","label":"Volunteering"},{"value":"learning","label":"Training & events"},{"value":"awards","label":"Academic achievements"}]}
-      - {"name":"date","label":"Sort date","widget":"string","required":true,"hint":"Use the project or experience date. A year, month, or full date works.","pattern":["^[0-9]{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12][0-9]|3[01]))?)?$","Use YYYY, YYYY-MM, or YYYY-MM-DD."]}
+      - {"name":"group","label":"Experience section","widget":"select","options":[{"value":"organizations","label":"Student organizations"},{"value":"volunteering","label":"Volunteering"},{"value":"learning","label":"Training & events"},{"value":"awards","label":"Academic achievements"},{"value":"community","label":"Community leadership"}]}
+      - {"name":"date","label":"Sort date","widget":"string","required":false,"hint":"Use the project or experience date. A year, month, or full date works.","pattern":["^[0-9]{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12][0-9]|3[01]))?)?$","Use YYYY, YYYY-MM, or YYYY-MM-DD."]}
       - {"name":"dateLabel","label":"Displayed dates","widget":"string","required":false,"hint":"Optional, e.g. “Since Aug 2026” or “Jan–Mar 2027”. Defaults to your sort date."}
       - {"name":"organization","label":"Organization","widget":"string","required":false}
       - {"name":"role","label":"Role","widget":"string","required":false}
@@ -194,6 +194,9 @@ collections:
         format: json
         preview_path: overview/
         fields:
+          - {name: homeHeadline, label: Homepage headline, widget: string}
+          - {name: homeBio, label: Homepage introduction, widget: text}
+          - {name: signature, label: Personal signature, widget: string, required: false}
           - {"name":"headline","label":"Overview headline","widget":"string","required":true}
           - {"name":"focus","label":"Introduction label","widget":"string","required":true}
           - {"name":"introduction","label":"Overview introduction","widget":"string","required":true}

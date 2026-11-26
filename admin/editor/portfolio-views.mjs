@@ -9,6 +9,7 @@ const groups = {
   volunteering: 'Volunteering',
   learning: 'Training & events',
   awards: 'Academic achievements',
+  community: 'Community leadership',
 };
 function newest(a, b) {
   return (b.date || '').localeCompare(a.date || '') || a.slug.localeCompare(b.slug);
@@ -97,7 +98,7 @@ function portfolioViews({ asset, page, heading, arrow, journalExists, projectExi
         hasNotes
           ? `<div class="dark"><div class="wrap case-notes"><p class="eyebrow">${e(project.tools)}</p><div>
       ${(project.details || []).map((item) => `<section class="reveal">${heading(item.heading, 2)}${paragraphs(item.text)}</section>`).join('')}
-      ${(project.gallery || []).map((photo) => `<figure class="film reveal">${img(photo.image, photo.alt)}${photo.caption ? `<figcaption>${e(photo.caption)}</figcaption>` : ''}</figure>`).join('')}
+      ${(project.gallery || []).map((photo) => `<figure class="film case-photo reveal"><a href="${file(photo.image)}" aria-label="Open full-size image: ${e(photo.alt)}">${img(photo.image, photo.alt)}</a>${photo.caption ? `<figcaption>${e(photo.caption)}</figcaption>` : ''}</figure>`).join('')}
       ${project.transcript ? `<details><summary>Video description</summary>${paragraphs(project.transcript)}</details>` : ''}
       ${links.map((item) => `<p>${item}</p>`).join('')}</div></div></div>`
           : ''
@@ -129,6 +130,7 @@ function portfolioViews({ asset, page, heading, arrow, journalExists, projectExi
       volunteering: 'section dark',
       learning: 'wrap section',
       awards: 'section light-section',
+      community: 'wrap section',
     };
     return Object.entries(groups)
       .map(([group, title]) => {
@@ -145,7 +147,7 @@ function portfolioViews({ asset, page, heading, arrow, journalExists, projectExi
     const href = related(entry);
     return `<section class="section wrap feature community" aria-labelledby="home-event">
       <figure class="reveal">${img(entry.cover, entry.alt)}</figure>
-      <div class="feature-copy reveal"><p class="eyebrow kicker">${e(entry.featureLabel || groups[entry.group])} · ${e(entry.date?.slice(0, 4))}</p>${heading(entry.overviewTitle || entry.title, 2, 'home-event')}
+      <div class="feature-copy reveal"><p class="eyebrow kicker">${[entry.featureLabel || groups[entry.group], entry.date?.slice(0, 4) || entry.dateLabel].filter(Boolean).map(e).join(' · ')}</p>${heading(entry.overviewTitle || entry.title, 2, 'home-event')}
       <p>${e(entry.overview || entry.description)}</p>${link(href || page('experience') + '#experience-' + entry.slug, href ? entry.featureLinkLabel || 'Read the journal entry' : 'View experience')}</div></section>`;
   }
   function slideCard(slide, duplicate = false) {

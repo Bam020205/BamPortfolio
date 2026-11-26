@@ -64,7 +64,8 @@ for (const name of ['projects', 'experiences'])
   CMS.registerPreviewTemplate(name, (props) => portfolioPreview(name, props));
 CMS.registerPreviewTemplate('site', ({ entry }) => {
   const s = entry.get('data').toJS();
-  return previewFrame(`<section class="preview-part"><h2 class="preview-label">Overview</h2><p class="eyebrow">${escape(s.discipline)} / ${escape(s.location)}</p><h2>${escape(s.headline)}</h2><p>${escape(s.focus)}</p><p>${escape(s.introduction)}</p></section>
+  return previewFrame(`<section class="preview-part"><h2 class="preview-label">Homepage</h2><h1>${escape(s.homeHeadline)}</h1><p>${escape(s.homeBio)}</p><p><i>${escape(s.signature)}</i></p></section>
+  <section class="preview-part"><h2 class="preview-label">Overview</h2><p class="eyebrow">${escape(s.discipline)} / ${escape(s.location)}</p><h2>${escape(s.headline)}</h2><p>${escape(s.focus)}</p><p>${escape(s.introduction)}</p></section>
   <section class="preview-part"><h2 class="preview-label">About</h2><h2>${escape(s.aboutHeadline)}</h2>${(s.bio || []).map((p) => `<p>${escape(p)}</p>`).join('')}</section>
   <section class="preview-part"><h2 class="preview-label">Contact and footer</h2><p>${escape(s.footerRole)} · ${escape(s.location)}</p><p>${escape(s.email)}</p><p>${escape(s.phone || s.dial)}</p>${(s.socials || []).map((profile) => `<p>${escape(profile.label)} · ${escape(profile.url)}</p>`).join('')}</section>`);
 });

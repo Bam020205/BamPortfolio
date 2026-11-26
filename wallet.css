@@ -4,7 +4,10 @@
   min-height: calc(100svh - 4.5rem); margin-inline: auto; padding-block: clamp(2rem,5vw,5rem);
 }
 .wallet-heading { padding-bottom: 1rem; }
-.wallet-heading h1 { font-size: clamp(4rem,8.3vw,9rem); margin-block: 1.4rem 2.4rem; }
+.wallet-heading h1 { font-size: clamp(2.6rem,4.8vw,5rem); line-height: 1.04; margin-block: 1rem; }
+.wallet-intro { max-width: 48ch; line-height: 1.55; }
+.wallet-signature { font: italic 1.15rem/1.5 Georgia, serif; margin-top: .75rem; }
+.wallet-heading .overview-link { margin-top: 1.4rem; }
 .overview-link { display: inline-flex; gap: 1rem; align-items: center; text-decoration: none; border-bottom: 1px solid currentColor; padding-block: .3rem; }
 .overview-link .arrow { transition: transform .55s var(--ease); }
 .overview-link:hover .arrow { transform: translate(.15rem,-.15rem); }
@@ -65,7 +68,7 @@
 @media (max-width: 760px) {
   .wallet-landing { grid-template-columns: 1fr; gap: 1.6rem; padding-block: 1.5rem 2.5rem; min-height: auto; }
   .wallet-heading { padding: 0; }
-  .wallet-heading h1 { font-size: clamp(3.1rem,9.5vw,4.75rem); margin-block: .8rem 1rem; }
+  .wallet-heading h1 { font-size: clamp(2.1rem,7.8vw,3.6rem); margin-block: .8rem 1rem; }
   .wallet-display { min-height: auto; padding: 1.25rem clamp(1.1rem,5vw,3rem) 2rem; }
   .wallet { --step: 2.8rem; --headroom: 1.65rem; --pocket-height: 7rem; }
 }

@@ -76,8 +76,10 @@ const pages = [
     const sections = nav.filter(([path]) => path);
     return `<section class="wallet-landing" aria-labelledby="wallet-title">
       <header class="wallet-heading">
-        <p class="eyebrow">Portfolio directory</p>
-        ${blurHeading(['Choose a','section.'], { level: 1, id: 'wallet-title' })}
+        <p class="eyebrow">Abram Seneca</p>
+        ${blurHeading(settings.homeHeadline, { level: 1, id: 'wallet-title' })}
+        <p class="wallet-intro">${html(settings.homeBio)}</p>
+        ${settings.signature ? `<p class="wallet-signature">${html(settings.signature)}</p>` : ''}
         <a class="overview-link" href="${pageUrl(root,'overview')}">View portfolio overview ${arrow()}</a>
       </header>
       <div class="wallet-display"><nav class="wallet" aria-label="Portfolio sections" style="--cards:${sections.length}">
@@ -164,8 +166,13 @@ const pages = [
     </div></div>`],
 ];
 
-for (const [route, title, description, render] of pages) {
+for (const [route, title, description, render, story] of pages) {
   const isJournal = route === 'journal' || route.startsWith('journal/');
+  const project = projects.find(item => route === 'projects/' + item.slug);
+  const share = story || project;
+  const origin = 'https://bamportfolio-two.vercel.app';
+  // Journal excerpts already contain escaped text from the article renderer.
+  const shareDescription = story?.excerpt ? story.excerpt.replaceAll('"', '&quot;') : html(description);
   const root = route ? '../'.repeat(route.split('/').length) : './';
   const navLinks = [nav[0], ['overview', 'Overview'], ...nav.slice(1)].map(([path, label]) => {
     const active = path === route || (path && route.startsWith(`${path}/`));
@@ -189,7 +196,14 @@ for (const [route, title, description, render] of pages) {
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1734">
   <meta property="og:image:height" content="907">
-  <meta property="og:image:alt" content="yohanan - the good apple beside a black wallet with a silver as monogram on a white studio background.">` : ''}
+  <meta property="og:image:alt" content="yohanan - the good apple beside a black wallet with a silver as monogram on a white studio background.">` : share ? `
+  <meta property="og:type" content="${story ? 'article' : 'website'}">
+  <meta property="og:title" content="${html(title)}">
+  <meta property="og:description" content="${shareDescription}">
+  <meta property="og:url" content="${origin}/${route}/">
+  <meta property="og:image" content="${origin}${html(encodePath(share.cover))}">
+  <meta property="og:image:alt" content="${html(share.alt)}">
+  <meta name="twitter:card" content="summary_large_image">` : ''}
   <title>${route ? `${title.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')} | ${name}` : name}</title>
   <link rel="stylesheet" href="${root}site.css">
   <link rel="stylesheet" href="${root}headings.css">${route === '' ? `

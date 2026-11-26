@@ -359,3 +359,9 @@ img { filter: grayscale(1); transition: filter .7s var(--ease), transform .7s va
   .credential { grid-template-columns: 4.25rem minmax(0,1fr); }
   .footer-base { display: grid; grid-template-columns: 1fr; justify-items: start; }
 }
+
+#menu, #menu :is(button, a), .menu-toggle { -webkit-tap-highlight-color: transparent; }
+#menu[data-touch] :focus { outline: none; }
+.case-photo { margin-top: 2rem; }
+.case-photo a { display: block; }
+.case-photo img { width: 100%; height: auto; filter: none; }

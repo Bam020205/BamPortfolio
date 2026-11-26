@@ -71,5 +71,6 @@ export const journalPages=[
  ...entries.map(e=>['journal/'+e.slug,e.title,'A journal entry by Abram Seneca.',root=>`<div class="journal-shell"><a class="edition-link" href="../index.html" aria-label="Journal front page">${edition(root,true)}</a>
  <article class="reading"><header>${category(e)}<h1>${escape(e.title)}</h1><div class="journal-meta">Abram Seneca · ${published(e)} · ${e.minutes} min read</div></header><figure class="cover"><img fetchpriority="high" src="${picture(root,e.cover)}" alt="${escape(e.alt)}">${e.caption?`<figcaption>${escape(e.caption)}</figcaption>`:''}</figure>
  <div class="prose">${e.body}</div>${e.sections.map(section => articleSection(root, section)).join('')}${e.gallery?.length?`<div class="story-gallery">${e.gallery.map(g=>`<figure><img loading="lazy" src="${picture(root,g.image)}" alt="${escape(g.alt)}">${g.caption?`<figcaption>${escape(g.caption)}</figcaption>`:''}</figure>`).join('')}</div>`:''}
- <p class="back-journal"><a href="../index.html">Back to the Journal</a></p></article></div>`])
+ <p class="back-journal"><a href="../index.html">Back to the Journal</a></p></article></div>`,
+ {cover:e.cover, alt:e.alt, excerpt:e.excerpt}])
 ];
