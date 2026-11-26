@@ -50,3 +50,35 @@
 .paired-photo .prose { margin: 0; }
 @media (min-width: 701px) { .paired-photo.image-left figure { grid-column: 1; grid-row: 1; } .paired-photo.image-left .prose { grid-column: 2; } }
 @media (max-width: 700px) { .reading .paired-photo { grid-template-columns: 1fr; gap: .75rem; } }
+
+.article-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1rem; }
+.article-share { display: inline-flex; align-items: center; gap: .4rem; min-height: 2.75rem; font-weight: 600; text-decoration: none; color: #25231e; }
+.article-share:hover { text-decoration: underline; }
+.article-share svg { width: 1rem; height: 1rem; }
+#article-share-dialog {
+  width: min(34rem, calc(100% - 2rem)); max-height: calc(100dvh - 2rem);
+  margin: auto; padding: 0; overflow: auto; overscroll-behavior: contain;
+  border: 1px solid #78746b; background: #faf9f6; color: #201e1b;
+  text-align: left; font: 400 .94rem/1.45 Inter, Arial, sans-serif;
+}
+#article-share-dialog::backdrop { background: rgb(21 20 18 / 48%); }
+.share-sheet { padding: clamp(1rem, 4vw, 1.65rem); }
+.share-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-bottom: .65rem; margin-bottom: 1.1rem; border-bottom: 3px double #625e56; }
+.share-heading h2 { font: 700 1.75rem/1.12 Playfair, Georgia, serif; letter-spacing: -.04em; }
+.share-heading button { min-width: 2.75rem; min-height: 2.75rem; font: 1.7rem/1 Arial, sans-serif; }
+.share-layout { display: grid; align-items: start; grid-template-columns: 42% minmax(0, 1fr); gap: clamp(.8rem, 3vw, 1.4rem); }
+.reading .share-preview { border: 1px solid #d2cec5; background: #faf9f6; width: 100%; height: auto; aspect-ratio: 9 / 16; }
+.share-options { display: grid; gap: .5rem; }
+.share-options :is(a, button) { display: grid; place-items: center; padding: .55rem .65rem; min-height: 2.75rem; border: 1px solid #99948b; color: inherit; text-align: center; text-decoration: none; font-weight: 600; }
+.share-options [data-share-file], .share-options [data-share-file][hidden] + .share-save { background: #26231f; color: #faf9f6; border-color: #26231f; }
+.share-options :is(a, button):hover { text-decoration: underline; }
+.share-options input { min-width: 0; width: 100%; padding: .5rem; }
+.share-options p { margin: .3rem 0 0; font-size: .84rem; }
+.share-options .share-status { color: #60422f; }
+.share-status:empty { display: none; }
+@media (max-width: 480px) {
+  .share-layout { grid-template-columns: minmax(0, 1fr); }
+  .reading .share-preview { justify-self: center; width: auto; max-width: 100%; height: min(33vh, 16rem); height: min(33dvh, 16rem); }
+  .share-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .share-options :is(p, input) { grid-column: 1 / -1; }
+}

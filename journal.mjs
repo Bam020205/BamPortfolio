@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { parse } from 'yaml';
 import { marked } from 'marked';
 import sanitizeHtml from 'sanitize-html';
+import { decodeHTML } from 'entities';
 import { readingMinutes } from './admin/editor/reading-time.mjs';
 
 export const publication = 'Yohanan Times - The Good Apple';
@@ -39,16 +40,39 @@ export function parseEntry(source, slug) {
   const firstParagraph = sanitizeHtml(body.match(/<p>([\s\S]*?)<\/p>/)?.[1] ?? '', {allowedTags:[],allowedAttributes:{}});
   const sectionText = sections.map(section => section.text || '').filter(Boolean).join('\n\n');
   const summary = firstParagraph || escape(sectionText.split(/\n\s*\n/)[0]);
+  const lead = decodeHTML(summary).replace(/\s+/g, ' ').trim();
+  const firstSentence = new Intl.Segmenter('en', {granularity:'sentence'}).segment(lead).containing(0)?.segment;
+  const storyExcerpt = (data.story_excerpt?.trim() || firstSentence || '').replace(/\s+/g, ' ').trim();
   const words = summary.trim().split(/\s+/);
   const excerpt = words.length > 34 ? words.slice(0, 34).join(" ") + "…" : summary;
-  return {...data,sections,images,slug,body,excerpt,category:data.category || 'Article',minutes:readingMinutes(front[2] + ' ' + sectionText),stamp:date.getTime(),dateLabel:date.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Manila'})};
+  return {...data,sections,images,slug,body,excerpt,storyExcerpt,category:data.category || 'Article',minutes:readingMinutes(front[2] + ' ' + sectionText),stamp:date.getTime(),dateLabel:date.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Manila'})};
 }
 const dir=new URL('./journal/entries/', import.meta.url);
-const entries=(existsSync(dir) ? readdirSync(dir) : []).filter(file=>file.endsWith('.md')).map(file=>parseEntry(readFileSync(new URL(file,dir),'utf8'),file.slice(0,-3))).sort((a,b)=>b.stamp-a.stamp||a.slug.localeCompare(b.slug));
+export const entries=(existsSync(dir) ? readdirSync(dir) : []).filter(file=>file.endsWith('.md')).map(file=>parseEntry(readFileSync(new URL(file,dir),'utf8'),file.slice(0,-3))).sort((a,b)=>b.stamp-a.stamp||a.slug.localeCompare(b.slug));
 const picture=(root,path)=>escape(root+path.slice(1).split('/').map(encodeURIComponent).join('/'));
 const edition=(root,small=false)=>`<span class="edition${small?' edition-small':''}"><img class="journal-nameplate" src="${root}media/yohanan-times.svg" alt="Yohanan Times"> <i>- The Good Apple</i></span>`;
 const category=e=>`<div class="story-category">${escape(e.category)}</div>`;
 const published=e=>`<time datetime="${escape(e.date)}">${e.dateLabel}</time>`;
+function shareMenu(root, entry) {
+  const image = root + 'journal/' + entry.slug + '/story.png';
+  return `<a class="article-share" id="open-share" href="${image}"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3m-4 4 4-4 4 4M6 11H4v10h16V11h-2"/></svg>Share</a>
+    <dialog id="article-share-dialog" aria-labelledby="share-heading">
+      <div class="share-sheet">
+        <div class="share-heading"><h2 id="share-heading">Share this article</h2><form method="dialog"><button aria-label="Close sharing">×</button></form></div>
+        <div class="share-layout"><img class="share-preview" width="1080" height="1920" alt="Story card for ${escape(entry.title)}" data-src="${image}">
+          <div class="share-options">
+            <button type="button" data-share-file hidden>Share Story image</button>
+            <a class="share-save" href="${image}" download="${entry.slug}-story.png">Save Story image</a>
+            <button type="button" data-share-link hidden>Share link</button>
+            <button type="button" data-copy-link>Copy article link</button>
+            <input type="text" readonly hidden aria-label="Article link">
+            <p>When posting your Story, add the article URL as a link sticker.</p>
+            <p class="share-status" role="status"></p>
+          </div>
+        </div>
+      </div>
+    </dialog>`;
+}
 function card(root,e,lead) {
   const href=e.slug+'/index.html';
   return `<article class="story-card ${lead?'lead-story':''}"><a href="${href}">
@@ -69,7 +93,7 @@ export const journalPages=[
  ${entries.length?card(root,entries[0],true):'<p>The first entry is on its way.</p>'}
  ${entries.length>1?`<section class="archive"><h2>Earlier entries</h2><div class="archive-grid">${entries.slice(1).map(e=>card(root,e,false)).join('')}</div></section>`:''}<div class="journal-colophon"><a href="../admin/index.html">Writing desk</a></div></div>`],
  ...entries.map(e=>['journal/'+e.slug,e.title,'A journal entry by Abram Seneca.',root=>`<div class="journal-shell"><a class="edition-link" href="../index.html" aria-label="Journal front page">${edition(root,true)}</a>
- <article class="reading"><header>${category(e)}<h1>${escape(e.title)}</h1><div class="journal-meta">Abram Seneca · ${published(e)} · ${e.minutes} min read</div></header><figure class="cover"><img fetchpriority="high" src="${picture(root,e.cover)}" alt="${escape(e.alt)}">${e.caption?`<figcaption>${escape(e.caption)}</figcaption>`:''}</figure>
+ <article class="reading"><header>${category(e)}<h1>${escape(e.title)}</h1><div class="journal-meta article-meta"><span>Abram Seneca · ${published(e)} · ${e.minutes} min read</span>${shareMenu(root,e)}</div></header><figure class="cover"><img fetchpriority="high" src="${picture(root,e.cover)}" alt="${escape(e.alt)}">${e.caption?`<figcaption>${escape(e.caption)}</figcaption>`:''}</figure>
  <div class="prose">${e.body}</div>${e.sections.map(section => articleSection(root, section)).join('')}${e.gallery?.length?`<div class="story-gallery">${e.gallery.map(g=>`<figure><img loading="lazy" src="${picture(root,g.image)}" alt="${escape(g.alt)}">${g.caption?`<figcaption>${escape(g.caption)}</figcaption>`:''}</figure>`).join('')}</div>`:''}
  <p class="back-journal"><a href="../index.html">Back to the Journal</a></p></article></div>`,
  {cover:e.cover, alt:e.alt, excerpt:e.excerpt}])

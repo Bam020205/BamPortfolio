@@ -37,6 +37,7 @@ collections:
       - {name: alt, label: Image description, widget: string}
       - {name: caption, label: Caption, widget: string, required: false}
       - {name: body, label: Opening text, required: false, widget: markdown, editor_components: []}
+      - {name: story_excerpt, label: Story excerpt, widget: text, required: false, hint: "Choose a short passage for the shareable Story image. Leave this blank to use the opening sentence."}
       - name: sections
         label: Article sections
         widget: list

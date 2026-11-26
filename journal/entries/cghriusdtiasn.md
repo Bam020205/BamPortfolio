@@ -1,5 +1,6 @@
 ---
 title: The First Name
+story_excerpt: Faith was never meant to replace effort, and trusting God was never an excuse to neglect the responsibilities entrusted to me.
 category: Devotion
 date: 2026-11-26T21:13:00+08:00
 cover: /media/journal/Screenshot 2026-11-26 212159.png

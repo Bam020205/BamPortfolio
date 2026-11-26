@@ -1,5 +1,6 @@
 import { escape as html, newest, portfolioSelection, portfolioViews } from './admin/editor/portfolio-views.mjs';
-import { journalPages } from './journal.mjs';
+import { entries, journalPages } from './journal.mjs';
+import { buildStoryCards } from './scripts/build-story-cards.mjs';
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -7,6 +8,7 @@ import { reactorBackdrop } from './reactor.mjs';
 import { blurHeading } from './headings.mjs';
 
 const name = 'Abram John R. Seneca';
+await buildStoryCards(entries);
 const records = JSON.parse(readFileSync(new URL('./content/portfolio.json', import.meta.url), 'utf8'));
 const { settings, experiences } = records;
 const projects = [...records.projects].sort(newest);
@@ -213,7 +215,7 @@ for (const [route, title, description, render, story] of pages) {
   <script src="${root}wallet.js" defer></script>` : ''}${route === '' || route === 'about' ? `
   <link rel="preload" href="${root}media/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>` : ''}
   ${isJournal ? `<link rel="stylesheet" href="${root}journal.css">` : `<link rel="stylesheet" href="${root}reactor.css">`}
-  <script src="${root}site.js" defer></script>
+  ${story ? `<script src="${root}journal/share.js" defer></script>` : ''}<script src="${root}site.js" defer></script>
   <script src="${root}visits.js" defer></script>
 </head>
 <body id="top" class="${route === 'overview' ? 'front-page' : route ? 'interior' : 'wallet-page'}">${route === '' ? `

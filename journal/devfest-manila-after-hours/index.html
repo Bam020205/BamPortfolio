@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="../../site.css">
   <link rel="stylesheet" href="../../headings.css">
   <link rel="stylesheet" href="../../journal.css">
-  <script src="../../site.js" defer></script>
+  <script src="../../journal/share.js" defer></script><script src="../../site.js" defer></script>
   <script src="../../visits.js" defer></script>
 </head>
 <body id="top" class="interior">
@@ -49,7 +49,23 @@
   </dialog>
   <div class="cursor-ring" aria-hidden="true"></div>
   <main id="main" tabindex="-1" class="journal-main reading-stage"><div class="journal-shell"><a class="edition-link" href="../index.html" aria-label="Journal front page"><span class="edition edition-small"><img class="journal-nameplate" src="../../media/yohanan-times.svg" alt="Yohanan Times"> <i>- The Good Apple</i></span></a>
- <article class="reading"><header><div class="story-category">Event</div><h1>What I took home from DevFest Manila After Hours</h1><div class="journal-meta">Abram Seneca · <time datetime="2026-11-24T09:01:00+08:00">November 24, 2026</time> · 1 min read</div></header><figure class="cover"><img fetchpriority="high" src="../../media/devfest/stage.webp" alt="Attendees gathering in front of the DevFest Manila After Hours stage"><figcaption>DevFest Manila 2026 After Hours.</figcaption></figure>
+ <article class="reading"><header><div class="story-category">Event</div><h1>What I took home from DevFest Manila After Hours</h1><div class="journal-meta article-meta"><span>Abram Seneca · <time datetime="2026-11-24T09:01:00+08:00">November 24, 2026</time> · 1 min read</span><a class="article-share" id="open-share" href="../../journal/devfest-manila-after-hours/story.png"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3m-4 4 4-4 4 4M6 11H4v10h16V11h-2"/></svg>Share</a>
+    <dialog id="article-share-dialog" aria-labelledby="share-heading">
+      <div class="share-sheet">
+        <div class="share-heading"><h2 id="share-heading">Share this article</h2><form method="dialog"><button aria-label="Close sharing">×</button></form></div>
+        <div class="share-layout"><img class="share-preview" width="1080" height="1920" alt="Story card for What I took home from DevFest Manila After Hours" data-src="../../journal/devfest-manila-after-hours/story.png">
+          <div class="share-options">
+            <button type="button" data-share-file hidden>Share Story image</button>
+            <a class="share-save" href="../../journal/devfest-manila-after-hours/story.png" download="devfest-manila-after-hours-story.png">Save Story image</a>
+            <button type="button" data-share-link hidden>Share link</button>
+            <button type="button" data-copy-link>Copy article link</button>
+            <input type="text" readonly hidden aria-label="Article link">
+            <p>When posting your Story, add the article URL as a link sticker.</p>
+            <p class="share-status" role="status"></p>
+          </div>
+        </div>
+      </div>
+    </dialog></div></header><figure class="cover"><img fetchpriority="high" src="../../media/devfest/stage.webp" alt="Attendees gathering in front of the DevFest Manila After Hours stage"><figcaption>DevFest Manila 2026 After Hours.</figcaption></figure>
  <div class="prose"><p>At DevFest Manila 2026 After Hours, I got to see how a team can take an idea all the way to a live application with Google Antigravity.</p>
 <p>I especially enjoyed the hands-on workflows led by Jeremy Ephraim Villa and Sermil Matoto. They showed how to coordinate AI agents, build a full-stack application, review its architecture, deploy cloud infrastructure, and verify the live result.</p>
 <p>What stayed with me was the role of human review. Even with agents helping at each stage, a developer still has to decide whether the application works as intended.</p>

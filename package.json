@@ -6,9 +6,11 @@
   },
   "devDependencies": {
     "@tailwindcss/cli": "4.3.5",
+    "playwright-core": "1.65.1",
     "tailwindcss": "4.3.5"
   },
   "dependencies": {
+    "entities": "8.1.0",
     "marked": "^18.3.0",
     "sanitize-html": "^2.18.2",
     "yaml": "^2.9.1"
