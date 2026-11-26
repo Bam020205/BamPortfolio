@@ -6,6 +6,7 @@ import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { reactorBackdrop } from './reactor.mjs';
 import { blurHeading } from './headings.mjs';
+import { socialIcon } from './social-icons.mjs';
 
 const name = 'Abram John R. Seneca';
 await buildStoryCards(entries);
@@ -16,7 +17,11 @@ const { selected, community, slides } = portfolioSelection(projects, experiences
 const journalRoutes = new Set(journalPages.map(([route]) => route));
 const email = html(settings.email);
 const arrow = (direction = 'out') => `<svg class="arrow arrow-${direction}" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4 16 16 4M5 4h11v11"/></svg>`;
-const socialLinks = () => settings.socials?.map(({label, url}) => `<a class="social-link" href="${html(url)}" target="_blank" rel="noopener noreferrer" aria-label="${html(label)} profile (opens in a new tab)">${html(label)} ${arrow()}</a>`).join('') || '';
+const socialLinks = (wallet = false) => settings.socials?.map(({label, url}) => {
+  const icon = wallet ? socialIcon(label) : '';
+  const content = wallet ? `${icon}<span>${html(label)}</span>` : `${html(label)} ${arrow()}`;
+  return `<a class="${wallet ? 'wallet-social-link' : 'social-link'}" href="${html(url)}" target="_blank" rel="noopener noreferrer" aria-label="${html(label)} profile (opens in a new tab)">${content}</a>`;
+}).join('') || '';
 const nav = [['', 'Home'], ['about', 'About'], ['projects', 'Projects'], ['experience', 'Experience'], ['certifications', 'Certifications'], ['journal', 'Journal'], ['contact', 'Contact']];
 const encodePath = (path) => path.split('/').map(encodeURIComponent).join('/');
 const pageUrl = (root, route = '') => `${root}${route ? `${route}/` : ''}index.html`;
@@ -258,7 +263,7 @@ for (const [route, title, description, render, story] of pages) {
   <footer class="footer dark">
     <div class="wrap footer-inner">
       <div class="footer-id"><a class="footer-name" href="${pageUrl(root)}">${name}</a><p>${html(settings.footerRole)} · ${html(settings.location)}</p><p data-visit-count hidden></p></div>
-      ${settings.socials?.length ? `<div><p class="eyebrow">Socials</p>${socialLinks()}</div>` : ''}
+      ${settings.socials?.length ? (route ? `<div><p class="eyebrow">Socials</p>${socialLinks()}</div>` : `<div class="wallet-socials"><p class="eyebrow">Socials</p><nav aria-label="Social profiles">${socialLinks(true)}</nav></div>`) : ''}
       <div><p class="eyebrow">Contact</p><a href="mailto:${email}">Email Abram ${arrow()}</a><a href="${pageUrl(root, 'contact')}">Contact details</a></div>
     </div>
     <div class="wrap footer-base"><span>© 2026 Abram Seneca</span><span>Built with HTML, CSS &amp; JavaScript</span><button class="motion-toggle" hidden type="button">Pause motion</button><a href="#top">Back to top ${arrow('up')}</a></div>
