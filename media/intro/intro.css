@@ -1,0 +1,77 @@
+.name-intro {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #fff;
+  color: #191919;
+  text-align: center;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+}
+.name-intro::backdrop { background: transparent; }
+body:has(.name-intro[open]) { overflow: hidden; }
+.name-intro canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+#intro-word {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font: 500 clamp(1rem, 15.6vw, 15rem)/1 Arial, sans-serif;
+  letter-spacing: .04em;
+  outline: none;
+  user-select: none;
+}
+.name-intro.has-particles #intro-word { color: transparent; }
+#intro-meaning, .intro-enter {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: opacity .45s ease;
+}
+#intro-meaning {
+  top: max(67%, calc(48% + min(9vw, 8.5rem)));
+  width: min(88%, 48rem);
+  font-size: clamp(.86rem, 1.55vw, 1.45rem);
+  font-weight: 400;
+  letter-spacing: .04em;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+.intro-enter {
+  transition-delay: .18s;
+  top: max(82%, calc(48% + min(9vw, 8.5rem) + 2.5rem));
+  min-height: 44px;
+  padding: .5rem .85rem;
+  color: #525252;
+  font-size: clamp(.8rem, 1.05vw, 1rem);
+  letter-spacing: .16em;
+  white-space: nowrap;
+}
+.name-intro.forming #intro-meaning,
+.name-intro.forming .intro-enter:not(:focus-visible) { opacity: 0; transition: none; }
+.name-intro .intro-motion { position: absolute; right: max(1rem, env(safe-area-inset-right)); bottom: max(.7rem, env(safe-area-inset-bottom)); width: 44px; height: 44px; color: #666; }
+.intro-motion span { display: inline-block; width: 10px; height: 15px; border-inline: 2px solid; }
+.intro-motion[aria-label="Resume particles"] span { width: 0; height: 0; border: 0; border-block: 6px solid transparent; border-left: 9px solid; }
+html.cursor-visible .name-intro, html.cursor-visible .name-intro * { cursor: auto !important; }
+html.cursor-visible .name-intro button { cursor: pointer !important; }
+.name-intro.leaving :is(#intro-meaning, .intro-enter, .intro-motion) { opacity: 0; transition: opacity .14s; }
+@media (max-width: 600px) and (orientation: portrait) {
+  #intro-meaning { top: calc(48% + 12vw); }
+  .intro-enter { top: calc(48% + 12vw + 4.5rem); }
+}
+@media (max-height: 400px) {
+  #intro-word { top: 38%; font-size: min(16vw, 28vh); }
+  #intro-meaning { top: 61%; }
+  .intro-enter { top: 78%; }
+}
+@media (forced-colors: active) {
+  .name-intro canvas { visibility: hidden; }
+  .name-intro.has-particles #intro-word { color: CanvasText; }
+}

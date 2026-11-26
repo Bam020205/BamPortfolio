@@ -208,13 +208,22 @@ for (const [route, title, description, render, story] of pages) {
   <link rel="stylesheet" href="${root}site.css">
   <link rel="stylesheet" href="${root}headings.css">${route === '' ? `
   <link rel="stylesheet" href="${root}wallet.css">
+  <link rel="stylesheet" href="${root}media/intro/intro.css">
+  <script src="${root}media/intro/intro.js" defer></script>
   <script src="${root}wallet.js" defer></script>` : ''}${route === '' || route === 'about' ? `
   <link rel="preload" href="${root}media/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>` : ''}
   ${isJournal ? `<link rel="stylesheet" href="${root}journal.css">` : `<link rel="stylesheet" href="${root}reactor.css">`}
   <script src="${root}site.js" defer></script>
   <script src="${root}visits.js" defer></script>
 </head>
-<body id="top" class="${route === 'overview' ? 'front-page' : route ? 'interior' : 'wallet-page'}">
+<body id="top" class="${route === 'overview' ? 'front-page' : route ? 'interior' : 'wallet-page'}">${route === '' ? `
+  <dialog class="name-intro" id="name-intro" aria-labelledby="intro-word" aria-describedby="intro-meaning">
+    <canvas aria-hidden="true"></canvas>
+    <h1 id="intro-word" tabindex="-1" autofocus>YOHANAN</h1>
+    <p id="intro-meaning">Hebrew given name meaning “YHWH is gracious”</p>
+    <button type="button" class="intro-enter" aria-label="Enter the portfolio">click anywhere</button>
+    <button type="button" class="intro-motion" aria-label="Pause particles" title="Pause particles" hidden><span aria-hidden="true"></span></button>
+  </dialog>` : ''}
   <a class="skip" href="#main">Skip to content</a>
   <header class="masthead wrap">
     <a class="brand" href="${pageUrl(root)}" aria-label="${name}, home">as</a>
