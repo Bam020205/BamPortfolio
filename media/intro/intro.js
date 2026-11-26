@@ -17,7 +17,8 @@
   let frame = 0, last = null, time = 0, exitTime = 0;
   let width, height, ratio, centerX, centerY, scale;
   let particles = [], dots, lines, painter;
-  let pointer = null;
+  let pointer = null, previousPointer = null;
+  let letterCount = 0;
   const formation = 2700, warp = 800;
   const events = new AbortController();
   const listen = (target, name, fn) => target.addEventListener(name, fn, {signal: events.signal});
@@ -46,10 +47,16 @@
   }
 
   function makeParticles(mask) {
-    const count = width < 660 ? 4600 : 12000;
+    const mobile = width < 660;
+    letterCount = mobile ? 4600 : 12000;
+    const haloCount = mobile ? 70 : 210;
+    const fieldCount = mobile ? 44 : 145;
+    const count = letterCount + haloCount + fieldCount;
     let seed = 7193;
     const random = () => { seed = Math.imul(1664525, seed) + 1013904223 | 0; return (seed >>> 0) / 4294967296; };
-    particles = Array.from({length: count}, () => {
+    particles = Array.from({length: count}, (_, i) => {
+      const floating = i >= letterCount;
+      const field = i >= letterCount + haloCount;
       const cell = mask.inside[Math.floor(random() * mask.inside.length)];
       const x = (cell % mask.width + random() - mask.width / 2);
       const y = (Math.floor(cell / mask.width) + random() - 70);
@@ -57,14 +64,19 @@
       const feather = random() < .41 ? random() ** 2 * 42 : random() ** 4 * 3;
       const angle = random() * Math.PI * 2;
       const distance = .065 + random() ** .8 * .49;
+      const haloDistance = floating ? 24 + random() * 112 : 0;
       return {
-        x: x + feather * (.45 + random() * .9), y: y - feather * (.55 + random() * .7),
+        field, floating,
+        x: field ? random() : x + feather * (.45 + random() * .9) + Math.cos(angle) * haloDistance,
+        y: field ? random() : y - feather * (.55 + random() * .7) + Math.sin(angle) * haloDistance,
         feather, phase: random() * Math.PI * 2, seed: random(),
         fromX: Math.cos(angle) * distance, fromY: Math.sin(angle) * distance,
         spread: random() * 2 - 1, depth: .55 + random() * 1.4,
         size: (.85 + random() * 1.8) * (feather > 10 ? .72 : 1),
-        alpha: (.52 + random() * .47) * (1 - feather / 63),
-        dx: 0, dy: 0
+        alpha: floating ? .19 + random() * .27 : (.52 + random() * .47) * (1 - feather / 63),
+        drift: floating ? 9 + random() * 18 : 1 + feather * .46,
+        rate: .22 + random() * .27,
+        dx: 0, dy: 0, wakeX: 0, wakeY: 0
       };
     });
     dots = new Float32Array(count * 4);
@@ -145,29 +157,52 @@
     const clock = time * .001;
     const u = limit(time / formation, 0, 1), depart = exitTime / warp;
     const zoom = depart ** 2.25 * 17;
-    const radius = limit(width * .075, 48, 108);
+    const radius = limit(width * .060, 38, 84);
+    // Sweep the segment between frames so a fast pass still brushes the strokes.
+    const brush = !exiting && !paused && !reduced.matches ? pointer : null;
+    const start = previousPointer || brush;
+    const travelX = brush ? brush.x - start.x : 0;
+    const travelY = brush ? brush.y - start.y : 0;
+    const travelSquared = travelX * travelX + travelY * travelY;
     const dotScale = Math.max(.63, scale) * (width < 660 ? 1.23 : 1.36);
-    const follow = 1 - Math.exp(-dt * .013);
+    // The wake outlasts contact. Grains ease towards it and coast back as it fades.
+    const wakeDecay = Math.exp(-dt / 310);
+    const follow = 1 - Math.exp(-dt / 205);
     let trails = 0;
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
       const progress = limit((u - p.seed * .15) / (1 - p.seed * .15), 0, 1);
       const loose = (1 - progress) ** 2.35;
-      const wind = Math.sin(clock * .68 + p.phase);
-      let x = centerX + (p.x + wind * p.feather * .10) * scale + p.fromX * width * loose;
-      let y = centerY + (p.y - wind * p.feather * .07) * scale + p.fromY * height * loose;
-      if (loose > .001) y += Math.sin(progress * Math.PI + p.phase) * height * .045 * loose;
-      let repelX = 0, repelY = 0;
-      if (pointer && !exiting) {
-        const offX = x - pointer.x, offY = y - pointer.y, dist = Math.hypot(offX, offY);
-        if (dist < radius) {
-          const push = (1 - dist / radius) ** 1.4 * radius * (.6 + p.seed);
-          repelX = offX / Math.max(1, dist) * push + Math.cos(p.phase) * push * .23;
-          repelY = offY / Math.max(1, dist) * push + Math.sin(p.phase) * push * .23;
+      const phase = clock * p.rate + p.phase;
+      const wander = p.drift * (p.field ? 1 : scale);
+      const driftX = wander * (Math.sin(phase) + .34 * Math.cos(phase * .69 + p.seed * 8));
+      const driftY = wander * (.82 * Math.cos(phase * .87 + p.phase) + .26 * Math.sin(phase * 1.43));
+      let x = (p.field ? p.x * width : centerX + p.x * scale + p.fromX * width * loose) + driftX;
+      let y = (p.field ? p.y * height : centerY + p.y * scale + p.fromY * height * loose) + driftY;
+      if (!p.field && loose > .001) y += Math.sin(progress * Math.PI + p.phase) * height * .045 * loose;
+
+      p.wakeX *= wakeDecay;
+      p.wakeY *= wakeDecay;
+      if (brush) {
+        const along = travelSquared ? limit(((x - start.x) * travelX + (y - start.y) * travelY) / travelSquared, 0, 1) : 0;
+        const offX = x - (start.x + along * travelX);
+        const offY = y - (start.y + along * travelY);
+        const distanceSquared = offX * offX + offY * offY;
+        if (distanceSquared < radius * radius) {
+          const distance = Math.sqrt(distanceSquared);
+          const strength = (1 - distance / radius) ** 1.45 * radius * (.26 + .20 * p.seed);
+          const nx = distance > 1 ? offX / distance : Math.cos(p.phase);
+          const ny = distance > 1 ? offY / distance : Math.sin(p.phase);
+          // A little sideways variation breaks up the edge of the ripple.
+          if (strength * strength >= p.wakeX * p.wakeX + p.wakeY * p.wakeY) {
+            const bend = .28 * p.spread;
+            p.wakeX = strength * (nx - ny * bend);
+            p.wakeY = strength * (ny + nx * bend);
+          }
         }
       }
-      p.dx += (repelX - p.dx) * follow;
-      p.dy += (repelY - p.dy) * follow;
+      p.dx += (p.wakeX - p.dx) * follow;
+      p.dy += (p.wakeY - p.dy) * follow;
       x += p.dx; y += p.dy;
       if (exiting) {
         const vx = x - centerX + p.spread * depart * width * .09;
@@ -183,9 +218,10 @@
         }
       }
       const j = i * 4;
-      dots[j] = x; dots[j+1] = y; dots[j+2] = p.size * dotScale;
+      dots[j] = x; dots[j+1] = y; dots[j+2] = p.size * (p.floating ? Math.max(.85, dotScale * .65) : dotScale);
       dots[j+3] = p.alpha * (.36 + .64 * (1 - loose)) * (1 - depart * .8);
     }
+    previousPointer = brush;
     painter.draw(trails);
   }
   let mask;
@@ -201,12 +237,13 @@
     centerX = word.left - rect.left + word.width / 2;
     centerY = word.top - rect.top + word.height / 2;
     scale = word.width / mask.width;
-    if (particles.length !== (width < 660 ? 4600 : 12000)) makeParticles(mask);
+    previousPointer = null;
+    if (letterCount !== (width < 660 ? 4600 : 12000)) makeParticles(mask);
     draw(0);
   }
   function stop() {
     cancelAnimationFrame(frame);
-    frame = 0; last = null;
+    frame = 0; last = null; previousPointer = null;
   }
   function schedule() {
     if (frame || entered || !visible || document.hidden || !painter || reduced.matches || forcedColors.matches || paused) return;
@@ -278,7 +315,7 @@
   listen(intro, 'pointermove', event => {
     if (event.pointerType !== 'touch' && !paused) pointer = {x:event.clientX,y:event.clientY};
   });
-  listen(intro, 'pointerleave', () => {pointer = null;});
+  listen(intro, 'pointerleave', () => {pointer = previousPointer = null;});
   listen(document, 'visibilitychange', () => {if (document.hidden) stop(); else schedule();});
   listen(reduced, 'change', syncPause);
   listen(forcedColors, 'change', syncPause);
