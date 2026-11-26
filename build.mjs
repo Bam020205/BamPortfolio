@@ -172,7 +172,7 @@ for (const [route, title, description, render, story] of pages) {
   const isJournal = route === 'journal' || route.startsWith('journal/');
   const project = projects.find(item => route === 'projects/' + item.slug);
   const share = story || project;
-  const origin = 'https://bamportfolio-two.vercel.app';
+  const origin = 'https://abramseneca.vercel.app';
   // Journal excerpts already contain escaped text from the article renderer.
   const shareDescription = story?.excerpt ? story.excerpt.replaceAll('"', '&quot;') : html(description);
   const root = route ? '../'.repeat(route.split('/').length) : './';
@@ -191,10 +191,10 @@ for (const [route, title, description, render, story] of pages) {
   <meta name="description" content="${html(description)}">
   <meta name="theme-color" content="#ffffff">${route === '' ? `
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://bamportfolio-two.vercel.app/">
+  <meta property="og:url" content="https://abramseneca.vercel.app/">
   <meta property="og:title" content="Abram Seneca | Portfolio">
   <meta property="og:description" content="Explore my projects, photography, and writing in Yohanan Times.">
-  <meta property="og:image" content="https://bamportfolio-two.vercel.app/media/yohanan-the-good-apple.png">
+  <meta property="og:image" content="https://abramseneca.vercel.app/media/yohanan-the-good-apple.png">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1734">
   <meta property="og:image:height" content="907">

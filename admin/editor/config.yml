@@ -7,8 +7,8 @@ publish_mode:
   type: editorial_workflow
   stages: [draft]
   direct_publish: true
-site_url: https://bamportfolio-two.vercel.app
-display_url: https://bamportfolio-two.vercel.app/overview/
+site_url: https://abramseneca.vercel.app
+display_url: https://abramseneca.vercel.app/overview/
 media_folder: media/journal
 public_folder: /media/journal
 slug:
