@@ -5,6 +5,18 @@
   "outputDirectory": "dist",
   "redirects": [
     {
+      "source": "/",
+      "has": [{ "type": "host", "value": "bamportfolio-two.vercel.app" }],
+      "destination": "https://abramseneca.vercel.app/",
+      "permanent": true
+    },
+    {
+      "source": "/:path+/",
+      "has": [{ "type": "host", "value": "bamportfolio-two.vercel.app" }],
+      "destination": "https://abramseneca.vercel.app/:path/",
+      "permanent": true
+    },
+    {
       "source": "/:path*",
       "has": [{ "type": "host", "value": "bamportfolio-two.vercel.app" }],
       "destination": "https://abramseneca.vercel.app/:path*",
