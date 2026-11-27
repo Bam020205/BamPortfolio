@@ -37,6 +37,14 @@
 }
 .story-card .journal-meta { margin-bottom: .65rem; }
 
+.journal-signup { margin: 0 auto 3rem; width: min(66rem, 92%); padding: clamp(1.25rem, 4vw, 3rem); border-block: 3px double #726b60; background: #faf8f3; color: #26221d; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 2rem; }
+.journal-signup img { width: 11rem; }
+.journal-signup h2 { margin: 1rem 0 .6rem; font: 700 clamp(2rem,4vw,3rem)/1.1 Playfair, Georgia, serif; }
+.journal-signup p { font: 1.13rem/1.5 SourceSerif, Georgia, serif; }
+.journal-signup .signup-help { margin-top: .7rem; font: .85rem/1.5 Arial, sans-serif; }
+.journal-signup .ml-form-embedContent { display: none; }
+@media (max-width: 740px) { .journal-signup { grid-template-columns: minmax(0, 1fr); gap: 1rem; } }
+
 @media (forced-colors: none) {
   body { cursor: url("media/fountain-pen-24.png") 2 22, auto; }
   :is(a[href], button:enabled, summary) {

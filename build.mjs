@@ -10,6 +10,13 @@ import { socialIcon } from './social-icons.mjs';
 
 const name = 'Abram John R. Seneca';
 await buildStoryCards(entries);
+const journalURL = 'https://abramseneca.vercel.app/journal/';
+const feedItems = entries.map(entry => {
+  const url = journalURL + entry.slug + '/';
+  return `<item><title>${html(entry.title)}</title><link>${url}</link><guid>${url}</guid><pubDate>${new Date(entry.stamp).toUTCString()}</pubDate><category>${html(entry.category)}</category><description>${html(entry.storyExcerpt)}</description></item>`;
+});
+writeFileSync(new URL('./journal/feed.xml', import.meta.url),
+  `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>Yohanan Times</title><link>${journalURL}</link><description>Journal entries by Abram Seneca</description>${feedItems.join('\n')}</channel></rss>\n`);
 const records = JSON.parse(readFileSync(new URL('./content/portfolio.json', import.meta.url), 'utf8'));
 const { settings, experiences } = records;
 const projects = [...records.projects].sort(newest);
@@ -219,7 +226,7 @@ for (const [route, title, description, render, story] of pages) {
   <script src="${root}media/intro/intro.js" defer></script>
   <script src="${root}wallet.js" defer></script>` : ''}${route === '' || route === 'about' ? `
   <link rel="preload" href="${root}media/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>` : ''}
-  ${isJournal ? `<link rel="stylesheet" href="${root}journal.css">` : `<link rel="stylesheet" href="${root}reactor.css">`}
+  ${isJournal ? `<link rel="stylesheet" href="${root}journal.css"><link rel="alternate" type="application/rss+xml" title="Yohanan Times" href="${root}journal/feed.xml"><script defer src="${root}journal/signup.js"></script>` : `<link rel="stylesheet" href="${root}reactor.css">`}
   ${story ? `<script src="${root}journal/share.js" defer></script>` : ''}<script src="${root}site.js" defer></script>
   <script src="${root}visits.js" defer></script>
 </head>
@@ -260,6 +267,7 @@ for (const [route, title, description, render, story] of pages) {
   </dialog>
   <div class="cursor-ring" aria-hidden="true"></div>
   <main id="main" tabindex="-1" class="${isJournal ? 'journal-main' : 'reactor-stage'} ${route === 'about' ? 'about-stage' : route ? 'reading-stage' : ''}">${isJournal ? '' : reactorBackdrop()}${render(root)}</main>
+  ${isJournal ? `<section class="journal-signup" aria-labelledby="signup-title"><div><img src="${root}media/yohanan-times.svg" alt="Yohanan Times"><h2 id="signup-title">New entries by email</h2><p>Get an email when I publish a new Journal entry.</p></div><div><div class="ml-embedded" data-form="OZq8Mo"></div><p class="signup-help"><a href="https://preview.mailerlite.io/forms/2828234/205261380672029731/share">Open signup form</a> · Confirm by email. Unsubscribe anytime.</p></div></section>` : ''}
   <footer class="footer dark">
     <div class="wrap footer-inner">
       <div class="footer-id"><a class="footer-name" href="${pageUrl(root)}">${name}</a><p>${html(settings.footerRole)} · ${html(settings.location)}</p><p data-visit-count hidden></p></div>
