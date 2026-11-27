@@ -266,8 +266,8 @@ for (const [route, title, description, render, story] of pages) {
     </div>
   </dialog>
   <div class="cursor-ring" aria-hidden="true"></div>
-  <main id="main" tabindex="-1" class="${isJournal ? 'journal-main' : 'reactor-stage'} ${route === 'about' ? 'about-stage' : route ? 'reading-stage' : ''}">${isJournal ? '' : reactorBackdrop()}${render(root)}</main>
-  ${isJournal ? `<section class="journal-signup" aria-labelledby="signup-title"><div><img src="${root}media/yohanan-times.svg" alt="Yohanan Times"><h2 id="signup-title">New entries by email</h2><p>Get an email when I publish a new Journal entry.</p></div><div><div class="ml-embedded" data-form="OZq8Mo"></div><p class="signup-help"><a href="https://preview.mailerlite.io/forms/2828234/205261380672029731/share">Open signup form</a> · Confirm by email. Unsubscribe anytime.</p></div></section>` : ''}
+  <main id="main" tabindex="-1" class="${isJournal ? 'journal-main' : 'reactor-stage'} ${route === 'about' ? 'about-stage' : route ? 'reading-stage' : ''}">${isJournal ? '' : reactorBackdrop()}${render(root)}</main>${isJournal ? `
+  <section class="journal-signup" aria-labelledby="signup-title"><div><img src="${root}media/yohanan-times.svg" alt="Yohanan Times"><h2 id="signup-title">New entries by email</h2><p>Get an email when I publish a new Journal entry.</p></div><div><div class="ml-embedded" data-form="OZq8Mo"></div><p class="signup-help"><a href="https://preview.mailerlite.io/forms/2828234/205261380672029731/share">Open signup form</a> · Confirm by email. Unsubscribe anytime.</p></div></section>` : ''}
   <footer class="footer dark">
     <div class="wrap footer-inner">
       <div class="footer-id"><a class="footer-name" href="${pageUrl(root)}">${name}</a><p>${html(settings.footerRole)} · ${html(settings.location)}</p><p data-visit-count hidden></p></div>
