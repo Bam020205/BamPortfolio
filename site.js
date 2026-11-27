@@ -10,12 +10,13 @@ if (typeof menu.showModal === 'function') {
   const camera = menu.querySelector('.camera');
   const memory = menu.querySelector('.phone-memory');
   const photo = memory.querySelector('img');
-  const photos = ['Science project presentation','Group instant photo','Testing electronics','Working at a café','Camera research at a desk','Interview at an expo','Playing the drums','Handheld camera and microphone','Photo editing desk','Behind the drum kit','Portrait at the expo','Night drive','Coding on a laptop','Stage drum kit'];
+  const photos = ['Science project presentation','Group instant photo','Testing electronics','Working at a café','Camera research at a desk','Interview at an expo','Playing the drums','Handheld camera and microphone','Photo editing desk','Behind the drum kit','Portrait at the expo','Night drive','Coding on a laptop','Stage drum kit', photo.alt];
   let nextPhoto = 0;
   try { nextPhoto = Number(sessionStorage.getItem('phone-camera-next')) || 0; } catch {}
   if (!Number.isInteger(nextPhoto) || nextPhoto < 0 || nextPhoto >= photos.length) nextPhoto = 0;
   function preparePhoto() {
-    photo.src = new URL('camera/' + (nextPhoto + 1) + '.jpg', new URL(photo.dataset.src, document.baseURI));
+    const original = new URL(photo.dataset.src, document.baseURI);
+    photo.src = nextPhoto === photos.length - 1 ? original : new URL('camera/' + (nextPhoto + 1) + '.jpg', original);
     photo.alt = photos[nextPhoto];
   }
   const flash = menu.querySelector('.phone-flash');
