@@ -119,6 +119,7 @@ body:has(dialog[open]) { overflow: hidden; }
   position:absolute; inset:0; z-index:2; isolation:isolate; overflow:hidden;
   border-radius:inherit; background:var(--paper); box-shadow:0 6px 18px #0002;
 }
+.phone-screen[data-view="apps"] { touch-action:pan-y; }
 .phone-screen[data-view="lock"] { touch-action:none; user-select:none; }
 .phone-home { z-index:2; }
 .phone-screen[data-unlocking] .phone-apps { overflow:visible; pointer-events:none; }

@@ -10,6 +10,14 @@ if (typeof menu.showModal === 'function') {
   const camera = menu.querySelector('.camera');
   const memory = menu.querySelector('.phone-memory');
   const photo = memory.querySelector('img');
+  const photos = ['Science project presentation','Group instant photo','Testing electronics','Working at a café','Camera research at a desk','Interview at an expo','Playing the drums','Handheld camera and microphone','Photo editing desk','Behind the drum kit','Portrait at the expo','Night drive','Coding on a laptop','Stage drum kit'];
+  let nextPhoto = 0;
+  try { nextPhoto = Number(sessionStorage.getItem('phone-camera-next')) || 0; } catch {}
+  if (!Number.isInteger(nextPhoto) || nextPhoto < 0 || nextPhoto >= photos.length) nextPhoto = 0;
+  function preparePhoto() {
+    photo.src = new URL('camera/' + (nextPhoto + 1) + '.jpg', new URL(photo.dataset.src, document.baseURI));
+    photo.alt = photos[nextPhoto];
+  }
   const flash = menu.querySelector('.phone-flash');
   const boot = menu.querySelector('.phone-boot');
   const clock = menu.querySelector('.phone-time');
@@ -68,7 +76,7 @@ if (typeof menu.showModal === 'function') {
     boot.hidden = !animateBoot;
     lock.inert = home.inert = animateBoot;
     menu.showModal();
-    if (!photo.hasAttribute('src')) photo.src = photo.dataset.src;
+    preparePhoto();
     syncClock();
     toggle.setAttribute('aria-expanded','true');
     if (animateBoot) bootTimer = setTimeout(finishBoot, 780);
@@ -91,6 +99,7 @@ if (typeof menu.showModal === 'function') {
     preview.flash?.cancel();
     preview = null;
     memory.hidden = true;
+    if (menu.open) preparePhoto();
     lock.inert = home.inert = statusBar.inert = false;
     if (restoreFocus && menu.open) camera.focus({preventScroll:true});
   }
@@ -146,6 +155,8 @@ if (typeof menu.showModal === 'function') {
       await photo.decode();
       if (preview !== current || !menu.open) return;
       lock.inert = home.inert = statusBar.inert = true;
+      nextPhoto = (nextPhoto + 1) % photos.length;
+      try { sessionStorage.setItem('phone-camera-next', String(nextPhoto)); } catch {}
       memory.hidden = false;
       memory.focus({preventScroll:true});
       if (moving()) {
@@ -186,7 +197,7 @@ if (typeof menu.showModal === 'function') {
     lock.inert = false;
   }
 
-  function beginTransition() {
+  function beginTransition(edgeReturn = false) {
     if (transition) return;
     const fromApps = screen.dataset.view === 'apps';
     const height = screen.clientHeight;
@@ -198,6 +209,12 @@ if (typeof menu.showModal === 'function') {
       const effect = element.animate(frames, {duration, fill:'both'});
       effect.pause();
       transition.effects.push(effect);
+    }
+    if (edgeReturn) {
+      track(lock, [{transform:'translateX(0)'}, {transform:'translateX(-101%)'}]);
+      track(apps, [{transform:'translateX(35%)'}, {transform:'translateX(0)'}]);
+      scrub(1);
+      return;
     }
     track(lock, [
       {transform:'translateY(0)'}, {offset:sheetEnd, transform:'translateY(-101%)'},
@@ -266,7 +283,14 @@ if (typeof menu.showModal === 'function') {
   screen.addEventListener('pointerdown', event => {
     if (!event.isPrimary || event.button !== 0) return;
     suppressClick = false;
-    if (!boot.hidden || preview || transition || screen.dataset.view !== 'lock') return;
+    if (!boot.hidden || preview || transition) return;
+    if (screen.dataset.view === 'apps') {
+      const bounds = screen.getBoundingClientRect();
+      if (event.clientX - bounds.left <= 26 && !event.target.closest('button,a')) {
+        drag = {edge:true, id:event.pointerId, x:event.clientX, y:event.clientY, width:bounds.width, moved:false};
+      }
+      return;
+    }
     const control = event.target.closest('button, a');
     if (control && control !== home) return;
     drag = {id:event.pointerId, x:event.clientX, y:event.clientY, moved:false,
@@ -275,6 +299,20 @@ if (typeof menu.showModal === 'function') {
   screen.addEventListener('pointermove', event => {
     if (!drag || drag.id !== event.pointerId) return;
     if (!event.buttons) { endDrag(event,true); return; }
+    if (drag.edge) {
+      const dx = event.clientX - drag.x;
+      if (!drag.moved) {
+        if (Math.max(Math.abs(dx), Math.abs(event.clientY - drag.y)) < 6) return;
+        if (dx <= Math.abs(event.clientY - drag.y)) { drag = null; return; }
+        drag.moved = true;
+        screen.setPointerCapture(event.pointerId);
+      }
+      if (moving()) {
+        beginTransition(true);
+        scrub(1 - dx / drag.width);
+      }
+      return;
+    }
     const lift = drag.y - event.clientY;
     if (!drag.moved) {
       if (Math.abs(lift) < 5 || Math.abs(lift) < Math.abs(event.clientX - drag.x)) return;
@@ -296,6 +334,11 @@ if (typeof menu.showModal === 'function') {
     if (!gesture.moved) return;
     suppressClick = true;
     if (screen.hasPointerCapture(event.pointerId)) screen.releasePointerCapture(event.pointerId);
+    if (gesture.edge) {
+      const complete = !cancelled && event.clientX - gesture.x >= Math.min(72, gesture.width * .22);
+      if (transition || complete) settle(!complete);
+      return;
+    }
     const lift = gesture.y - event.clientY;
     if (!cancelled && lift < -70) { closePhone(); return; }
     const flick = lift > 24 && gesture.velocity > .42 && event.timeStamp - gesture.lastTime < 110;
