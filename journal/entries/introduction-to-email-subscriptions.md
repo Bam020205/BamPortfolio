@@ -1,10 +1,13 @@
 ---
 title: Introduction to Email Subscriptions
-category: Journal
+category: Article
 date: 2026-11-27T18:00:00+08:00
 cover: /media/journal/email-subscriptions-gmail.png
 alt: Gmail logo on a white background
 caption: Email is how new Yohanan Times entries can reach readers who choose to subscribe.
+story_excerpt: I’ve added an email subscription option to Yohanan Times so readers can hear about new Journal entries without checking the website every day. Here is how it works and what to expect.
+sections: []
+gallery: []
 ---
 
 I’ve added an email subscription option to Yohanan Times so readers can hear about new Journal entries without checking the website every day. Here is how it works and what to expect.
