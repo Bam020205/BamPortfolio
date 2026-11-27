@@ -3,7 +3,7 @@ import { parseEntry } from '../journal.mjs';
 
 const source = process.argv[2];
 const slugs = process.argv.slice(3);
-const token = process.env.MAILERLITE_API_TOKEN;
+const token = process.env.MAILERLITE_API_TOKEN?.replace(/\\s+/g, '');
 if (!source || !token) throw Error('Writing source and MAILERLITE_API_TOKEN are required');
 
 const site = 'https://abramseneca.vercel.app';
@@ -39,3 +39,4 @@ for (const slug of slugs) {
   });
   console.log(`Created MailerLite draft ${campaign.data?.id} for ${slug}`);
 }
+
