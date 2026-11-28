@@ -10,13 +10,22 @@ const site = 'https://abramseneca.vercel.app';
 const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 
 async function mailerLite(path, options = {}) {
-  const response = await fetch('https://connect.mailerlite.com/api' + path, {
-    ...options,
-    headers: { Authorization: `Bearer ${token}`, Accept: 'application/json', 'Content-Type': 'application/json' }
-  });
-  const result = await response.json();
-  if (!response.ok) throw Error(`MailerLite ${response.status}: ${JSON.stringify(result)}`);
-  return result;
+  let response;
+  try {
+    response = await fetch('https://connect.mailerlite.com/api' + path, {
+      ...options,
+      redirect: 'error',
+      headers: { Authorization: `Bearer ${token}`, Accept: 'application/json', 'Content-Type': 'application/json' }
+    });
+  } catch {
+    throw Error('Could not reach the MailerLite API');
+  }
+  if (!response.ok) throw Error(`MailerLite API request failed (HTTP ${response.status})`);
+  try {
+    return await response.json();
+  } catch {
+    throw Error('MailerLite API returned an unreadable response');
+  }
 }
 
 for (const slug of slugs) {

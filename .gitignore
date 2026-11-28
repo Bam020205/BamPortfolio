@@ -1,2 +1,9 @@
 /media/determinator-original.mp4
 /node_modules/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
