@@ -7,6 +7,14 @@ import { readingMinutes } from './admin/editor/reading-time.mjs';
 
 export const publication = 'Yohanan Times - The Good Apple';
 const escape = value => String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+export function renderProse(source) {
+  return sanitizeHtml(marked.parse(source), {
+    allowedTags: ['div','p','a','h2','h3','h4','blockquote','strong','em','ul','ol','li','hr','br','code','pre','del','h1','h5','h6'],
+    allowedClasses: {div:['journal-centered','journal-large','journal-reference']},
+    allowedAttributes: {div:['class'],a:['href','title']}, allowedSchemes:['http','https','mailto'], allowProtocolRelative:false
+  });
+}
+
 export function parseEntry(source, slug) {
   const front = /^---\r?\n([\s\S]+?)\r?\n---\r?\n([\s\S]*)$/.exec(source);
   if (!front || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) throw Error('Invalid journal entry');
@@ -33,10 +41,7 @@ export function parseEntry(source, slug) {
       throw Error('Invalid image path in ' + slug);
     }
   }
-  const body = sanitizeHtml(marked.parse(front[2]), {
-    allowedTags: ['p','a','h2','h3','h4','blockquote','strong','em','ul','ol','li','hr','br','code','pre','del','h1','h5','h6'],
-    allowedAttributes: {a:['href','title']}, allowedSchemes:['http','https','mailto'], allowProtocolRelative:false
-  });
+  const body = renderProse(front[2]);
   const firstParagraph = sanitizeHtml(body.match(/<p>([\s\S]*?)<\/p>/)?.[1] ?? '', {allowedTags:[],allowedAttributes:{}});
   const sectionText = sections.map(section => section.text || '').filter(Boolean).join('\n\n');
   const summary = firstParagraph || escape(sectionText.split(/\n\s*\n/)[0]);
@@ -80,7 +85,7 @@ function card(root,e,lead) {
     <img src="${picture(root,e.cover)}" alt="${escape(e.alt)}" ${lead?'fetchpriority="high"':'loading="lazy"'}></a></article>`;
 }
 function articleSection(root, section) {
-  const paragraphs = (section.text || '').split(/\n\s*\n/).filter(Boolean).map(p => '<p>' + escape(p) + '</p>').join('');
+  const paragraphs = renderProse(section.text || '');
   const text = '<div class="prose">' + paragraphs + '</div>';
   if (section.type === 'text') return text;
   const caption = section.caption ? '<figcaption>' + escape(section.caption) + '</figcaption>' : '';

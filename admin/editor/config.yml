@@ -36,7 +36,7 @@ collections:
       - {name: cover, label: Cover photo, widget: image, choose_url: false, accept: "image/jpeg,image/png,image/webp,image/avif,image/gif"}
       - {name: alt, label: Image description, widget: string}
       - {name: caption, label: Caption, widget: string, required: false}
-      - {name: body, label: Opening text, required: false, widget: markdown, editor_components: []}
+      - {name: body, label: Opening text, required: false, widget: richtext, editor_components: [journal-centered, journal-large, journal-reference]}
       - {name: story_excerpt, label: Story excerpt, widget: text, required: false, hint: "Choose a short passage for the shareable Story image. Leave this blank to use the opening sentence."}
       - name: sections
         label: Article sections
@@ -47,7 +47,7 @@ collections:
             label: Text
             widget: object
             fields:
-              - &passage {name: text, label: Paragraphs, widget: text}
+              - &passage {name: text, label: Paragraphs, widget: richtext, editor_components: [journal-centered, journal-large, journal-reference]}
           - name: image
             label: Image between paragraphs
             widget: object

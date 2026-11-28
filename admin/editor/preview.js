@@ -1,9 +1,15 @@
 import './portfolio-preview.js';
+import './journal-formatting.js';
 import { readingMinutes } from './reading-time.mjs';
+
+function passage(text, key) {
+  const html = window.DOMPurify.sanitize(window.marked.parse(text || ''), {FORBID_TAGS:['img','style'], FORBID_ATTR:['style']});
+  return h('div',{className:'prose',key,dangerouslySetInnerHTML:{__html:html}});
+}
 
 const publicationRoot = new URL('../../', location.href);
 CMS.registerPreviewStyle(new URL('journal.css', publicationRoot).href);
-CMS.registerPreviewTemplate('journal', ({entry, getAsset, widgetFor}) => {
+CMS.registerPreviewTemplate('journal', ({entry, getAsset}) => {
   const data = entry.get('data');
   function imageURL(path) {
     if (!path) return '';
@@ -15,7 +21,7 @@ CMS.registerPreviewTemplate('journal', ({entry, getAsset, widgetFor}) => {
     h('img',{src:imageURL(path),alt:alt || ''}),caption ? h('figcaption',{},caption) : null);
   const sections = data.get('sections')?.toJS() || [];
   function sectionView(section, key) {
-    const text = h('div',{className:'prose',key}, ...(section.text || '').split(/\n\s*\n/).filter(Boolean).map((p,i)=>h('p',{key:i},p)));
+    const text = passage(section.text,key);
     if (section.type === 'text') return text;
     const figure = photo(section.image,section.alt,section.caption,'section-photo');
     if (section.type === 'image') return h('div',{className:'inline-photo',key},figure);
@@ -29,7 +35,7 @@ CMS.registerPreviewTemplate('journal', ({entry, getAsset, widgetFor}) => {
     h('article',{className:'reading'},h('header',{},h('div',{className:'story-category'},data.get('category') || 'Article'),h('h1',{},data.get('title') || 'Untitled entry'),
       h('div',{className:'journal-meta'},['Abram Seneca', dateLabel, readingMinutes([data.get('body'), ...sections.map(s=>s.text)].join(' '))+' min read'].filter(Boolean).join(' · '))),
       photo(data.get('cover'),data.get('alt'),data.get('caption'),'cover'),
-      h('div',{className:'prose'},widgetFor('body')), ...sections.map(sectionView),
+      passage(data.get('body')), ...sections.map(sectionView),
       h('div',{className:'story-gallery'},...gallery.map((item,i)=>photo(item.image,item.alt,item.caption,i)))));
 });
 

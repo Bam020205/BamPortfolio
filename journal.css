@@ -90,3 +90,9 @@
   .share-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .share-options :is(p, input) { grid-column: 1 / -1; }
 }
+
+.prose .journal-centered { text-align: center; }
+.prose .journal-large { font-size: 1.2em; }
+.prose .journal-reference { padding-inline-start: .5in; text-indent: -.5in; overflow-wrap: anywhere; }
+.prose ul { list-style: disc outside; padding-inline-start: 1.5em; }
+.prose ol { list-style: decimal outside; padding-inline-start: 1.5em; }
